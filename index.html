@@ -327,13 +327,22 @@ setInterval(() => {
   updateBadges();
 }, 1000);
 
-/* DISPLAY TIME */
-let displaySec = 0;
-setInterval(() => {
-  displaySec++;
+/* DISPLAY TIME THAT SAVES */
+let displaySec = parseInt(localStorage.getItem("displaySec") || "0");
+
+function updateDisplayTime() {
+  localStorage.setItem("displaySec", displaySec);
+
   let mins = Math.floor(displaySec / 60);
   let secs = displaySec % 60;
   document.getElementById("timeSpent").innerText = `Time on site: ${mins}m ${secs}s`;
+}
+
+updateDisplayTime();
+
+setInterval(() => {
+  displaySec++;
+  updateDisplayTime();
 }, 1000);
 
 /* ------------------------ LEVEL SYSTEM (unchanged) ------------------------ */
