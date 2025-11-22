@@ -251,6 +251,26 @@ h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; }
   cursor: not-allowed;
   opacity: 0.4;
 }
+
+  #leaderboardBtn {
+  position: fixed;
+  left: 15px;
+  top: 65px;
+  padding: 12px 18px;
+  background: #00ffcc;
+  color: black;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 5000;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 0 10px #00ffcc;
+}
+
+#leaderboardBtn:hover {
+  background: #00e6b8;
+}
+
 </style>
 </head>
 
@@ -393,6 +413,8 @@ h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; }
 
 <!-- LEVEL UP POPUP -->
 <div id="levelUpPopup">🎉 Level Up! 🎉</div>
+  <a href="leaderboard.html" id="leaderboardBtn">📊 Leaderboard</a>
+
 
 <script>
 /* ------------------------ DOM + ACHIEVEMENT PANEL TOGGLE ------------------------ */
