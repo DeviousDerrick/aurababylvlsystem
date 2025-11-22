@@ -2,113 +2,112 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Leaderboard</title>
+<title>Aurababy Leaderboards</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
 
 <style>
   body {
-    background: #0e0e0e;
-    color: white;
     font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
+    color: white;
     text-align: center;
-    padding: 20px;
+    padding: 40px;
   }
 
   h1 {
-    font-size: 40px;
-    margin-bottom: 10px;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #00ffcc;
   }
 
   /* Back button */
   #backBtn {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    padding: 12px 20px;
+    top: 20px;
+    left: 20px;
     background: #00ffcc;
     color: black;
+    padding: 10px 20px;
     border-radius: 10px;
-    font-weight: 800;
     text-decoration: none;
     box-shadow: 0 0 10px #00ffcc;
   }
-  #backBtn:hover {
-    background: #00e6b8;
+  #backBtn:hover { background: #00eebb; }
+
+  /* Glass container */
+  #leaderboardContainer {
+    background: rgba(0,0,0,0.35);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-weight: 800;
   }
 
   /* Tabs */
   .tab-buttons {
-    margin: 25px auto;
     display: flex;
     justify-content: center;
     gap: 20px;
+    margin-bottom: 25px;
   }
 
   .tab-btn {
-    padding: 12px 20px;
     background: #00ffcc;
     color: black;
-    font-weight: 800;
-    border-radius: 12px;
+    padding: 10px 18px;
+    border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 0 10px #00ffcc;
   }
-  .tab-btn:hover {
-    background: #00e6b8;
-  }
+  .tab-btn:hover { background: #00e6b8; }
 
   .tab {
     display: none;
-    margin-top: 20px;
   }
 
-  table {
-    width: 85%;
-    margin: auto;
-    background: #161616;
-    border-radius: 12px;
-    border-collapse: collapse;
-    overflow: hidden;
-    margin-top: 10px;
+  /* Leaderboard rows */
+  .lb-row {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
   }
 
-  th, td {
-    padding: 14px;
-    border-bottom: 1px solid #333;
-    font-size: 20px;
-  }
-
-  th {
-    background: #00ffcc;
-    color: black;
-    font-weight: 900;
-  }
+  .lb-row:nth-child(1) { background: rgba(255,255,255,0.15); border-left: 5px solid gold; }
+  .lb-row:nth-child(2) { background: rgba(255,255,255,0.1); border-left: 5px solid silver; }
+  .lb-row:nth-child(3) { background: rgba(255,255,255,0.1); border-left: 5px solid #cd7f32; }
 </style>
 </head>
+
 <body>
 
 <a id="backBtn" href="index.html">⬅ Back</a>
 
-<h1>Leaderboard</h1>
+<h1>🏆 Aurababy Leaderboards 🏆</h1>
 
-<div class="tab-buttons">
-  <div class="tab-btn" onclick="switchTab('expTab')">🏆 EXP</div>
-  <div class="tab-btn" onclick="switchTab('timeTab')">⏱ Time</div>
-</div>
+<div id="leaderboardContainer">
 
-<!-- EXP TAB -->
-<div id="expTab" class="tab">
-  <h2>Top EXP Players</h2>
-  <table id="expBoard">
-    <tr><th>Username</th><th>EXP</th></tr>
-  </table>
-</div>
+  <!-- TABS -->
+  <div class="tab-buttons">
+    <div class="tab-btn" onclick="switchTab('expTab')">EXP</div>
+    <div class="tab-btn" onclick="switchTab('timeTab')">TIME</div>
+  </div>
 
-<!-- TIME TAB -->
-<div id="timeTab" class="tab">
-  <h2>Top Time Players</h2>
-  <table id="timeBoard">
-    <tr><th>Username</th><th>Time Played</th></tr>
-  </table>
+  <!-- EXP TAB -->
+  <div id="expTab" class="tab">
+    <h2>Top EXP</h2>
+    <div id="expBoard"></div>
+  </div>
+
+  <!-- TIME TAB -->
+  <div id="timeTab" class="tab">
+    <h2>Top Time</h2>
+    <div id="timeBoard"></div>
+  </div>
 </div>
 
 <script>
@@ -120,27 +119,48 @@
     document.getElementById(tab).style.display = "block";
   }
 
-  // Load and display stored data
-  function loadLeaderboard() {
-    let expData = JSON.parse(localStorage.getItem("expLeaderboard")) || [];
-    let timeData = JSON.parse(localStorage.getItem("timeLeaderboard")) || [];
-
-    expData.sort((a, b) => b.exp - a.exp);
-    timeData.sort((a, b) => b.time - a.time);
-
-    const expTable = document.getElementById("expBoard");
-    const timeTable = document.getElementById("timeBoard");
-
-    expData.forEach(player => {
-      expTable.innerHTML += `<tr><td>${player.username}</td><td>${player.exp}</td></tr>`;
-    });
-
-    timeData.forEach(player => {
-      timeTable.innerHTML += `<tr><td>${player.username}</td><td>${player.time}s</td></tr>`;
-    });
+  function niceNum(n) {
+    return n.toLocaleString();
   }
 
-  loadLeaderboard();
+  function loadBoards() {
+    let expLB = JSON.parse(localStorage.getItem("expLeaderboard") || "[]");
+    let timeLB = JSON.parse(localStorage.getItem("timeLeaderboard") || "[]");
+
+    expLB.sort((a,b)=>b.exp - a.exp);
+    timeLB.sort((a,b)=>b.time - a.time);
+
+    const expBoard = document.getElementById("expBoard");
+    const timeBoard = document.getElementById("timeBoard");
+
+    expBoard.innerHTML = "";
+    timeBoard.innerHTML = "";
+
+    // Show top 5 for both
+    for (let i = 0; i < 5; i++) {
+      // EXP
+      let expRow = document.createElement("div");
+      expRow.className = "lb-row";
+      if (expLB[i]) {
+        expRow.innerHTML = `<strong>${i+1}. ${expLB[i].username}</strong> <span>${niceNum(expLB[i].exp)} EXP</span>`;
+      } else {
+        expRow.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
+      }
+      expBoard.appendChild(expRow);
+
+      // TIME
+      let timeRow = document.createElement("div");
+      timeRow.className = "lb-row";
+      if (timeLB[i]) {
+        timeRow.innerHTML = `<strong>${i+1}. ${timeLB[i].username}</strong> <span>${niceNum(timeLB[i].time)}s</span>`;
+      } else {
+        timeRow.innerHTML = `<strong>${i+1}. ---</strong> <span>0s</span>`;
+      }
+      timeBoard.appendChild(timeRow);
+    }
+  }
+
+  loadBoards();
 </script>
 
 </body>
