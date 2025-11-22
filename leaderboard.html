@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aurababy Leaderboard</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
+    color: white;
+    text-align: center;
+    padding: 40px;
+  }
+
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #00ffcc;
+  }
+
+  #leaderboardContainer {
+    background: rgba(0,0,0,0.35);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: 0 auto;
+    font-weight: 800;
+  }
+
+  input {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    margin: 5px 0;
+    width: 70%;
+    font-size: 1em;
+  }
+
+  button {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+
+  #submitBtn { background: #00ffcc; color: black; }
+  #refreshBtn { background: #0072ff; color: white; }
+
+  #submitMsg {
+    margin-top: 8px;
+    font-size: 0.85em;
+    min-height: 20px;
+  }
+
+  #leaderboard div {
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.05em;
+  }
+
+  #leaderboard div:nth-child(1) { background: rgba(255,255,255,0.15); border-left: 5px solid gold; }
+  #leaderboard div:nth-child(2) { background: rgba(255,255,255,0.1); border-left: 5px solid silver; }
+  #leaderboard div:nth-child(3) { background: rgba(255,255,255,0.1); border-left: 5px solid #cd7f32; }
+</style>
+</head>
+
+<body>
+
+<h1>🏆 Aurababy Leaderboard 🏆</h1>
+
+<div id="leaderboardContainer">
+  <div>
+    <input type="text" id="usernameInput" placeholder="Enter your username">
+    <button id="submitBtn">Submit</button>
+  </div>
+  
+  <div id="submitMsg"></div>
+
+  <div>
+    <input type="text" id="filterInput" placeholder="Filter by username">
+    <button id="refreshBtn">Refresh</button>
+  </div>
+
+  <div id="leaderboard" style="margin-top:20px;"></div>
+</div>
+
+<script>
+  let leaderboard = JSON.parse(localStorage.getItem("localLeaderboard") || "[]");
+
+  const usernameInput = document.getElementById("usernameInput");
+  const submitBtn = document.getElementById("submitBtn");
+  const submitMsg = document.getElementById("submitMsg");
+  const leaderboardEl = document.getElementById("leaderboard");
+  const filterInput = document.getElementById("filterInput");
+  const refreshBtn = document.getElementById("refreshBtn");
+
+  function niceNum(n){ return n.toLocaleString(); }
+
+  function renderLeaderboard() {
+    const filter = (filterInput.value || "").toLowerCase();
+    let data = leaderboard.slice();
+
+    if(filter) data = data.filter(u => u.username.toLowerCase().includes(filter));
+    
+    data.sort((a,b) => b.exp - a.exp);
+
+    leaderboardEl.innerHTML = "";
+
+    for(let i=0; i<5; i++){
+      const div = document.createElement("div");
+      if (i < data.length) {
+        div.innerHTML = `<strong>${i+1}. ${data[i].username}</strong> <span>${niceNum(data[i].exp)} EXP</span>`;
+      } else {
+        div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
+      }
+      leaderboardEl.appendChild(div);
+    }
+  }
+
+  submitBtn.addEventListener("click", () => {
+    const name = usernameInput.value.trim();
+
+    if (!name || name.length < 3 || name.length > 20) {
+      submitMsg.innerText = "Username must be 3–20 chars.";
+      return;
+    }
+
+    const exp = parseInt(localStorage.getItem("exp") || "0");
+
+    if (exp <= 0) {
+      submitMsg.innerText = "Earn some EXP first!";
+      return;
+    }
+
+    let existing = leaderboard.find(u => u.username === name);
+
+    if (existing) {
+      if (exp > existing.exp) existing.exp = exp;
+    } else {
+      leaderboard.push({username: name, exp: exp});
+    }
+
+    localStorage.setItem("localLeaderboard", JSON.stringify(leaderboard));
+
+    submitMsg.innerText = `Submitted ${niceNum(exp)} EXP for ${name}`;
+    renderLeaderboard();
+  });
+
+  refreshBtn.addEventListener("click", renderLeaderboard);
+  filterInput.addEventListener("input", () => setTimeout(renderLeaderboard, 200));
+
+  renderLeaderboard();
+</script>
+
+</body>
+</html>
