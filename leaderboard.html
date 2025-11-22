@@ -44,7 +44,36 @@
     max-width: 500px;
     margin: 0 auto;
     font-weight: 800;
+    display: none;
   }
+
+  /* Username login card */
+  #loginCard {
+    background: rgba(0,0,0,0.35);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    margin: 0 auto 20px auto;
+  }
+
+  #loginCard input {
+    width: 80%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1.1em;
+  }
+
+  #loginBtn {
+    background: #00ffcc;
+    color: black;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  #loginBtn:hover { background: #00eebb; }
 
   /* Tabs */
   .tab-buttons {
@@ -89,6 +118,15 @@
 
 <h1>🏆 Aurababy Leaderboards 🏆</h1>
 
+<!-- USERNAME LOGIN -->
+<div id="loginCard">
+  <h2>Enter Your Username</h2>
+  <input type="text" id="usernameInput" placeholder="Username">
+  <div id="loginBtn">Enter</div>
+  <p id="loginMsg" style="margin-top:10px; color:#ff8080;"></p>
+</div>
+
+<!-- LEADERBOARDS -->
 <div id="leaderboardContainer">
 
   <!-- TABS -->
@@ -111,16 +149,38 @@
 </div>
 
 <script>
-  // Show EXP tab by default
-  document.getElementById("expTab").style.display = "block";
-
   function switchTab(tab) {
     document.querySelectorAll(".tab").forEach(t => t.style.display = "none");
     document.getElementById(tab).style.display = "block";
   }
 
-  function niceNum(n) {
-    return n.toLocaleString();
+  function niceNum(n) { return n.toLocaleString(); }
+
+  function saveUserToBoards(username) {
+    let exp = parseInt(localStorage.getItem("exp") || "0");
+    let time = parseInt(localStorage.getItem("timePlayed") || "0");
+
+    let expLB = JSON.parse(localStorage.getItem("expLeaderboard") || "[]");
+    let timeLB = JSON.parse(localStorage.getItem("timeLeaderboard") || "[]");
+
+    // EXP UPDATE
+    let existingExp = expLB.find(u => u.username === username);
+    if (existingExp) {
+      if (exp > existingExp.exp) existingExp.exp = exp;
+    } else {
+      expLB.push({ username, exp });
+    }
+
+    // TIME UPDATE
+    let existingTime = timeLB.find(u => u.username === username);
+    if (existingTime) {
+      if (time > existingTime.time) existingTime.time = time;
+    } else {
+      timeLB.push({ username, time });
+    }
+
+    localStorage.setItem("expLeaderboard", JSON.stringify(expLB));
+    localStorage.setItem("timeLeaderboard", JSON.stringify(timeLB));
   }
 
   function loadBoards() {
@@ -136,31 +196,45 @@
     expBoard.innerHTML = "";
     timeBoard.innerHTML = "";
 
-    // Show top 5 for both
     for (let i = 0; i < 5; i++) {
-      // EXP
       let expRow = document.createElement("div");
       expRow.className = "lb-row";
-      if (expLB[i]) {
-        expRow.innerHTML = `<strong>${i+1}. ${expLB[i].username}</strong> <span>${niceNum(expLB[i].exp)} EXP</span>`;
-      } else {
-        expRow.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
-      }
+      expRow.innerHTML = expLB[i]
+        ? `<strong>${i+1}. ${expLB[i].username}</strong> <span>${niceNum(expLB[i].exp)} EXP</span>`
+        : `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
       expBoard.appendChild(expRow);
 
-      // TIME
       let timeRow = document.createElement("div");
       timeRow.className = "lb-row";
-      if (timeLB[i]) {
-        timeRow.innerHTML = `<strong>${i+1}. ${timeLB[i].username}</strong> <span>${niceNum(timeLB[i].time)}s</span>`;
-      } else {
-        timeRow.innerHTML = `<strong>${i+1}. ---</strong> <span>0s</span>`;
-      }
+      timeRow.innerHTML = timeLB[i]
+        ? `<strong>${i+1}. ${timeLB[i].username}</strong> <span>${niceNum(timeLB[i].time)}s</span>`
+        : `<strong>${i+1}. ---</strong> <span>0s</span>`;
       timeBoard.appendChild(timeRow);
     }
   }
 
-  loadBoards();
+  // LOGIN BUTTON
+  document.getElementById("loginBtn").onclick = () => {
+    const username = document.getElementById("usernameInput").value.trim();
+    const msg = document.getElementById("loginMsg");
+
+    if (username.length < 3 || username.length > 20) {
+      msg.textContent = "Username must be 3–20 characters.";
+      return;
+    }
+
+    msg.textContent = "";
+
+    // Save their progress into leaderboards
+    saveUserToBoards(username);
+
+    // Show leaderboard
+    document.getElementById("loginCard").style.display = "none";
+    document.getElementById("leaderboardContainer").style.display = "block";
+
+    switchTab("expTab");
+    loadBoards();
+  };
 </script>
 
 </body>
