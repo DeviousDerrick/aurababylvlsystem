@@ -2,166 +2,145 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aurababy Leaderboard</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+<title>Leaderboard</title>
 
 <style>
   body {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
+    background: #0e0e0e;
     color: white;
+    font-family: 'Poppins', sans-serif;
     text-align: center;
-    padding: 40px;
+    padding: 20px;
   }
 
   h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #00ffcc;
+    font-size: 40px;
+    margin-bottom: 10px;
   }
 
-  #leaderboardContainer {
-    background: rgba(0,0,0,0.35);
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 500px;
-    margin: 0 auto;
+  /* Back button */
+  #backBtn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    padding: 12px 20px;
+    background: #00ffcc;
+    color: black;
+    border-radius: 10px;
     font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 0 10px #00ffcc;
+  }
+  #backBtn:hover {
+    background: #00e6b8;
   }
 
-  input {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    margin: 5px 0;
-    width: 70%;
-    font-size: 1em;
-  }
-
-  button {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    margin-left: 5px;
-  }
-
-  #submitBtn { background: #00ffcc; color: black; }
-  #refreshBtn { background: #0072ff; color: white; }
-
-  #submitMsg {
-    margin-top: 8px;
-    font-size: 0.85em;
-    min-height: 20px;
-  }
-
-  #leaderboard div {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+  /* Tabs */
+  .tab-buttons {
+    margin: 25px auto;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.05em;
+    justify-content: center;
+    gap: 20px;
   }
 
-  #leaderboard div:nth-child(1) { background: rgba(255,255,255,0.15); border-left: 5px solid gold; }
-  #leaderboard div:nth-child(2) { background: rgba(255,255,255,0.1); border-left: 5px solid silver; }
-  #leaderboard div:nth-child(3) { background: rgba(255,255,255,0.1); border-left: 5px solid #cd7f32; }
+  .tab-btn {
+    padding: 12px 20px;
+    background: #00ffcc;
+    color: black;
+    font-weight: 800;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ffcc;
+  }
+  .tab-btn:hover {
+    background: #00e6b8;
+  }
+
+  .tab {
+    display: none;
+    margin-top: 20px;
+  }
+
+  table {
+    width: 85%;
+    margin: auto;
+    background: #161616;
+    border-radius: 12px;
+    border-collapse: collapse;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  th, td {
+    padding: 14px;
+    border-bottom: 1px solid #333;
+    font-size: 20px;
+  }
+
+  th {
+    background: #00ffcc;
+    color: black;
+    font-weight: 900;
+  }
 </style>
 </head>
-
 <body>
 
-<h1>🏆 Aurababy Leaderboard 🏆</h1>
+<a id="backBtn" href="index.html">⬅ Back</a>
 
-<div id="leaderboardContainer">
-  <div>
-    <input type="text" id="usernameInput" placeholder="Enter your username">
-    <button id="submitBtn">Submit</button>
-  </div>
-  
-  <div id="submitMsg"></div>
+<h1>Leaderboard</h1>
 
-  <div>
-    <input type="text" id="filterInput" placeholder="Filter by username">
-    <button id="refreshBtn">Refresh</button>
-  </div>
+<div class="tab-buttons">
+  <div class="tab-btn" onclick="switchTab('expTab')">🏆 EXP</div>
+  <div class="tab-btn" onclick="switchTab('timeTab')">⏱ Time</div>
+</div>
 
-  <div id="leaderboard" style="margin-top:20px;"></div>
+<!-- EXP TAB -->
+<div id="expTab" class="tab">
+  <h2>Top EXP Players</h2>
+  <table id="expBoard">
+    <tr><th>Username</th><th>EXP</th></tr>
+  </table>
+</div>
+
+<!-- TIME TAB -->
+<div id="timeTab" class="tab">
+  <h2>Top Time Players</h2>
+  <table id="timeBoard">
+    <tr><th>Username</th><th>Time Played</th></tr>
+  </table>
 </div>
 
 <script>
-  let leaderboard = JSON.parse(localStorage.getItem("localLeaderboard") || "[]");
+  // Show EXP tab by default
+  document.getElementById("expTab").style.display = "block";
 
-  const usernameInput = document.getElementById("usernameInput");
-  const submitBtn = document.getElementById("submitBtn");
-  const submitMsg = document.getElementById("submitMsg");
-  const leaderboardEl = document.getElementById("leaderboard");
-  const filterInput = document.getElementById("filterInput");
-  const refreshBtn = document.getElementById("refreshBtn");
-
-  function niceNum(n){ return n.toLocaleString(); }
-
-  function renderLeaderboard() {
-    const filter = (filterInput.value || "").toLowerCase();
-    let data = leaderboard.slice();
-
-    if(filter) data = data.filter(u => u.username.toLowerCase().includes(filter));
-    
-    data.sort((a,b) => b.exp - a.exp);
-
-    leaderboardEl.innerHTML = "";
-
-    for(let i=0; i<5; i++){
-      const div = document.createElement("div");
-      if (i < data.length) {
-        div.innerHTML = `<strong>${i+1}. ${data[i].username}</strong> <span>${niceNum(data[i].exp)} EXP</span>`;
-      } else {
-        div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
-      }
-      leaderboardEl.appendChild(div);
-    }
+  function switchTab(tab) {
+    document.querySelectorAll(".tab").forEach(t => t.style.display = "none");
+    document.getElementById(tab).style.display = "block";
   }
 
-  submitBtn.addEventListener("click", () => {
-    const name = usernameInput.value.trim();
+  // Load and display stored data
+  function loadLeaderboard() {
+    let expData = JSON.parse(localStorage.getItem("expLeaderboard")) || [];
+    let timeData = JSON.parse(localStorage.getItem("timeLeaderboard")) || [];
 
-    if (!name || name.length < 3 || name.length > 20) {
-      submitMsg.innerText = "Username must be 3–20 chars.";
-      return;
-    }
+    expData.sort((a, b) => b.exp - a.exp);
+    timeData.sort((a, b) => b.time - a.time);
 
-    const exp = parseInt(localStorage.getItem("exp") || "0");
+    const expTable = document.getElementById("expBoard");
+    const timeTable = document.getElementById("timeBoard");
 
-    if (exp <= 0) {
-      submitMsg.innerText = "Earn some EXP first!";
-      return;
-    }
+    expData.forEach(player => {
+      expTable.innerHTML += `<tr><td>${player.username}</td><td>${player.exp}</td></tr>`;
+    });
 
-    let existing = leaderboard.find(u => u.username === name);
+    timeData.forEach(player => {
+      timeTable.innerHTML += `<tr><td>${player.username}</td><td>${player.time}s</td></tr>`;
+    });
+  }
 
-    if (existing) {
-      if (exp > existing.exp) existing.exp = exp;
-    } else {
-      leaderboard.push({username: name, exp: exp});
-    }
-
-    localStorage.setItem("localLeaderboard", JSON.stringify(leaderboard));
-
-    submitMsg.innerText = `Submitted ${niceNum(exp)} EXP for ${name}`;
-    renderLeaderboard();
-  });
-
-  refreshBtn.addEventListener("click", renderLeaderboard);
-  filterInput.addEventListener("input", () => setTimeout(renderLeaderboard, 200));
-
-  renderLeaderboard();
+  loadLeaderboard();
 </script>
 
 </body>
