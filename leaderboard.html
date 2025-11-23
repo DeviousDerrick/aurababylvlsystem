@@ -125,6 +125,7 @@
 <script>
   let leaderboard = JSON.parse(localStorage.getItem("localLeaderboard") || "[]");
   let currentTab = "exp";
+  let hasSubmitted = false;  // 🔥 NEW: prevents double login
 
   const usernameInput = document.getElementById("usernameInput");
   const submitBtn = document.getElementById("submitBtn");
@@ -139,6 +140,8 @@
   function niceTime(t){ return (t || 0) + "s"; }
 
   function renderLeaderboard() {
+    leaderboard = JSON.parse(localStorage.getItem("localLeaderboard") || "[]");
+
     const filter = (filterInput.value || "").toLowerCase();
     let data = leaderboard.slice();
 
@@ -161,9 +164,8 @@
         const u = data[i];
         div.innerHTML = `
           <strong>${i+1}. ${u.username}</strong> 
-          <span>
-            ${niceNum(u.exp)} EXP • ${niceTime(u.time)}
-          </span>`;
+          <span>${niceNum(u.exp)} EXP • ${niceTime(u.time)}</span>
+        `;
       } else {
         div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP • 0s</span>`;
       }
@@ -173,6 +175,11 @@
   }
 
   submitBtn.addEventListener("click", () => {
+    if (hasSubmitted) {
+      submitMsg.innerText = "Already submitted this session!";
+      return;
+    }
+
     const name = usernameInput.value.trim();
     if (!name || name.length < 3 || name.length > 20) {
       submitMsg.innerText = "Username must be 3–20 characters.";
@@ -197,6 +204,7 @@
     }
 
     localStorage.setItem("localLeaderboard", JSON.stringify(leaderboard));
+    hasSubmitted = true;
 
     submitMsg.innerText = `Saved! EXP: ${niceNum(exp)}, Time: ${niceTime(time)}`;
     renderLeaderboard();
@@ -219,8 +227,14 @@
     renderLeaderboard();
   };
 
+  // 🔥 REAL-TIME UPDATE WHEN LOCALSTORAGE CHANGES
+  window.addEventListener("storage", () => {
+    renderLeaderboard();
+  });
+
   renderLeaderboard();
 </script>
+
 
 </body>
 </html>
