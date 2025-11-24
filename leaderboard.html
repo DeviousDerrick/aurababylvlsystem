@@ -37,11 +37,24 @@
     display: flex;
     justify-content: space-between;
     font-size: 1.05em;
+    align-items: center;
   }
 
   #leaderboard div:nth-child(1) { border-left: 5px solid gold; background: rgba(255,255,255,0.15); }
   #leaderboard div:nth-child(2) { border-left: 5px solid silver; background: rgba(255,255,255,0.1); }
   #leaderboard div:nth-child(3) { border-left: 5px solid #cd7f32; background: rgba(255,255,255,0.1); }
+
+  /* highlight current user */
+  .you {
+    background: rgba(0,255,204,0.08);
+    border-left: 5px solid #00ffcc !important;
+    font-weight: 900;
+  }
+
+  .muted { color: rgba(255,255,255,0.6); font-weight: 600; }
+
+  #rankInfo { margin-top:10px; font-size:0.95em; min-height:22px; }
+
 </style>
 </head>
 
@@ -56,6 +69,8 @@
   <div id="message" style="margin-top:10px; min-height:20px;"></div>
 
   <button id="updateBtn">Check EXP</button>
+
+  <div id="rankInfo" class="muted"></div>
 
   <div id="leaderboard" style="margin-top:20px;"></div>
 
@@ -72,6 +87,7 @@ const submitBtn = document.getElementById("submitBtn");
 const message = document.getElementById("message");
 const leaderboardEl = document.getElementById("leaderboard");
 const updateBtn = document.getElementById("updateBtn");
+const rankInfo = document.getElementById("rankInfo");
 
 // Lock username if already stored
 if (username) {
@@ -100,11 +116,12 @@ submitBtn.onclick = () => {
 async function fetchLeaderboard() {
   try {
     const res = await fetch(`${apiBase}/leaderboard`);
-    if (!res.ok) throw new Error("Failed to fetch");
+    if (!res.ok) throw new Error("Failed to fetch leaderboard");
     const data = await res.json();
-    return data;
+    return Array.isArray(data) ? data : [];
   } catch (err) {
     console.error(err);
+    message.innerText = "Could not reach leaderboard server. Showing local-only view.";
     return [];
   }
 }
@@ -112,45 +129,186 @@ async function fetchLeaderboard() {
 // Submit current user EXP to backend
 async function submitEXP() {
   if (!username) return;
-  const exp = parseInt(localStorage.getItem("exp") || "0");
+  const exp = parseInt(localStorage.getItem("exp") || "0", 10);
   try {
-    await fetch(`${apiBase}/submit`, {
+    const res = await fetch(`${apiBase}/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, exp })
     });
+    if (!res.ok) {
+      console.warn("Submit EXP returned non-OK:", res.status);
+    }
   } catch(err) {
     console.error(err);
   }
 }
 
-// Render top 5
+// Render top 5 and user's place
 async function updateLeaderboard() {
-  if (!username) return;
+  if (!username) {
+    message.innerText = "Please enter a username first.";
+    usernameInput.focus();
+    return;
+  }
 
+  message.innerText = "";
+  rankInfo.innerText = "Checking...";
+
+  // submit current exp (best-effort)
   await submitEXP();
 
   let data = await fetchLeaderboard();
+  // Ensure exp numbers and username exist
+  data = data.map(d => ({ username: d.username, exp: Number(d.exp) || 0 }));
+
+  // Sort descending by exp
   data.sort((a,b) => b.exp - a.exp);
 
   leaderboardEl.innerHTML = "";
+
+  // Top 5 display
   for (let i=0; i<5; i++) {
     const div = document.createElement("div");
     if (i < data.length) {
       const u = data[i];
-      div.innerHTML = `<strong>${i+1}. ${u.username}</strong> <span>${u.exp} EXP</span>`;
+      div.innerHTML = `<strong>${i+1}. ${escapeHtml(u.username)}</strong> <span>${u.exp} EXP</span>`;
+      if (u.username.toLowerCase() === username.toLowerCase()) {
+        div.classList.add("you");
+      }
     } else {
       div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
     }
     leaderboardEl.appendChild(div);
+  }
+
+  // Find user's index in full list
+  const myIndex = data.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
+  if (myIndex === -1) {
+    // user not on leaderboard (server may not have them or exp is 0)
+    const myExp = Number(localStorage.getItem("exp") || "0");
+    rankInfo.innerText = `You are not ranked yet. Your EXP: ${myExp}. Submit by clicking "Check EXP".`;
+    // Optionally show user's current exp below top 5
+    const spacer = document.createElement("div");
+    spacer.className = "muted";
+    spacer.innerText = "...";
+    leaderboardEl.appendChild(spacer);
+
+    const selfDiv = document.createElement("div");
+    selfDiv.classList.add("you");
+    selfDiv.innerHTML = `<strong>—. ${escapeHtml(username)}</strong> <span>${myExp} EXP</span>`;
+    leaderboardEl.appendChild(selfDiv);
+  } else {
+    const rank = myIndex + 1;
+    rankInfo.innerText = `You are #${rank} out of ${data.length} player${data.length === 1 ? "" : "s"} (${data[myIndex].exp} EXP).`;
+    // If user is not in top 5, show a small separator and their actual rank row
+    if (myIndex >= 5) {
+      const spacer = document.createElement("div");
+      spacer.className = "muted";
+      spacer.innerText = "...";
+      leaderboardEl.appendChild(spacer);
+
+      const myDiv = document.createElement("div");
+      myDiv.classList.add("you");
+      myDiv.innerHTML = `<strong>${rank}. ${escapeHtml(data[myIndex].username)}</strong> <span>${data[myIndex].exp} EXP</span>`;
+      leaderboardEl.appendChild(myDiv);
+    }
   }
 }
 
 // Update button
 updateBtn.onclick = updateLeaderboard;
 
-// Auto-refresh every 10s
-setInterval(updateLeaderboard, 10000);
+// Auto-refresh every 10s (only if logged in)
+setInterval(() => {
+  if (sessionStorage.getItem("aurababyUsername")) updateLeaderboard();
+}, 10000);
+
+// simple HTML-escape helper to avoid injection if usernames are untrusted
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+</script>
+</body>
+</html>
+```
+
+
+````html name=index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Aurababy - Game</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align:center; padding:40px; background:#f3f8ff; }
+  #exp { font-size:2em; margin:20px 0; }
+  button { padding:10px 16px; margin:6px; border-radius:6px; border:none; cursor:pointer; font-weight:bold; }
+  #toLeaderboard { background:#0072ff; color:white; }
+  #saveExp { background:#00cc66; color:white; }
+</style>
+</head>
+<body>
+  <h1>Aurababy Game (demo)</h1>
+
+  <div>Current EXP:</div>
+  <div id="exp">0</div>
+
+  <button id="gainExp">Gain 10 EXP</button>
+  <button id="saveExp">Save EXP (to local)</button>
+  <br/>
+  <input id="usernameField" placeholder="Enter username to use on leaderboard" />
+  <br/>
+  <button id="setName">Set Username for Leaderboard</button>
+  <br/>
+  <button id="toLeaderboard">Open Leaderboard</button>
+
+<script>
+  // Simple demo to show how index.html should store EXP and username
+  const expEl = document.getElementById('exp');
+  const gainExpBtn = document.getElementById('gainExp');
+  const saveExpBtn = document.getElementById('saveExp');
+  const toLeaderboardBtn = document.getElementById('toLeaderboard');
+  const usernameField = document.getElementById('usernameField');
+  const setNameBtn = document.getElementById('setName');
+
+  // load stored exp (if any)
+  let exp = Number(localStorage.getItem('exp') || 0);
+  expEl.innerText = exp;
+
+  gainExpBtn.onclick = () => {
+    exp += 10;
+    expEl.innerText = exp;
+  };
+
+  // Save EXP into localStorage so leaderboard can read it
+  saveExpBtn.onclick = () => {
+    localStorage.setItem('exp', String(exp));
+    alert('EXP saved locally. Now click "Open Leaderboard" and then "Check EXP" to submit.');
+  };
+
+  // Save username into sessionStorage so leaderboard.html can auto-use it
+  setNameBtn.onclick = () => {
+    const name = usernameField.value.trim();
+    if (!name || name.length < 3) {
+      alert('Choose a username with 3+ chars');
+      return;
+    }
+    sessionStorage.setItem('aurababyUsername', name);
+    alert('Username saved for leaderboard: ' + name);
+  };
+
+  // open leaderboard in same tab
+  toLeaderboardBtn.onclick = () => {
+    // ensure exp saved first (optional convenience)
+    localStorage.setItem('exp', String(exp));
+    window.location.href = 'leaderboard.html';
+  };
 </script>
 </body>
 </html>
