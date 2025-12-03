@@ -1,294 +1,351 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Level System</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Level System</title>
 
-<!-- POPPINS EXTRABOLD FONT -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
-<script src="leaderboard.js"></script>
-<style>
-/* GLOBAL FONT */
-body, * {
-  font-family: 'Poppins', sans-serif !important;
-  font-weight: 800 !important;
-}
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="leaderboard.js"></script>
+    <style>
+            /* GLOBAL FONT */
+            body, * {
+              font-family: 'Poppins', sans-serif !important;
+              font-weight: 800 !important;
+            }
 
-/* BACKGROUND + LAYOUT */
-body {
-  background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
-  color: #ffffff;
-  text-align: center;
-  padding-top: 50px;
-  position: relative;
-  overflow-y: auto;
-}
+            /* BACKGROUND + LAYOUT */
+            body {
+              background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
+              color: #ffffff;
+              text-align: center;
+              padding-top: 50px;
+              position: relative;
+              overflow-y: auto;
+            }
 
-/* WHITE STAR SHAPES */
-.star {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: white;
-  clip-path: polygon(
-      50% 0%,
-      61% 35%,
-      98% 35%,
-      68% 57%,
-      79% 91%,
-      50% 70%,
-      21% 91%,
-      32% 57%,
-      2% 35%,
-      39% 35%
-  );
-  filter: drop-shadow(0 0 6px white);
-  opacity: 0.9;
-}
+            /* WHITE STAR SHAPES */
+            .star {
+              position: absolute;
+              width: 12px;
+              height: 12px;
+              background: white;
+              clip-path: polygon(
+                  50% 0%,
+                  61% 35%,
+                  98% 35%,
+                  68% 57%,
+                  79% 91%,
+                  50% 70%,
+                  21% 91%,
+                  32% 57%,
+                  2% 35%,
+                  39% 35%
+              );
+              filter: drop-shadow(0 0 6px white);
+              opacity: 0.9;
+            }
 
-.star:nth-child(1) { top: 10%; left: 15%; transform: scale(0.8); }
-.star:nth-child(2) { top: 25%; left: 70%; transform: scale(1.1); }
-.star:nth-child(3) { top: 40%; left: 30%; transform: scale(0.6); }
-.star:nth-child(4) { top: 55%; left: 85%; transform: scale(1.3); }
-.star:nth-child(5) { top: 75%; left: 20%; transform: scale(1.0); }
-.star:nth-child(6) { top: 12%; left: 80%; transform: scale(0.7); }
-.star:nth-child(7) { top: 90%; left: 60%; transform: scale(1.2); }
-.star:nth-child(8) { top: 65%; left: 45%; transform: scale(0.9); }
+            .star:nth-child(1) { top: 10%; left: 15%; transform: scale(0.8); }
+            .star:nth-child(2) { top: 25%; left: 70%; transform: scale(1.1); }
+            .star:nth-child(3) { top: 40%; left: 30%; transform: scale(0.6); }
+            .star:nth-child(4) { top: 55%; left: 85%; transform: scale(1.3); }
+            .star:nth-child(5) { top: 75%; left: 20%; transform: scale(1.0); }
+            .star:nth-child(6) { top: 12%; left: 80%; transform: scale(0.7); }
+            .star:nth-child(7) { top: 90%; left: 60%; transform: scale(1.2); }
+            .star:nth-child(8) { top: 65%; left: 45%; transform: scale(0.9); }
 
-/* TIMER BOX */
-#timeSpent {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  padding: 10px 16px;
-  background: rgba(0, 0, 0, 0.45);
-  color: white;
-  font-size: 16px;
-  border-radius: 8px;
-  backdrop-filter: blur(4px);
-  z-index: 5000;
-  box-shadow: 0 0 8px rgba(255,255,255,0.4);
-}
+            /* TIMER BOX */
+            #timeSpent {
+              position: fixed;
+              top: 15px;
+              right: 15px;
+              padding: 10px 16px;
+              background: rgba(0, 0, 0, 0.45);
+              color: white;
+              font-size: 16px;
+              border-radius: 8px;
+              backdrop-filter: blur(4px);
+              z-index: 5000;
+              box-shadow: 0 0 8px rgba(255,255,255,0.4);
+            }
 
-/* ACHIEVEMENTS BUTTON */
-#achButton {
-  position: fixed;
-  left: 15px;
-  top: 15px;
-  padding: 12px 18px;
-  background: #ffdd57;
-  color: black;
-  border-radius: 8px;
-  cursor: pointer;
-  z-index: 5000;
-}
+            /* ACHIEVEMENTS BUTTON */
+            #achButton {
+              position: fixed;
+              left: 15px;
+              top: 15px;
+              padding: 12px 18px;
+              background: #ffdd57;
+              color: black;
+              border-radius: 8px;
+              cursor: pointer;
+              z-index: 5000;
+            }
 
-/* FULL SCREEN ACHIEVEMENT PANEL */
-#achPanel {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 40px 20px;
-  overflow-y: auto;
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(10px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .3s;
-  z-index: 9000;
-}
+            /* FULL SCREEN ACHIEVEMENT PANEL */
+            #achPanel {
+              position: fixed;
+              top: 0; left: 0;
+              width: 100%;
+              height: 100%;
+              padding: 40px 20px;
+              overflow-y: auto;
+              background: rgba(0,0,0,0.55);
+              backdrop-filter: blur(10px);
+              opacity: 0;
+              pointer-events: none;
+              transition: opacity .3s;
+              z-index: 9000;
+            }
 
-#achPanel.open {
-  opacity: 1;
-  pointer-events: auto;
-}
+            #achPanel.open {
+              opacity: 1;
+              pointer-events: auto;
+            }
 
-#achPanel h2 {
-  font-size: 2.5em;
-  margin-bottom: 25px;
-  text-shadow: 0 0 10px white;
-}
+            #achPanel h2 {
+              font-size: 2.5em;
+              margin-bottom: 25px;
+              text-shadow: 0 0 10px white;
+              margin-top: 40px; /* Space between sections */
+            }
+            /* --- AURA SURGE EVENT STYLES --- */
+      #qteOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 50, 0.85); /* Dark blue dim */
+        backdrop-filter: blur(5px);
+        z-index: 20000;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s;
+      }
 
-/* ACHIEVEMENT CLOSE BUTTON */
-#achClose {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  padding: 6px 10px;
-  background: #000000aa;
-  color: #ffffff;
-  border: 2px solid #ffffff88;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  z-index: 9500;
-}
+      #qteOverlay.active {
+        opacity: 1; pointer-events: auto;
+      }
 
-#achClose:hover {
-  background: #000000dd;
-}
+      #qteMessage {
+        font-size: 3em; color: #ffdd57;
+        text-shadow: 0 0 20px red;
+        margin-bottom: 20px;
+        animation: pulseWarning 0.5s infinite alternate;
+      }
 
-/* BADGE GRID */
-#badgeGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 18px;
-  width: 95%;
-  max-width: 900px;
-  margin: 0 auto;
-}
+      @keyframes pulseWarning {
+        from { transform: scale(1); }
+        to { transform: scale(1.1); }
+      }
 
-/* BADGES */
-.badge {
-  padding: 20px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 14px;
-  font-size: 1.2em;
-  color: white;
-  text-shadow: 0 0 8px rgba(255,255,255,0.5);
-  transition: 0.3s;
-  border: 3px solid rgba(255,255,255,0.2);
-}
+      .qte-orb {
+        position: absolute;
+        width: 70px; height: 70px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #fff, #00c6ff);
+        box-shadow: 0 0 25px #00c6ff, 0 0 50px #fff;
+        cursor: crosshair;
+        animation: shake 0.5s infinite;
+      }
 
-.badge span {
-  display: block;
-  margin-top: 10px;
-  opacity: 0.85;
-  font-size: 0.8em;
-}
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+      }
 
-/* UNLOCKED BADGE */
-.badge.unlocked {
-  background: #00ff99;
-  color: black;
-  border-color: #00ff99;
-  box-shadow: 0 0 18px #00ff99;
-  text-shadow: none;
-}
+            /* First header doesn't need top margin */
+            #achPanel h2:first-of-type { margin-top: 0; }
 
-/* LEVEL UI */
-h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; }
-.level-info { font-size: 1.5em; margin-bottom: 10px; }
-.title-info { font-size: 1.2em; color: #ffdd57; margin-bottom: 25px; }
+            /* ACHIEVEMENT CLOSE BUTTON */
+            #achClose {
+              position: absolute;
+              top: 18px;
+              right: 18px;
+              padding: 6px 10px;
+              background: #000000aa;
+              color: #ffffff;
+              border: 2px solid #ffffff88;
+              border-radius: 8px;
+              cursor: pointer;
+              font-size: 14px;
+              z-index: 9500;
+            }
 
-.progress-container {
-  width: min(90%, 600px);
-  height: 40px;
-  background-color: #1a1a2e;
-  border-radius: 20px;
-  margin: 0 auto;
-  overflow: hidden;
-  box-shadow: 0 0 10px #00c6ff;
-}
+            #achClose:hover {
+              background: #000000dd;
+            }
 
-.progress-bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(to right, #00c6ff, #0072ff);
-  border-radius: 20px;
-  line-height: 40px;
-  color: #fff;
-  transition: width 0.5s ease-in-out;
-}
+            /* BADGE GRID (Applies to all badge sections) */
+            #badgeGrid, #levelBadgeGrid, #codeBadgeGrid {
+              display: grid;
+              grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+              gap: 18px;
+              width: 95%;
+              max-width: 900px;
+              margin: 0 auto;
+            }
 
-.exp-text, .countdown {
-  margin-top: 10px;
-  font-size: 1.1em;
-  color: #a0d8ef;
-}
+            /* BADGES */
+            .badge {
+              padding: 20px;
+              background: rgba(255,255,255,0.15);
+              border-radius: 14px;
+              font-size: 1.2em;
+              color: white;
+              text-shadow: 0 0 8px rgba(255,255,255,0.5);
+              transition: 0.3s;
+              border: 3px solid rgba(255,255,255,0.2);
+            }
 
-.countdown { margin-top: 20px; color: #66d9ff; }
+            .badge span {
+              display: block;
+              margin-top: 10px;
+              opacity: 0.85;
+              font-size: 0.8em;
+            }
 
-/* CODE SYSTEM */
-.code-message { margin-top: 10px; color: #ffdd57; transition: 0.5s; }
-.muted { opacity: 0.6; pointer-events: none; }
+            /* UNLOCKED BADGE */
+            .badge.unlocked {
+              background: #00ff99;
+              color: black;
+              border-color: #00ff99;
+              box-shadow: 0 0 18px #00ff99;
+              text-shadow: none;
+            }
 
-/* LEVEL UP POPUP */
-#levelUpPopup {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #00ff99;
-  color: black;
-  padding: 20px 40px;
-  font-size: 1.5em;
-  border-radius: 12px;
-  box-shadow: 0 0 20px #00ff99;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s;
-  z-index: 10001;
-}
+            /* LEVEL UI */
+            h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; }
+            .level-info { font-size: 1.5em; margin-bottom: 10px; }
+            .title-info { font-size: 1.2em; color: #ffdd57; margin-bottom: 25px; }
 
-.claimBtn {
-  margin-top: 8px;
-  padding: 6px 12px;
-  background: #ffffff22;
-  border: 1px solid #ffffff55;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  transition: 0.2s;
-}
+            .progress-container {
+              width: min(90%, 600px);
+              height: 40px;
+              background-color: #1a1a2e;
+              border-radius: 20px;
+              margin: 0 auto;
+              overflow: hidden;
+              box-shadow: 0 0 10px #00c6ff;
+            }
 
-.claimBtn:hover {
-  background: #ffffff44;
-}
+            .progress-bar {
+              height: 100%;
+              width: 0%;
+              background: linear-gradient(to right, #00c6ff, #0072ff);
+              border-radius: 20px;
+              line-height: 40px;
+              color: #fff;
+              transition: width 0.5s ease-in-out;
+            }
 
-.claimBtn.claimed {
-  background: #00c853;
-  border-color: #00e676;
-  cursor: default;
-  opacity: 0.8;
-}
+            .exp-text, .countdown {
+              margin-top: 10px;
+              font-size: 1.1em;
+              color: #a0d8ef;
+            }
 
-.claimBtn.locked {
-  background: #aaaaaa33;
-  border-color: #aaaaaa55;
-  cursor: not-allowed;
-  opacity: 0.4;
-}
+            .countdown { margin-top: 20px; color: #66d9ff; }
 
-  #leaderboardBtn {
-  position: fixed;
-  left: 15px;
-  top: 65px;
-  padding: 12px 18px;
-  background: #00ffcc;
-  color: black;
-  border-radius: 8px;
-  cursor: pointer;
-  z-index: 5000;
-  text-decoration: none;
-  font-weight: 800;
-  box-shadow: 0 0 10px #00ffcc;
-}
+            /* CODE SYSTEM */
+            .code-message { margin-top: 10px; color: #ffdd57; transition: 0.5s; }
+            .muted { opacity: 0.6; pointer-events: none; }
 
-#leaderboardBtn:hover {
-  background: #00e6b8;
-}
+            /* LEVEL UP POPUP */
+            #levelUpPopup {
+              position: fixed;
+              top: 20%;
+              left: 50%;
+              transform: translateX(-50%);
+              background: #00ff99;
+              color: black;
+              padding: 20px 40px;
+              font-size: 1.5em;
+              border-radius: 12px;
+              box-shadow: 0 0 20px #00ff99;
+              opacity: 0;
+              pointer-events: none;
+              transition: opacity 0.5s;
+              z-index: 10001;
+            }
 
-</style>
-</head>
+            .claimBtn {
+              margin-top: 8px;
+              padding: 6px 12px;
+              background: #ffffff22;
+              border: 1px solid #ffffff55;
+              border-radius: 8px;
+              color: white;
+              cursor: pointer;
+              font-size: 14px;
+              transition: 0.2s;
+            }
 
-<body>
+            .claimBtn:hover {
+              background: #ffffff44;
+            }
 
-<!-- TIMER -->
-<div id="timeSpent">Time on site: 0s</div>
+            .claimBtn.claimed {
+              background: #00c853;
+              border-color: #00e676;
+              cursor: default;
+              opacity: 0.8;
+            }
 
-<!-- ACHIEVEMENTS BUTTON -->
-<div id="achButton">🏆 Achievements</div>
+            .claimBtn.locked {
+              background: #aaaaaa33;
+              border-color: #aaaaaa55;
+              cursor: not-allowed;
+              opacity: 0.4;
+            }
 
-<!-- ACHIEVEMENT PANEL -->
-<div id="achPanel">
+            #leaderboardBtn {
+              position: fixed;
+              left: 15px;
+              top: 65px;
+              padding: 12px 18px;
+              background: #00ffcc;
+              color: black;
+              border-radius: 8px;
+              cursor: pointer;
+              z-index: 5000;
+              text-decoration: none;
+              font-weight: 800;
+              box-shadow: 0 0 10px #00ffcc;
+            }
+
+            #leaderboardBtn:hover {
+              background: #00e6b8;
+            }
+    </style>
+  </head>
+
+  <body>
+    <div id="qteOverlay">
+      <div id="qteMessage">⚠️ AURA SURGE! ⚠️</div>
+      <div style="font-size:1.5em; color:white;">Click the 3 Orbs fast!</div>
+      <div id="qteTimer" style="font-size:2em; color:#ff4444; margin-top:10px;">
+        5.0s
+      </div>
+    </div>
+    <div id="timeSpent">Time on site: 0s</div>
+
+    <div id="achButton">🏆 Achievements</div>
+
+ <div id="achPanel">
   <button id="achClose">✖ Close</button>
+  
   <h2>🏆 Time Badges</h2>
-
   <div id="badgeGrid">
-
     <div id="ach60s" class="badge">
       ✨👶 Sparkling Newborn<br>
       <span>Stay for 1 minute — Rewards +100 EXP</span>
@@ -297,451 +354,752 @@ h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; }
 
     <div id="ach300s" class="badge">
       🌙👶 Tiny Time Wanderer<br>
-      <span>Stay for 5 minutes — Rewards +150 EXP</span>
+      <span>Stay for 5 minutes — Rewards +350 EXP</span>
       <button class="claimBtn" data-ach="300s">Claim</button>
     </div>
 
     <div id="ach600s" class="badge">
       ⭐👶 Little Starlight Crawler<br>
-      <span>Stay for 10 minutes — Rewards +250 EXP</span>
+      <span>Stay for 10 minutes — Rewards +600 EXP</span>
       <button class="claimBtn" data-ach="600s">Claim</button>
     </div>
 
     <div id="ach1800s" class="badge">
       ⏳👶 Half-Hour Hatchling<br>
-      <span>Stay for 30 minutes — Rewards +400 EXP</span>
+      <span>Stay for 30 minutes — Rewards +1,300 EXP</span>
       <button class="claimBtn" data-ach="1800s">Claim</button>
     </div>
 
     <div id="ach3600s" class="badge">
       🕰👶 Hour-Born Baby<br>
-      <span>Stay for 1 hour — Rewards +600 EXP</span>
+      <span>Stay for 1 hour — Rewards +2,250 EXP</span>
       <button class="claimBtn" data-ach="3600s">Claim</button>
     </div>
 
     <div id="ach7200s" class="badge">
       💠👶 Double-Hour Crystal Baby<br>
-      <span>Stay for 2 hours — Rewards +800 EXP</span>
+      <span>Stay for 2 hours — Rewards +3,750 EXP</span>
       <button class="claimBtn" data-ach="7200s">Claim</button>
     </div>
 
-    <div id="ach18000s" class="badge">
+    <div id="ach14400s" class="badge">
       🔮👶 Arcane Time Infant<br>
-      <span>Stay for 5 hours — Rewards +1200 EXP</span>
-      <button class="claimBtn" data-ach="18000s">Claim</button>
+      <span>Stay for 4 hours — Rewards +6,400 EXP</span>
+      <button class="claimBtn" data-ach="14400s">Claim</button>
     </div>
 
-    <div id="ach36000s" class="badge">
+    <div id="ach28800s" class="badge">
       🌌👶 Cosmic Time Baby<br>
-      <span>Stay for 10 hours — Rewards +1800 EXP</span>
-      <button class="claimBtn" data-ach="36000s">Claim</button>
+      <span>Stay for 8 hours — Rewards +11,000 EXP</span>
+      <button class="claimBtn" data-ach="28800s">Claim</button>
+    </div>
+
+    <div id="ach57600s" class="badge">
+      🌅👶 Dawn-Touched Baby<br>
+      <span>Stay for 16 hours — Rewards +18,500 EXP</span>
+      <button class="claimBtn" data-ach="57600s">Claim</button>
     </div>
 
     <div id="ach86400s" class="badge">
       🪽👶 Daylight Aura Child<br>
-      <span>Stay for 1 day — Rewards +2500 EXP</span>
+      <span>Stay for 1 day — Rewards +25,000 EXP</span>
       <button class="claimBtn" data-ach="86400s">Claim</button>
     </div>
-
-    <div id="ach259200s" class="badge">
-      🌅👶 Triple-Dawn Baby<br>
-      <span>Stay for 3 days — Rewards +4000 EXP</span>
-      <button class="claimBtn" data-ach="259200s">Claim</button>
+  </div> 
+  <h2>🎁 Level Badges</h2>
+  <div id="levelBadgeGrid">
+    <div id="achLvl10" class="badge">
+      ✨👶 Aurababy<br>
+      <span>Reach Level 10 — Rewards +1,000 EXP</span>
+      <button class="claimBtn" data-ach-level="lvl10">Claim</button>
     </div>
 
-    <div id="ach604800s" class="badge">
-      🪐👶 Weekborn Star Baby<br>
-      <span>Stay for 1 week — Rewards +8000 EXP</span>
-      <button class="claimBtn" data-ach="604800s">Claim</button>
+    <div id="achLvl25" class="badge">
+      🌾👶 Aurafarmer<br>
+      <span>Reach Level 25 — Rewards +5,000 EXP</span>
+      <button class="claimBtn" data-ach-level="lvl25">Claim</button>
     </div>
 
-    <div id="ach1209600s" class="badge">
-      🌠👶 Duo-Comet Baby<br>
-      <span>Stay for 2 weeks — Rewards +12,000 EXP</span>
-      <button class="claimBtn" data-ach="1209600s">Claim</button>
+    <div id="achLvl50" class="badge">
+      🌌👶 Celestial Baby<br>
+      <span>Reach Level 50 — Rewards +10,000 EXP</span>
+      <button class="claimBtn" data-ach-level="lvl50">Claim</button>
     </div>
 
-    <div id="ach2592000s" class="badge">
-      🌀👶 Chrono Aura Baby<br>
-      <span>Stay for 1 month — Rewards +20,000 EXP</span>
-      <button class="claimBtn" data-ach="2592000s">Claim</button>
+    <div id="achLvl75" class="badge">
+      👼 Divine Baby<br>
+      <span>Reach Level 75 — Rewards +20,000 EXP</span>
+      <button class="claimBtn" data-ach-level="lvl75">Claim</button>
     </div>
 
-    <div id="ach7776000s" class="badge">
-      🌟👶 Eternity-Touched Baby<br>
-      <span>Stay for 3 months — Rewards +40,000 EXP</span>
-      <button class="claimBtn" data-ach="7776000s">Claim</button>
+    <div id="achLvl100" class="badge">
+      💫👶💫 The Baby That Holds Aura<br>
+      <span>Reach Level 100 — MAX LEVEL!</span>
+      <button class="claimBtn" data-ach-level="lvl100">Complete!</button>
     </div>
-
   </div>
-</div>
+  <br>
+  <div id="codeBadgeGrid">
+    <div id="achCode1" class="badge">
+        🔎👶 Code Novice<br>
+        <span>Redeem 1 Code — Rewards +500 EXP</span>
+        <button class="claimBtn" data-ach-code="code1">Claim</button>
+    </div>
 
-<!-- STARS -->
-<div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
-<div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+    <div id="achCode5" class="badge">
+        🕵️👶 Code Detective<br>
+        <span>Redeem 5 Codes — Rewards +2,500 EXP</span>
+        <button class="claimBtn" data-ach-code="code5">Claim</button>
+    </div>
 
-<!-- TITLE -->
-<h1>🌟👶Aurababy Leveling System👶🌟</h1>
-<div class="level-info">Level: <span id="level">0</span></div>
-<div class="title-info" id="title">🍼 Title: None Yet</div>
+    <div id="achCode10" class="badge">
+        📜👶 Code Collector<br>
+        <span>Redeem 10 Codes — Rewards +5,000 EXP</span>
+        <button class="claimBtn" data-ach-code="code10">Claim</button>
+    </div>
 
-<!-- PROGRESS BAR -->
-<div class="progress-container">
-  <div class="progress-bar" id="expBar">0%</div>
-</div>
+    <div id="achCode20" class="badge">
+        🧠👶 Code Master<br>
+        <span>Redeem 20 Codes — Rewards +10,000 EXP</span>
+        <button class="claimBtn" data-ach-code="code20">Claim</button>
+    </div>
 
-<div class="exp-text">EXP: <span id="exp">0</span> / <span id="nextExp">100</span></div>
-<div class="countdown" id="countdown">Next EXP in: 60 seconds</div>
+    <div id="achCode30" class="badge">
+        💎👶 The Vault Keeper<br>
+        <span>Redeem 30 Codes — Rewards +15,000 EXP</span>
+        <button class="claimBtn" data-ach-code="code30">Claim</button>
+    </div>
+  </div>
+  <h2>⚡ Surge Badges</h2>
+  <div id="actionBadgeGrid" class="badgeGrid">
 
-<!-- CODE SYSTEM -->
-<div class="code-redeem" id="codeSection">
-  <input type="text" id="codeInput" placeholder="Enter code">
-  <button id="redeemBtn" onclick="redeemCode()">Redeem Code</button>
-  <div id="codeMessage" class="code-message"></div>
-</div>
+    <div id="achSurge1" class="badge">
+      ⚡👶 First Spark<br>
+      <span>Complete 1 Surge — Rewards +500 EXP</span>
+      <button class="claimBtn" data-ach-action="surge1">Claim</button>
+    </div>
 
-<!-- LEVEL REWARDS -->
-<div class="level-rewards">
-  <h2>🎁 Level Rewards</h2>
-  <ul id="rewardList" style="list-style:none; padding:0;">
-    <li data-level="25">🔒 Level 25 Reward: ???</li>
-    <li data-level="50">🔒 Level 50 Reward: ???</li>
-    <li data-level="75">🔒 Level 75 Reward: ???</li>
-    <li data-level="100">🔒 Level 100 Reward: ???</li>
-  </ul>
-</div>
+    <div id="achSurge5" class="badge">
+      🔋👶 Energy Gatherer<br>
+      <span>Complete 5 Surges — Rewards +2,500 EXP</span>
+      <button class="claimBtn" data-ach-action="surge5">Claim</button>
+    </div>
 
-<!-- LEVEL UP POPUP -->
-<div id="levelUpPopup">🎉 Level Up! 🎉</div>
-  <a href="" id="leaderboardBtn"> 🚧Leaderboard Soon🚧</a>
+    <div id="achSurge10" class="badge">
+      ⛈️👶 Storm Chaser<br>
+      <span>Complete 10 Surges — Rewards +5,000 EXP</span>
+      <button class="claimBtn" data-ach-action="surge10">Claim</button>
+    </div>
 
+    <div id="achSurge25" class="badge">
+      🌪️👶 Tempest Born<br>
+      <span>Complete 25 Surges — Rewards +12,500 EXP</span>
+      <button class="claimBtn" data-ach-action="surge25">Claim</button>
+    </div>
 
-<script>
-/* ------------------------ DOM + ACHIEVEMENT PANEL TOGGLE ------------------------ */
-document.addEventListener("DOMContentLoaded", () => {
-  const achButton = document.getElementById("achButton");
-  const achPanel  = document.getElementById("achPanel");
-  const achClose  = document.getElementById("achClose");
+    <div id="achSurge50" class="badge">
+      🔮👶 Orb Master<br>
+      <span>Complete 50 Surges — Rewards +25,000 EXP</span>
+      <button class="claimBtn" data-ach-action="surge50">Claim</button>
+    </div>
+  </div>
+  </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
 
-  if (achButton && achPanel) {
-    achButton.addEventListener("click", () => {
-      achPanel.classList.toggle("open");
-    });
-  }
+    <h1>🌟👶Aurababy Leveling System👶🌟</h1>
+    <div class="level-info">Level: <span id="level">0</span></div>
+    <div class="title-info" id="title">🍼 Title: None Yet</div>
 
-  if (achClose && achPanel) {
-    achClose.addEventListener("click", () => {
-      achPanel.classList.remove("open");
-    });
-  }
-});
+    <div class="progress-container">
+      <div class="progress-bar" id="expBar">0%</div>
+    </div>
 
-/* ------------------------ BADGE SYSTEM ------------------------ */
+    <div class="exp-text">
+      EXP: <span id="exp">0</span> / <span id="nextExp">100</span>
+    </div>
+    <div class="countdown" id="countdown">Next EXP in: 60 seconds</div>
 
-/* ------------------------ TIME BADGES + CLAIM SYSTEM ------------------------ */
+    <div class="code-redeem" id="codeSection">
+      <input type="text" id="codeInput" placeholder="Enter code" />
+      <button id="redeemBtn" onclick="redeemCode()">Redeem Code</button>
+      <div id="codeMessage" class="code-message"></div>
+    </div>
 
-let totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+    <div class="level-rewards">
+      <h2>🎁 Level Rewards</h2>
+      <ul id="rewardList" style="list-style:none; padding:0;">
+        <li data-level="25">🔒 Level 25 Reward: ???</li>
+        <li data-level="50">🔒 Level 50 Reward: ???</li>
+        <li data-level="75">🔒 Level 75 Reward: ???</li>
+        <li data-level="100">🔒 Level 100 Reward: ???</li>
+      </ul>
+    </div>
 
-/* Time requirements */
-const timeRequirements = {
-  "60s": 60,
-  "300s": 300,
-  "600s": 600,
-  "1800s": 1800,
-  "3600s": 3600,
-  "7200s": 7200,
-  "18000s": 18000,
-  "36000s": 36000,
-  "86400s": 86400,
-  "259200s": 259200,
-  "604800s": 604800,
-  "1209600s": 1209600,
-  "2592000s": 2592000,
-  "7776000s": 7776000
-};
+    <div id="levelUpPopup">🎉 Level Up! 🎉</div>
+    <a href="" id="leaderboardBtn"> 🚧Leaderboard Soon🚧</a>
 
-/* EXP rewards */
-const badgeRewards = {
-  "60s": 100,
-  "300s": 150,
-  "600s": 250,
-  "1800s": 400,
-  "3600s": 600,
-  "7200s": 800,
-  "18000s": 1200,
-  "36000s": 1800,
-  "86400s": 2500,
-  "259200s": 4000,
-  "604800s": 8000,
-  "1209600s": 12000,
-  "2592000s": 20000,
-  "7776000s": 40000
-};
+    <script>
+            /* ------------------------ DOM + ACHIEVEMENT PANEL TOGGLE ------------------------ */
+            document.addEventListener("DOMContentLoaded", () => {
+              const achButton = document.getElementById("achButton");
+              const achPanel  = document.getElementById("achPanel");
+              const achClose  = document.getElementById("achClose");
 
-/* Load claimed badges */
-let claimedBadges = JSON.parse(localStorage.getItem("claimedBadges") || "{}");
+              if (achButton && achPanel) {
+                achButton.addEventListener("click", () => {
+                  achPanel.classList.toggle("open");
+                });
+              }
 
-/* Unlock badges visually */
-function updateBadges() {
-  document.querySelectorAll(".badge").forEach(badge => {
-    const btn = badge.querySelector(".claimBtn");
-    const ach = btn.dataset.ach;
+              if (achClose && achPanel) {
+                achClose.addEventListener("click", () => {
+                  achPanel.classList.remove("open");
+                });
+              }
+            });
 
-    if (totalSeconds >= timeRequirements[ach]) {
-      badge.classList.add("unlocked");
-      if (!claimedBadges[ach]) {
-        btn.classList.remove("locked");
-        btn.innerText = "Claim";
+            /* ------------------------ BADGE SYSTEM ------------------------ */
+
+            /* 1. TIME BADGES + CLAIM SYSTEM */
+            let totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+
+            const timeRequirements = {
+              "60s": 60,
+              "300s": 300,
+              "600s": 600,
+              "1800s": 1800,
+              "3600s": 3600,
+              "7200s": 7200,
+              "14400s": 14400,
+              "28800s": 28800,
+              "57600s": 57600,
+              "86400s": 86400
+            };
+            const badgeRewards = {
+              "60s": 100,
+              "300s": 350,
+              "600s": 600,
+              "1800s": 1300,
+              "3600s": 2250,
+              "7200s": 3750,
+              "14400s": 6400,
+              "28800s": 11000,
+              "57600s": 18500,
+              "86400s": 25000
+            };
+
+            let claimedBadges = JSON.parse(localStorage.getItem("claimedBadges") || "{}");
+
+            function updateBadges() {
+              document.querySelectorAll("#badgeGrid .badge").forEach(badge => {
+                const btn = badge.querySelector(".claimBtn");
+                const ach = btn.dataset.ach;
+
+                if (totalSeconds >= timeRequirements[ach]) {
+                  badge.classList.add("unlocked");
+                  if (!claimedBadges[ach]) {
+                    btn.classList.remove("locked");
+                    btn.innerText = "Claim";
+                  }
+                }
+
+                if (claimedBadges[ach]) {
+                  btn.classList.add("claimed");
+                  btn.innerText = "Claimed ✔";
+                }
+              });
+            }
+
+            function setupClaimButtons() {
+              document.querySelectorAll("#badgeGrid .claimBtn").forEach(btn => {
+                const ach = btn.dataset.ach;
+
+                btn.addEventListener("click", () => {
+                  if (claimedBadges[ach]) return;
+                  if (totalSeconds < timeRequirements[ach]) return;
+
+                  exp = clampToMaxExp(exp + badgeRewards[ach]);
+                  updateUI();
+
+                  claimedBadges[ach] = true;
+                  localStorage.setItem("claimedBadges", JSON.stringify(claimedBadges));
+
+                  btn.classList.add("claimed");
+                  btn.innerText = "Claimed ✔";
+                });
+              });
+            }
+
+            /* 2. LEVEL BADGES + CLAIM SYSTEM */
+            const levelRequirements = {
+              "lvl10": 10, "lvl25": 25, "lvl50": 50, "lvl75": 75, "lvl100": 100
+            };
+            const levelBadgeRewards = {
+              "lvl10": 1000, "lvl25": 5000, "lvl50": 10000, "lvl75": 20000, "lvl100": 0
+            };
+
+            let claimedLevelBadges = JSON.parse(localStorage.getItem("claimedLevelBadges") || "{}");
+
+            function updateLevelBadges(currentLevel) {
+              document.querySelectorAll("#levelBadgeGrid .badge").forEach(badge => {
+                  const btn = badge.querySelector(".claimBtn");
+                  const ach = btn.dataset.achLevel;
+
+                  if (currentLevel >= levelRequirements[ach]) {
+                      badge.classList.add("unlocked");
+                      if (!claimedLevelBadges[ach]) {
+                          btn.classList.remove("locked");
+                          btn.innerText = (ach === "lvl100") ? "Complete!" : "Claim";
+                      }
+                  }
+                  if (claimedLevelBadges[ach]) {
+                      btn.classList.add("claimed");
+                      btn.innerText = (ach === "lvl100") ? "Complete ✔" : "Claimed ✔";
+                  }
+              });
+            }
+
+            function setupLevelClaimButtons() {
+              document.querySelectorAll("#levelBadgeGrid .claimBtn").forEach(btn => {
+                  const ach = btn.dataset.achLevel;
+                  btn.addEventListener("click", () => {
+                      const currentLevel = getLevelFromExp(exp);
+                      if (claimedLevelBadges[ach]) return;
+                      if (currentLevel < levelRequirements[ach]) return;
+
+                      exp = clampToMaxExp(exp + levelBadgeRewards[ach]);
+                      updateUI();
+
+                      claimedLevelBadges[ach] = true;
+                      localStorage.setItem("claimedLevelBadges", JSON.stringify(claimedLevelBadges));
+
+                      btn.classList.add("claimed");
+                      btn.innerText = (ach === "lvl100") ? "Complete ✔" : "Claimed ✔";
+                  });
+              });
+            }
+
+            /* 3. CODE BADGES + CLAIM SYSTEM */
+            const codeRequirements = {
+              "code1": 1, "code5": 5, "code10": 10, "code20": 20, "code30": 30
+            };
+            const codeBadgeRewards = {
+              "code1": 500, "code5": 2500, "code10": 5000, "code20": 10000, "code30": 15000
+            };
+
+            let claimedCodeBadges = JSON.parse(localStorage.getItem("claimedCodeBadges") || "{}");
+
+            function updateCodeBadges() {
+              const redeemedCount = Object.keys(usedCodes).length;
+              document.querySelectorAll("#codeBadgeGrid .badge").forEach(badge => {
+                  const btn = badge.querySelector(".claimBtn");
+                  const ach = btn.dataset.achCode;
+
+                  if (redeemedCount >= codeRequirements[ach]) {
+                      badge.classList.add("unlocked");
+                      if (!claimedCodeBadges[ach]) {
+                          btn.classList.remove("locked");
+                          btn.innerText = "Claim";
+                      }
+                  }
+                  if (claimedCodeBadges[ach]) {
+                      btn.classList.add("claimed");
+                      btn.innerText = "Claimed ✔";
+                  }
+              });
+            }
+
+            function setupCodeClaimButtons() {
+              document.querySelectorAll("#codeBadgeGrid .claimBtn").forEach(btn => {
+                  const ach = btn.dataset.achCode;
+                  btn.addEventListener("click", () => {
+                      const redeemedCount = Object.keys(usedCodes).length;
+                      if (claimedCodeBadges[ach]) return;
+                      if (redeemedCount < codeRequirements[ach]) return;
+
+                      exp = clampToMaxExp(exp + codeBadgeRewards[ach]);
+                      updateUI();
+
+                      claimedCodeBadges[ach] = true;
+                      localStorage.setItem("claimedCodeBadges", JSON.stringify(claimedCodeBadges));
+
+                      btn.classList.add("claimed");
+                      btn.innerText = "Claimed ✔";
+                  });
+              });
+            }
+
+            /* Timer for totalSeconds and badge unlock */
+            setInterval(() => {
+              totalSeconds++;
+              localStorage.setItem("totalSeconds", totalSeconds);
+              updateBadges();
+            }, 1000);
+
+            setupClaimButtons();
+            setupLevelClaimButtons();
+            setupCodeClaimButtons();
+
+            updateBadges();
+
+            /* DISPLAY TIME THAT SAVES */
+            let displaySec = parseInt(localStorage.getItem("displaySec") || "0");
+
+            function updateDisplayTime() {
+              localStorage.setItem("displaySec", displaySec);
+              let mins = Math.floor(displaySec / 60);
+              let secs = displaySec % 60;
+              document.getElementById("timeSpent").innerText = `Time on site: ${mins}m ${secs}s`;
+            }
+
+            updateDisplayTime();
+
+            setInterval(() => {
+              displaySec++;
+              updateDisplayTime();
+            }, 1000);
+
+            /* ------------------------ LEVEL SYSTEM ------------------------ */
+            const maxLevel = 100;
+
+            let exp = parseInt(localStorage.getItem("exp") || "0");
+            let secondsLeft = parseInt(localStorage.getItem("secondsLeft") || "60");
+
+            /* --- CODE ARRAYS --- */
+            let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
+
+            // --- EXISTING CODES ---
+            const codes5000 = ["teroswillrebirth"];
+            const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
+            const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
+
+            // --- NEW HOLIDAY CODES (Reward: 1750 XP) ---
+            const codesHoliday = [
+              "merrychristmas", "merryhanukkah", "hollyandjolly", "jinglethebells",
+              "sleddingbaby!", "gingerbaby", "mannylovescookiesandmilk!", "candycanes",
+              "eggingandnogging", "reinbabies", "carolingtime", "cozybabies",
+              "babyontheshelf", "frostybaby", "santababy!", "yetibebeh",
+              "underthemistletoe!", "tothenorthpole", "presentsforall", "angelbabies",
+              "clausbaby", "staronthetree", "winterweather", "jollybaby",
+              "happyholidaysaurababyteam!"
+            ];
+
+            // Combine all arrays for validation
+            const validCodes = [
+              ...codes5000,
+              ...codes2500,
+              ...codes1000,
+              ...codesHoliday
+            ].map(c => c.toLowerCase());
+
+            const titleMap = {
+              1: "🧬 Sperm Cell", 5: "👶 Newborn", 10: "✨👶 Aurababy",
+              25: "🌾👶 Aurafarmer", 50: "🌌👶 The Celestial Baby",
+              75: "👼 Divine Baby", 100: "💫👶💫 The Baby That Holds Aura"
+            };
+
+            const rewards = {
+              25: "https://hianime.cx",
+              50: "https://npm.lat.cdn.cloudflare.net/",
+              75: "http://xcpugbjyjm.finxstudio.fi/",
+              100: "https://www.khanacademy.ink/"
+            };
+
+            /* --- NEW EXPONENTIAL LEVEL CONFIG --- */
+            const BASE_XP_COST = 100; // The XP cost to go from Level 1 to Level 2
+            const TARGET_MAX_XP = 200000; // The total XP needed to reach Level 100
+
+            // Solves for the exponent 'E' to make the curve fit perfectly.
+            const XP_CURVE_EXPONENT = Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1); // approx 1.6541
+
+            function getTotalExpForLevel(level) {
+              if (level <= 1) return 0; // Need 0 XP to be level 1
+              if (level >= maxLevel) return TARGET_MAX_XP;
+
+              // Formula: BaseCost * ((CurrentLevel - 1) ^ Exponent)
+              const total_xp = BASE_XP_COST * Math.pow(level - 1, XP_CURVE_EXPONENT);
+              return Math.floor(total_xp);
+            }
+
+            // --- Build the Experience Table ---
+            const expTable = [];
+            for (let i = 0; i <= maxLevel; i++) {
+              expTable.push(getTotalExpForLevel(i));
+            }
+
+            function clampToMaxExp(v) { return Math.min(v, expTable[maxLevel]); }
+            function getLevelFromExp(x) {
+              for (let i = 1; i <= maxLevel; i++)
+                if (x < expTable[i]) return i - 1;
+              return maxLevel;
+            }
+            function getNextLevelExp(lv) {
+              return lv >= maxLevel ? expTable[maxLevel] : expTable[lv + 1];
+            }
+            function getTitle(level) {
+              let best = "🍼 None Yet";
+              for (const lvl in titleMap)
+                if (level >= lvl) best = titleMap[lvl];
+              return best;
+            }
+            function updateRewards() {
+              document.querySelectorAll("#rewardList li").forEach(li => {
+                const lvl = parseInt(li.dataset.level);
+                if (getLevelFromExp(exp) >= lvl)
+                  li.innerHTML = `🎉 Level ${lvl} Reward: <a href="${rewards[lvl]}" target="_blank">Claim Here</a>`;
+              });
+            }
+            function updateCodeSection(isMaxed) {
+              const input = document.getElementById("codeInput");
+              const btn = document.getElementById("redeemBtn");
+              const msg = document.getElementById("codeMessage");
+              const section = document.getElementById("codeSection");
+
+              if (isMaxed) {
+                input.disabled = true;
+                btn.disabled = true;
+                section.classList.add("muted");
+                msg.innerText = "🏆 Max level reached!";
+              } else {
+                input.disabled = false;
+                btn.disabled = false;
+                section.classList.remove("muted");
+              }
+            }
+
+            /* LEVEL UP POPUP */
+            let prevLevel = getLevelFromExp(exp);
+
+            function showLevelUpPopup(lv) {
+              const popup = document.getElementById("levelUpPopup");
+              popup.innerText = `🎉 Level Up! You are now Level ${lv} 🎉`;
+              popup.style.opacity = 1;
+              setTimeout(() => popup.style.opacity = 0, 2500);
+            }
+
+            function updateUI() {
+              exp = clampToMaxExp(exp);
+              const level = getLevelFromExp(exp);
+              const prevExp = expTable[level];
+              const nextExp = getNextLevelExp(level);
+              const isMaxed = level >= maxLevel;
+
+              const percent = isMaxed ? 100 : ((exp - prevExp) / (nextExp - prevExp)) * 100;
+
+              document.getElementById("level").innerText = level;
+              document.getElementById("exp").innerText = exp;
+              document.getElementById("nextExp").innerText = nextExp;
+              document.getElementById("title").innerText = `🍼 Title: ${getTitle(level)}`;
+
+              const bar = document.getElementById("expBar");
+              bar.style.width = percent + "%";
+              bar.innerText = isMaxed ? "MAX" : Math.floor(percent) + "%";
+
+              const totalPercent = Math.floor((exp / expTable[maxLevel]) * 100);
+              document.querySelector(".exp-text").innerHTML =
+                `EXP: <span id="exp">${exp}</span> / <span id="nextExp">${expTable[maxLevel]}</span> (${totalPercent}% to Max)`;
+
+              updateRewards();
+              updateLevelBadges(level);
+              updateCodeBadges();
+              updateCodeSection(isMaxed);
+
+              if (level > prevLevel) showLevelUpPopup(level);
+              prevLevel = level;
+
+              localStorage.setItem("exp", exp);
+              localStorage.setItem("secondsLeft", secondsLeft);
+            }
+
+            function updateCountdownUI() {
+              const level = getLevelFromExp(exp);
+              const isMaxed = level >= maxLevel;
+              document.getElementById("countdown").innerText =
+                isMaxed ? "Next EXP in: — (Max Level)" : `Next EXP in: ${secondsLeft}s`;
+            }
+
+            /* EXP TIMER */
+            setInterval(() => {
+              const level = getLevelFromExp(exp);
+              if (level >= maxLevel) {
+                secondsLeft = 0;
+                updateCountdownUI();
+                return;
+              }
+
+              secondsLeft--;
+              if (secondsLeft <= 0) {
+                exp = clampToMaxExp(exp + 100);
+                secondsLeft = 60;
+                updateUI();
+              }
+
+              updateCountdownUI();
+              localStorage.setItem("secondsLeft", secondsLeft);
+            }, 1000);
+
+            /* REDEEM CODES */
+            function redeemCode() {
+              const codeInput = document.getElementById("codeInput").value.trim().toLowerCase();
+              const msg = document.getElementById("codeMessage");
+
+              if (getLevelFromExp(exp) >= maxLevel) {
+                msg.innerText = "🏆 You're max level already!";
+                return;
+              }
+
+              if (!codeInput) return;
+
+              if (!validCodes.includes(codeInput)) {
+                msg.innerText = "❌ Invalid code!";
+                return;
+              }
+
+              if (usedCodes[codeInput]) {
+                msg.innerText = "❌ Code already used!";
+                return;
+              }
+
+              /* --- CHECK REWARD AMOUNTS --- */
+              let gainedExp = 0;
+              if (codes5000.includes(codeInput)) gainedExp = 5000;
+              else if (codesHoliday.includes(codeInput)) gainedExp = 1750; // <--- SET TO 1750 XP
+              else if (codes2500.includes(codeInput)) gainedExp = 2500;
+              else if (codes1000.includes(codeInput)) gainedExp = 1000;
+
+              const before = exp;
+              exp = clampToMaxExp(exp + gainedExp);
+              const actualGain = exp - before;
+
+              usedCodes[codeInput] = true;
+              localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
+
+              updateUI();
+              updateCodeBadges();
+
+              msg.innerText =
+                actualGain > 0
+                  ? `🎉 Code redeemed! +${actualGain} EXP 🎉`
+                  : "🏆 You're already at max EXP!";
+            }
+            /* ------------------------ AURA SURGE QTE SYSTEM ------------------------ */
+
+      const QTE_INTERVAL = 180000; // 3 Minutes (in milliseconds)
+      const QTE_DURATION = 5000;   // 5 Seconds to click
+      const QTE_TARGETS = 3;       // How many buttons to click
+      const QTE_REWARD = 500;      // XP Reward
+
+      let qteActive = false;
+      let qteClicks = 0;
+      let qteTimerInterval;
+
+      function startQTE() {
+        if (getLevelFromExp(exp) >= maxLevel) return; // Don't run if maxed
+        if (qteActive) return;
+
+        qteActive = true;
+        qteClicks = 0;
+
+        const overlay = document.getElementById("qteOverlay");
+        const timerText = document.getElementById("qteTimer");
+
+        overlay.classList.add("active");
+
+        // Spawn Orbs
+        for (let i = 0; i < QTE_TARGETS; i++) {
+          createQTEOrb();
+        }
+
+        // Start Countdown
+        let timeLeft = QTE_DURATION / 1000;
+        timerText.innerText = timeLeft.toFixed(1) + "s";
+
+        qteTimerInterval = setInterval(() => {
+          timeLeft -= 0.1;
+          timerText.innerText = Math.max(0, timeLeft).toFixed(1) + "s";
+
+          if (timeLeft <= 0) {
+            endQTE(false); // Failed
+          }
+        }, 100);
       }
-    }
 
-    if (claimedBadges[ach]) {
-      btn.classList.add("claimed");
-      btn.innerText = "Claimed ✔";
-    }
-  });
-}
+      function createQTEOrb() {
+        const orb = document.createElement("div");
+        orb.className = "qte-orb";
 
-/* Claim handler */
-function setupClaimButtons() {
-  document.querySelectorAll(".claimBtn").forEach(btn => {
-    const ach = btn.dataset.ach;
+        // Random Position (keep away from edges)
+        const x = Math.random() * 80 + 10; // 10% to 90% width
+        const y = Math.random() * 80 + 10; // 10% to 90% height
 
-    btn.addEventListener("click", () => {
-      if (claimedBadges[ach]) return;
-      if (totalSeconds < timeRequirements[ach]) return;
+        orb.style.left = x + "%";
+        orb.style.top = y + "%";
 
-      exp = clampToMaxExp(exp + badgeRewards[ach]);
-      updateUI();
+        orb.onclick = () => {
+          orb.remove();
+          qteClicks++;
+          // Check if won
+          if (qteClicks >= QTE_TARGETS) {
+            endQTE(true);
+          }
+        };
 
-      claimedBadges[ach] = true;
-      localStorage.setItem("claimedBadges", JSON.stringify(claimedBadges));
+        document.getElementById("qteOverlay").appendChild(orb);
+      }
 
-      btn.classList.add("claimed");
-      btn.innerText = "Claimed ✔";
-    });
-  });
-}
+      function endQTE(success) {
+        clearInterval(qteTimerInterval);
+        qteActive = false;
 
-/* Timer for totalSeconds and badge unlock */
-setInterval(() => {
-  totalSeconds++;
-  localStorage.setItem("totalSeconds", totalSeconds);
-  updateBadges();
-}, 1000);
+        const overlay = document.getElementById("qteOverlay");
 
-setupClaimButtons();
-updateBadges();
+        // Clear any remaining orbs
+        document.querySelectorAll(".qte-orb").forEach(el => el.remove());
 
-/* DISPLAY TIME THAT SAVES */
-let displaySec = parseInt(localStorage.getItem("displaySec") || "0");
+        if (success) {
+          // SUCCESS
+          exp = clampToMaxExp(exp + QTE_REWARD);
+          updateUI();
+          document.getElementById("qteMessage").innerText = "SUCCESS! +500 XP";
+          document.getElementById("qteMessage").style.color = "#00ff99";
+        } else {
+          // FAIL
+          document.getElementById("qteMessage").innerText = "SURGE FAILED...";
+          document.getElementById("qteMessage").style.color = "#ff4444";
+        }
 
-function updateDisplayTime() {
-  localStorage.setItem("displaySec", displaySec);
-  let mins = Math.floor(displaySec / 60);
-  let secs = displaySec % 60;
-  document.getElementById("timeSpent").innerText = `Time on site: ${mins}m ${secs}s`;
-}
+        // Hide after 1.5 seconds
+        setTimeout(() => {
+          overlay.classList.remove("active");
+          // Reset text for next time
+          setTimeout(() => {
+            document.getElementById("qteMessage").innerText = "⚠️ AURA SURGE! ⚠️";
+            document.getElementById("qteMessage").style.color = "#ffdd57";
+          }, 500);
+        }, 1500);
+      }
 
-updateDisplayTime();
+      // Start the 3-minute loop
+      setInterval(startQTE, QTE_INTERVAL);
 
-setInterval(() => {
-  displaySec++;
-  updateDisplayTime();
-}, 1000);
-
-/* ------------------------ LEVEL SYSTEM ------------------------ */
-const maxLevel = 100;
-const maxTotalExp = 55000;
-
-let exp = parseInt(localStorage.getItem("exp") || "0");
-let secondsLeft = parseInt(localStorage.getItem("secondsLeft") || "60");
-let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
-
-const codes5000 = ["teroswillrebirth"];
-const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
-const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
-const validCodes = [...codes5000, ...codes2500, ...codes1000].map(c => c.toLowerCase());
-
-const titleMap = {
-  1: "🧬 Sperm Cell", 5: "👶 Newborn", 10: "✨👶 Aurababy",
-  25: "🌾👶 Aurafarmer", 50: "🌌👶 The Celestial Baby",
-  75: "👼 Divine Baby", 100: "💫👶💫 The Baby That Holds Aura"
-};
-
-const rewards = {
-  25: "https://hianime.cx",
-  50: "https://npm.lat.cdn.cloudflare.net/",
-  75: "http://xcpugbjyjm.finxstudio.fi/",
-  100: "https://www.khanacademy.ink/"
-};
-
-const expTable = [0];
-let total = 0;
-for (let i = 1; i <= maxLevel; i++) {
-  const expForLevel = Math.floor(50 + Math.pow(i / maxLevel, 1.7) * 600);
-  total += expForLevel;
-  expTable.push(total);
-}
-const scale = maxTotalExp / expTable[maxLevel];
-for (let i = 1; i <= maxLevel; i++) expTable[i] = Math.floor(expTable[i] * scale);
-
-function clampToMaxExp(v) { return Math.min(v, expTable[maxLevel]); }
-function getLevelFromExp(x) {
-  for (let i = 1; i <= maxLevel; i++)
-    if (x < expTable[i]) return i - 1;
-  return maxLevel;
-}
-function getNextLevelExp(lv) {
-  return lv >= maxLevel ? expTable[maxLevel] : expTable[lv + 1];
-}
-function getTitle(level) {
-  let best = "🍼 None Yet";
-  for (const lvl in titleMap)
-    if (level >= lvl) best = titleMap[lvl];
-  return best;
-}
-function updateRewards() {
-  document.querySelectorAll("#rewardList li").forEach(li => {
-    const lvl = parseInt(li.dataset.level);
-    if (getLevelFromExp(exp) >= lvl)
-      li.innerHTML = `🎉 Level ${lvl} Reward: <a href="${rewards[lvl]}" target="_blank">Claim Here</a>`;
-  });
-}
-function updateCodeSection(isMaxed) {
-  const input = document.getElementById("codeInput");
-  const btn = document.getElementById("redeemBtn");
-  const msg = document.getElementById("codeMessage");
-  const section = document.getElementById("codeSection");
-
-  if (isMaxed) {
-    input.disabled = true;
-    btn.disabled = true;
-    section.classList.add("muted");
-    msg.innerText = "🏆 Max level reached!";
-  } else {
-    input.disabled = false;
-    btn.disabled = false;
-    section.classList.remove("muted");
-  }
-}
-
-/* LEVEL UP POPUP */
-let prevLevel = getLevelFromExp(exp);
-
-function showLevelUpPopup(lv) {
-  const popup = document.getElementById("levelUpPopup");
-  popup.innerText = `🎉 Level Up! You are now Level ${lv} 🎉`;
-  popup.style.opacity = 1;
-  setTimeout(() => popup.style.opacity = 0, 2500);
-}
-
-function updateUI() {
-  exp = clampToMaxExp(exp);
-  const level = getLevelFromExp(exp);
-  const prevExp = expTable[level];
-  const nextExp = getNextLevelExp(level);
-  const isMaxed = level >= maxLevel;
-
-  const percent = isMaxed ? 100 : ((exp - prevExp) / (nextExp - prevExp)) * 100;
-
-  document.getElementById("level").innerText = level;
-  document.getElementById("exp").innerText = exp;
-  document.getElementById("nextExp").innerText = nextExp;
-  document.getElementById("title").innerText = `🍼 Title: ${getTitle(level)}`;
-
-  const bar = document.getElementById("expBar");
-  bar.style.width = percent + "%";
-  bar.innerText = isMaxed ? "MAX" : Math.floor(percent) + "%";
-
-  const totalPercent = Math.floor((exp / expTable[maxLevel]) * 100);
-  document.querySelector(".exp-text").innerHTML =
-    `EXP: <span id="exp">${exp}</span> / <span id="nextExp">${expTable[maxLevel]}</span> (${totalPercent}% to Max)`;
-
-  updateRewards();
-  updateCodeSection(isMaxed);
-
-  if (level > prevLevel) showLevelUpPopup(level);
-  prevLevel = level;
-
-  localStorage.setItem("exp", exp);
-  localStorage.setItem("secondsLeft", secondsLeft);
-}
-
-function updateCountdownUI() {
-  const level = getLevelFromExp(exp);
-  const isMaxed = level >= maxLevel;
-  document.getElementById("countdown").innerText =
-    isMaxed ? "Next EXP in: — (Max Level)" : `Next EXP in: ${secondsLeft}s`;
-}
-
-/* EXP TIMER */
-setInterval(() => {
-  const level = getLevelFromExp(exp);
-  if (level >= maxLevel) {
-    secondsLeft = 0;
-    updateCountdownUI();
-    return;
-  }
-
-  secondsLeft--;
-  if (secondsLeft <= 0) {
-    exp = clampToMaxExp(exp + 100);
-    secondsLeft = 60;
-    updateUI();
-  }
-
-  updateCountdownUI();
-  localStorage.setItem("secondsLeft", secondsLeft);
-}, 1000);
-
-/* REDEEM CODES */
-function redeemCode() {
-  const codeInput = document.getElementById("codeInput").value.trim().toLowerCase();
-  const msg = document.getElementById("codeMessage");
-
-  if (getLevelFromExp(exp) >= maxLevel) {
-    msg.innerText = "🏆 You're max level already!";
-    return;
-  }
-
-  if (!codeInput) return;
-
-  if (!validCodes.includes(codeInput)) {
-    msg.innerText = "❌ Invalid code!";
-    return;
-  }
-
-  if (usedCodes[codeInput]) {
-    msg.innerText = "❌ Code already used!";
-    return;
-  }
-
-  let gainedExp = 0;
-  if (codes5000.includes(codeInput)) gainedExp = 5000;
-  else if (codes2500.includes(codeInput)) gainedExp = 2500;
-  else if (codes1000.includes(codeInput)) gainedExp = 1000;
-
-  const before = exp;
-  exp = clampToMaxExp(exp + gainedExp);
-  const actualGain = exp - before;
-
-  usedCodes[codeInput] = true;
-  localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
-
-  updateUI();
-
-  msg.innerText =
-    actualGain > 0
-      ? `🎉 Code redeemed! +${actualGain} EXP 🎉`
-      : "🏆 You're already at max EXP!";
-}
-
-/* INIT */
-updateUI();
-updateCountdownUI();
-updateBadges();
-</script>
-
-</body>
+            /* INIT */
+            updateUI();
+            updateCountdownUI();
+            updateBadges();
+            updateLevelBadges(getLevelFromExp(exp));
+            updateCodeBadges();
+    </script>
+  </body>
 </html>
