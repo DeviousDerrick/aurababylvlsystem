@@ -2,86 +2,116 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Aurababy Leaderboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
+<title>Aurababy Leaderboard & Game Center</title>
+<link href="fonts.googleapis.com" rel="stylesheet">
 <style>
+  /* Base Styles */
   body {
     font-family: 'Poppins', sans-serif;
-    font-weight: 800;
+    font-weight: 700;
     background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
     color: white;
     text-align: center;
     padding: 50px 20px;
+    margin: 0;
   }
-
   h1 { font-size: 2.5em; color: #00ffcc; margin-bottom: 20px; }
-
   #container {
     background: rgba(0,0,0,0.35);
     padding: 30px;
     border-radius: 15px;
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   }
 
-  input { padding: 8px; border-radius: 6px; border: none; width: 70%; font-size: 1em; }
-  button { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 800; margin-left:5px; }
-
+  /* Shared Input/Button Styles */
+  input { padding: 8px; border-radius: 6px; border: none; width: 70%; font-size: 1em; box-sizing: border-box; }
+  button { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 800; margin: 5px; transition: background-color 0.2s; }
+  button:hover:enabled { opacity: 0.9; }
+  button:disabled { cursor: not-allowed; opacity: 0.6; }
   #submitBtn { background: #00ffcc; color: black; }
-  #updateBtn { background: #0072ff; color: white; margin-top: 10px; }
-  #backBtn { background: #ff00aa; color: white; margin-top: 15px; }
+  #updateBtn { background: #0072ff; color: white; }
+  /* Since we are now on one page, the 'backBtn' ID is used for the game-specific save button */
+  #saveExpBtn { background: #ff00aa; color: white; } 
 
-  #leaderboard div {
+  /* Leaderboard Specific Styles (Level System Look) */
+  #rankInfo { margin-top:10px; font-size:0.95em; min-height:22px; color: rgba(255,255,255,0.8); }
+  #message { color: #ff00aa; }
+  #leaderboard div.leaderboard-row {
     padding: 10px;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     display: flex;
     justify-content: space-between;
-    font-size: 1.05em;
     align-items: center;
+    font-size: 1.05em;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 5px;
+    border-radius: 8px;
+    position: relative;
   }
+  #leaderboard div:nth-child(1) { border-left: 5px solid gold; background: rgba(255,215,0,0.15); }
+  #leaderboard div:nth-child(2) { border-left: 5px solid silver; background: rgba(192,192,192,0.1); }
+  #leaderboard div:nth-child(3) { border-left: 5px solid #cd7f32; background: rgba(205,127,50,0.1); }
+  .you { background: rgba(0,255,204,0.15) !important; border-left: 5px solid #00ffcc !important; font-weight: 900; }
+  .muted { color: rgba(255,255,255,0.6); font-weight: 600; text-align: center; padding: 10px 0; font-size: 0.9em; }
+  .player-info { display: flex; align-items: center; flex-grow: 1; }
+  .rank-badge { font-size: 1em; font-weight: 900; width: 30px; text-align: center; margin-right: 15px; color: #00ffcc; }
+  .level-badge { background: #ff00aa; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; font-size: 0.8em; font-weight: 900; margin-left: 10px; box-shadow: 0 0 5px rgba(255, 0, 170, 0.5); }
+  .player-name { margin-left: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; }
+  .xp-bar-container { width: 150px; background: rgba(0, 0, 0, 0.5); border-radius: 10px; overflow: hidden; margin-left: auto; box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8); }
+  .xp-bar-fill { height: 12px; background: linear-gradient(to right, #0072ff, #00ffcc); width: 0%; transition: width 0.5s ease-out; text-align: right; line-height: 12px; font-size: 0.7em; font-weight: bold; color: white; padding-right: 3px; }
 
-  #leaderboard div:nth-child(1) { border-left: 5px solid gold; background: rgba(255,255,255,0.15); }
-  #leaderboard div:nth-child(2) { border-left: 5px solid silver; background: rgba(255,255,255,0.1); }
-  #leaderboard div:nth-child(3) { border-left: 5px solid #cd7f32; background: rgba(255,255,255,0.1); }
-
-  /* highlight current user */
-  .you {
-    background: rgba(0,255,204,0.08);
-    border-left: 5px solid #00ffcc !important;
-    font-weight: 900;
+  /* Game Specific Styles (New Additions for in-page game UI) */
+  #game-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(0,255,204,0.5);
   }
-
-  .muted { color: rgba(255,255,255,0.6); font-weight: 600; }
-
-  #rankInfo { margin-top:10px; font-size:0.95em; min-height:22px; }
+  #currentExpDisplay { font-size: 2em; margin: 10px 0; color: #00ffcc; }
 
 </style>
 </head>
 
 <body>
-<h1>🏆 Aurababy Leaderboard 🏆</h1>
+<h1>🏆 Aurababy Command Center 🏆</h1>
 <div id="container">
 
+  <!-- GAME SECTION ADDED HERE -->
+  <div id="game-section">
+    <h2>Game Status</h2>
+    <div>Current Local EXP:</div>
+    <div id="currentExpDisplay">0</div>
+
+    <button id="gainExpBtn">Gain 10 EXP</button>
+    <button id="saveExpBtn">Save EXP Locally</button>
+  </div>
+  <!-- END GAME SECTION -->
+  
   <div>
-    <input type="text" id="usernameInput" placeholder="Enter your username">
-    <button id="submitBtn">Submit</button>
+    <input type="text" id="usernameInput" placeholder="Enter your username" aria-label="Username input">
+    <button id="submitBtn" aria-label="Submit username">Login</button>
   </div>
   <div id="message" style="margin-top:10px; min-height:20px;"></div>
 
-  <button id="updateBtn">Check EXP</button>
+  <button id="updateBtn">Sync EXP & Refresh Ranks</button>
 
-  <div id="rankInfo" class="muted"></div>
+  <div id="rankInfo"></div>
 
-  <div id="leaderboard" style="margin-top:20px;"></div>
+  <div id="leaderboard" style="margin-top:20px;">
+    <!-- Leaderboard entries will be dynamically inserted here -->
+  </div>
 
-  <button id="backBtn" onclick="window.location.href='index.html'">⬅ Back to Game</button>
+  <!-- Removed the 'Back to Game' button as the game is now here -->
 </div>
 
 <script>
 const apiBase = "https://leaderboardbackend-7cum.onrender.com";
 let username = sessionStorage.getItem("aurababyUsername") || null;
 
-// DOM elements
+// DOM elements mapping for Leaderboard
 const usernameInput = document.getElementById("usernameInput");
 const submitBtn = document.getElementById("submitBtn");
 const message = document.getElementById("message");
@@ -89,15 +119,63 @@ const leaderboardEl = document.getElementById("leaderboard");
 const updateBtn = document.getElementById("updateBtn");
 const rankInfo = document.getElementById("rankInfo");
 
-// Lock username if already stored
+// DOM elements mapping for Game (NEW)
+const currentExpDisplay = document.getElementById("currentExpDisplay");
+const gainExpBtn = document.getElementById("gainExpBtn");
+const saveExpBtn = document.getElementById("saveExpBtn");
+
+// --- GAME LOGIC INTEGRATED HERE ---
+let currentExp = parseInt(localStorage.getItem("exp") || "0", 10);
+currentExpDisplay.textContent = currentExp.toLocaleString();
+
+gainExpBtn.onclick = () => {
+    currentExp += 10;
+    currentExpDisplay.textContent = currentExp.toLocaleString();
+};
+
+saveExpBtn.onclick = () => {
+    localStorage.setItem("exp", currentExp);
+    alert("EXP saved to local storage!");
+};
+// --- END GAME LOGIC ---
+
+
+// Rest of the Leaderboard JS (Same as previous response, just included here)
+
+function expNeededForLevel(level) {
+    if (level <= 1) return 0;
+    return Math.floor(Math.pow(level - 1, 2) * 100); 
+}
+
+function calculateLevelDetails(totalExp) {
+    let level = 1;
+    let expForCurrent = 0;
+    let expForNext = expNeededForLevel(2);
+    while (totalExp >= expForNext) {
+        level++;
+        expForCurrent = expForNext;
+        expForNext = expNeededForLevel(level + 1);
+    }
+    const expInCurrentLevel = totalExp - expForCurrent;
+    const neededForNext = expForNext - expForCurrent;
+    const progressPercent = neededForNext > 0 ? (expInCurrentLevel / neededForNext) * 100 : 100;
+    return {
+        level,
+        progressPercent: Math.min(progressPercent, 100),
+        totalExp: totalExp,
+        nextLevelExp: expForNext
+    };
+}
+
+
 if (username) {
   usernameInput.value = username;
   usernameInput.disabled = true;
   submitBtn.disabled = true;
-  message.innerText = `Logged in as ${username}`;
+  message.innerText = `Pilot ${username} logged in.`;
+  updateLeaderboard(); 
 }
 
-// Submit username
 submitBtn.onclick = () => {
   const name = usernameInput.value.trim();
   if (!name || name.length < 3 || name.length > 20) {
@@ -108,12 +186,11 @@ submitBtn.onclick = () => {
   sessionStorage.setItem("aurababyUsername", username);
   usernameInput.disabled = true;
   submitBtn.disabled = true;
-  message.innerText = `Logged in as ${username}`;
+  message.innerText = `Pilot ${username} accepted.`;
   updateLeaderboard();
 };
 
-// Fetch leaderboard
-async function fetchLeaderboard() {
+async function fetchLeaderboard() { /* ... function body same as before ... */
   try {
     const res = await fetch(`${apiBase}/leaderboard`);
     if (!res.ok) throw new Error("Failed to fetch leaderboard");
@@ -121,15 +198,14 @@ async function fetchLeaderboard() {
     return Array.isArray(data) ? data : [];
   } catch (err) {
     console.error(err);
-    message.innerText = "Could not reach leaderboard server. Showing local-only view.";
+    message.innerText = "Error: Could not reach leaderboard server. Displaying local data only.";
     return [];
   }
 }
 
-// Submit current user EXP to backend
-async function submitEXP() {
+async function submitEXP() { /* ... function body same as before ... */
   if (!username) return;
-  const exp = parseInt(localStorage.getItem("exp") || "0", 10);
+  const exp = parseInt(localStorage.getItem("exp") || "0", 10); 
   try {
     const res = await fetch(`${apiBase}/submit`, {
       method: "POST",
@@ -137,178 +213,99 @@ async function submitEXP() {
       body: JSON.stringify({ username, exp })
     });
     if (!res.ok) {
-      console.warn("Submit EXP returned non-OK:", res.status);
+      console.warn("Submit EXP returned non-OK status:", res.status);
     }
   } catch(err) {
     console.error(err);
   }
 }
 
-// Render top 5 and user's place
-async function updateLeaderboard() {
+async function updateLeaderboard() { /* ... function body same as before ... */
   if (!username) {
-    message.innerText = "Please enter a username first.";
+    message.innerText = "Please enter a username first to access the Command Center.";
     usernameInput.focus();
     return;
   }
-
   message.innerText = "";
-  rankInfo.innerText = "Checking...";
-
-  // submit current exp (best-effort)
+  rankInfo.innerText = "Syncing data with the mainframe...";
   await submitEXP();
-
   let data = await fetchLeaderboard();
-  // Ensure exp numbers and username exist
   data = data.map(d => ({ username: d.username, exp: Number(d.exp) || 0 }));
-
-  // Sort descending by exp
   data.sort((a,b) => b.exp - a.exp);
-
   leaderboardEl.innerHTML = "";
 
-  // Top 5 display
-  for (let i=0; i<5; i++) {
+  const createLeaderboardRow = (rank, userObj) => {
     const div = document.createElement("div");
-    if (i < data.length) {
-      const u = data[i];
-      div.innerHTML = `<strong>${i+1}. ${escapeHtml(u.username)}</strong> <span>${u.exp} EXP</span>`;
-      if (u.username.toLowerCase() === username.toLowerCase()) {
-        div.classList.add("you");
-      }
-    } else {
-      div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
+    div.classList.add("leaderboard-row");
+    const levelDetails = calculateLevelDetails(userObj.exp);
+    div.innerHTML = `
+      <div class="player-info">
+        <span class="rank-badge">${rank}.</span>
+        <span class="player-name">${escapeHtml(userObj.username)}</span>
+        <span class="level-badge">Lvl ${levelDetails.level}</span>
+      </div>
+      <div class="xp-bar-container">
+        <div class="xp-bar-fill" style="width: ${levelDetails.progressPercent}%">
+          ${Math.floor(levelDetails.progressPercent)}%
+        </div>
+      </div>
+    `;
+    if (userObj.username.toLowerCase() === username.toLowerCase()) {
+      div.classList.add("you");
     }
-    leaderboardEl.appendChild(div);
+    return div;
+  };
+
+  for (let i = 0; i < 5; i++) {
+    if (i < data.length) {
+      leaderboardEl.appendChild(createLeaderboardRow(i + 1, data[i]));
+    } else {
+      const emptyDiv = document.createElement("div");
+      emptyDiv.classList.add("leaderboard-row", "muted");
+      emptyDiv.innerHTML = `<div class="player-info"><span class="rank-badge">${i+1}.</span> <span class="player-name">--- Empty Slot ---</span></div>`;
+      leaderboardEl.appendChild(emptyDiv);
+    }
   }
 
-  // Find user's index in full list
   const myIndex = data.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
   if (myIndex === -1) {
-    // user not on leaderboard (server may not have them or exp is 0)
     const myExp = Number(localStorage.getItem("exp") || "0");
-    rankInfo.innerText = `You are not ranked yet. Your EXP: ${myExp}. Submit by clicking "Check EXP".`;
-    // Optionally show user's current exp below top 5
+    rankInfo.innerText = `You are not ranked on the public list yet. Your local EXP: ${myExp.toLocaleString()}. Click "Sync EXP" to update your status.`;
     const spacer = document.createElement("div");
     spacer.className = "muted";
-    spacer.innerText = "...";
+    spacer.innerText = "Your Rank Details Below...";
     leaderboardEl.appendChild(spacer);
-
-    const selfDiv = document.createElement("div");
-    selfDiv.classList.add("you");
-    selfDiv.innerHTML = `<strong>—. ${escapeHtml(username)}</strong> <span>${myExp} EXP</span>`;
+    const myUnrankedUser = { username: username, exp: myExp };
+    const selfDiv = createLeaderboardRow("—", myUnrankedUser);
     leaderboardEl.appendChild(selfDiv);
   } else {
     const rank = myIndex + 1;
-    rankInfo.innerText = `You are #${rank} out of ${data.length} player${data.length === 1 ? "" : "s"} (${data[myIndex].exp} EXP).`;
-    // If user is not in top 5, show a small separator and their actual rank row
+    const userDetails = calculateLevelDetails(data[myIndex].exp);
+    rankInfo.innerText = `You are ranked #${rank} (Level ${userDetails.level}) out of ${data.length.toLocaleString()} total pilots.`;
     if (myIndex >= 5) {
       const spacer = document.createElement("div");
       spacer.className = "muted";
-      spacer.innerText = "...";
+      spacer.innerText = "... Jump to your rank ...";
       leaderboardEl.appendChild(spacer);
-
-      const myDiv = document.createElement("div");
-      myDiv.classList.add("you");
-      myDiv.innerHTML = `<strong>${rank}. ${escapeHtml(data[myIndex].username)}</strong> <span>${data[myIndex].exp} EXP</span>`;
-      leaderboardEl.appendChild(myDiv);
+      leaderboardEl.appendChild(createLeaderboardRow(rank, data[myIndex]));
     }
   }
 }
 
-// Update button
 updateBtn.onclick = updateLeaderboard;
 
-// Auto-refresh every 10s (only if logged in)
 setInterval(() => {
   if (sessionStorage.getItem("aurababyUsername")) updateLeaderboard();
 }, 10000);
 
-// simple HTML-escape helper to avoid injection if usernames are untrusted
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/'/g, '&#39;');
 }
-</script>
-</body>
-</html>
-```
-
-
-````html name=index.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Aurababy - Game</title>
-<style>
-  body { font-family: Arial, sans-serif; text-align:center; padding:40px; background:#f3f8ff; }
-  #exp { font-size:2em; margin:20px 0; }
-  button { padding:10px 16px; margin:6px; border-radius:6px; border:none; cursor:pointer; font-weight:bold; }
-  #toLeaderboard { background:#0072ff; color:white; }
-  #saveExp { background:#00cc66; color:white; }
-</style>
-</head>
-<body>
-  <h1>Aurababy Game (demo)</h1>
-
-  <div>Current EXP:</div>
-  <div id="exp">0</div>
-
-  <button id="gainExp">Gain 10 EXP</button>
-  <button id="saveExp">Save EXP (to local)</button>
-  <br/>
-  <input id="usernameField" placeholder="Enter username to use on leaderboard" />
-  <br/>
-  <button id="setName">Set Username for Leaderboard</button>
-  <br/>
-  <button id="toLeaderboard">Open Leaderboard</button>
-
-<script>
-  // Simple demo to show how index.html should store EXP and username
-  const expEl = document.getElementById('exp');
-  const gainExpBtn = document.getElementById('gainExp');
-  const saveExpBtn = document.getElementById('saveExp');
-  const toLeaderboardBtn = document.getElementById('toLeaderboard');
-  const usernameField = document.getElementById('usernameField');
-  const setNameBtn = document.getElementById('setName');
-
-  // load stored exp (if any)
-  let exp = Number(localStorage.getItem('exp') || 0);
-  expEl.innerText = exp;
-
-  gainExpBtn.onclick = () => {
-    exp += 10;
-    expEl.innerText = exp;
-  };
-
-  // Save EXP into localStorage so leaderboard can read it
-  saveExpBtn.onclick = () => {
-    localStorage.setItem('exp', String(exp));
-    alert('EXP saved locally. Now click "Open Leaderboard" and then "Check EXP" to submit.');
-  };
-
-  // Save username into sessionStorage so leaderboard.html can auto-use it
-  setNameBtn.onclick = () => {
-    const name = usernameField.value.trim();
-    if (!name || name.length < 3) {
-      alert('Choose a username with 3+ chars');
-      return;
-    }
-    sessionStorage.setItem('aurababyUsername', name);
-    alert('Username saved for leaderboard: ' + name);
-  };
-
-  // open leaderboard in same tab
-  toLeaderboardBtn.onclick = () => {
-    // ensure exp saved first (optional convenience)
-    localStorage.setItem('exp', String(exp));
-    window.location.href = 'leaderboard.html';
-  };
 </script>
 </body>
 </html>
