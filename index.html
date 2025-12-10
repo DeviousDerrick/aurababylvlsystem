@@ -185,15 +185,19 @@
               background: #000000dd;
             }
 
-            /* BADGE GRID (Applies to all badge sections) */
-            #badgeGrid, #levelBadgeGrid, #codeBadgeGrid {
-              display: grid;
-              grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-              gap: 18px;
-              width: 95%;
-              max-width: 900px;
-              margin: 0 auto;
-            }
+           /* BADGE GRID (Applies to all badge sections) */
+#badgeGrid,
+#levelBadgeGrid,
+#codeBadgeGrid,
+#actionBadgeGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 18px;
+    width: 95%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 
             /* BADGES */
             .badge {
@@ -599,6 +603,27 @@
               "57600s": 18500,
               "86400s": 25000
             };
+            /* 4. SURGE BADGES + CLAIM SYSTEM */
+
+const surgeRequirements = {
+  surge1: 1,
+  surge5: 5,
+  surge10: 10,
+  surge25: 25,
+  surge50: 50
+};
+
+const surgeBadgeRewards = {
+  surge1: 500,
+  surge5: 2500,
+  surge10: 5000,
+  surge25: 12500,
+  surge50: 25000
+};
+
+let surgeCount = parseInt(localStorage.getItem("surgeCount") || "0");
+let claimedSurgeBadges = JSON.parse(localStorage.getItem("claimedSurgeBadges") || "{}");
+
 
             let claimedBadges = JSON.parse(localStorage.getItem("claimedBadges") || "{}");
 
@@ -720,6 +745,26 @@
                   }
               });
             }
+function updateSurgeBadges() {
+  document.querySelectorAll("#actionBadgeGrid .badge").forEach(badge => {
+    const btn = badge.querySelector(".claimBtn");
+    const ach = btn.dataset.achAction;
+
+    if (surgeCount >= surgeRequirements[ach]) {
+      badge.classList.add("unlocked");
+
+      if (!claimedSurgeBadges[ach]) {
+        btn.classList.remove("locked");
+        btn.innerText = "Claim";
+      }
+    }
+
+    if (claimedSurgeBadges[ach]) {
+      btn.classList.add("claimed");
+      btn.innerText = "Claimed ✔";
+    }
+  });
+}
 
             function setupCodeClaimButtons() {
               document.querySelectorAll("#codeBadgeGrid .claimBtn").forEach(btn => {
@@ -740,6 +785,26 @@
                   });
               });
             }
+            function setupSurgeClaimButtons() {
+  document.querySelectorAll("#actionBadgeGrid .claimBtn").forEach(btn => {
+    const ach = btn.dataset.achAction;
+
+    btn.addEventListener("click", () => {
+      if (claimedSurgeBadges[ach]) return;
+      if (surgeCount < surgeRequirements[ach]) return;
+
+      exp = clampToMaxExp(exp + surgeBadgeRewards[ach]);
+      updateUI();
+
+      claimedSurgeBadges[ach] = true;
+      localStorage.setItem("claimedSurgeBadges", JSON.stringify(claimedSurgeBadges));
+
+      btn.classList.add("claimed");
+      btn.innerText = "Claimed ✔";
+    });
+  });
+}
+
 
             /* Timer for totalSeconds and badge unlock */
             setInterval(() => {
@@ -955,10 +1020,12 @@
               const codeInput = document.getElementById("codeInput").value.trim().toLowerCase();
               const msg = document.getElementById("codeMessage");
 
-              if (getLevelFromExp(exp) >= maxLevel) {
-                msg.innerText = "🏆 You're max level already!";
-                return;
-              }
+             // Only block codes if they truly hit the EXP cap
+if (exp >= expTable[maxLevel]) {
+  msg.innerText = "🏆 You're already at max EXP!";
+  return;
+}
+
 
               if (!codeInput) return;
 
@@ -1070,6 +1137,11 @@
 
         if (success) {
           // SUCCESS
+          // Track surge wins
+surgeCount++;
+localStorage.setItem("surgeCount", surgeCount);
+updateSurgeBadges();
+
           exp = clampToMaxExp(exp + QTE_REWARD);
           updateUI();
           document.getElementById("qteMessage").innerText = "SUCCESS! +500 XP";
@@ -1100,6 +1172,9 @@
             updateBadges();
             updateLevelBadges(getLevelFromExp(exp));
             updateCodeBadges();
+            setupSurgeClaimButtons();
+updateSurgeBadges();
+
     </script>
   </body>
 </html>
