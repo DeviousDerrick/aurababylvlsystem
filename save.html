@@ -2,38 +2,80 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Aurababy Saving System</title>
+  <title>Aurababy Level System — Save / Load</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    /* Minimal styles for UI */
-    #save-ui { position: fixed; bottom: 10px; right: 10px; background:#fff;border:1px solid #ccc;padding:10px; width:320px; z-index:9999; }
-    #save-ui input, #save-ui textarea { width:100%; margin-top:6px; box-sizing:border-box; }
-    #save-ui button { margin-top:6px; }
+    /* Minimal styles for the save UI */
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:16px; }
+    #save-ui {
+      max-width:720px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+    #save-ui label { display:block; font-size:13px; margin-top:10px; }
+    #save-ui input[type="text"], #save-ui textarea {
+      width:100%;
+      box-sizing:border-box;
+      padding:8px 10px;
+      margin-top:6px;
+      border:1px solid #ccc;
+      border-radius:4px;
+      font-size:14px;
+    }
+    #save-ui textarea { resize:vertical; min-height:80px; }
+    .row { display:flex; gap:8px; margin-top:12px; }
+    .row button {
+      flex:1;
+      padding:10px;
+      font-size:14px;
+      border-radius:6px;
+      border:1px solid #bbb;
+      background:#f7f7f7;
+      cursor:pointer;
+    }
+    #save-msg { font-size:14px; margin-top:12px; min-height:20px; color:#0a0; }
+    .note { font-size:12px; color:#666; margin-top:8px; }
+    a.home { display:inline-block; margin-top:12px; color:#0366d6; text-decoration:none; }
   </style>
 </head>
 <body>
-  <!-- your existing content here -->
+  <div id="save-ui" aria-live="polite">
+    <h2>Aurababy Level System — Save / Load</h2>
 
-  <!-- Save UI -->
-  <div id="save-ui">
-    <label>Username
-      <input id="save-username" placeholder="Choose a username (optional)">
+    <label>Username (optional)
+      <input id="save-username" type="text" placeholder="Choose a username">
     </label>
 
     <label>Save Code (shareable)
       <textarea id="save-code" rows="3" placeholder="Press Export to create a save code"></textarea>
     </label>
 
-    <button id="export-save">Export Save</button>
-    <button id="copy-save">Copy Code</button>
-    <button id="import-save">Import Save (apply)</button>
+    <div class="row">
+      <button id="export-save">Export</button>
+      <button id="copy-save">Copy</button>
+      <button id="import-save">Import</button>
+    </div>
 
-    <hr>
-    <label>Load code or paste URL param:
-      <input id="load-code" placeholder="Paste save code or ?save=...">
+    <label class="note">Load from code or paste URL param (?save=...):
+      <input id="load-code" type="text" placeholder="Paste save code or ?save=...">
     </label>
-    <button id="load-from-input">Load</button>
 
-    <div id="save-msg" style="color:green;margin-top:8px;"></div>
+    <div class="row">
+      <button id="load-from-input">Load</button>
+      <button id="clear-local">Clear Local</button>
+    </div>
+
+    <div id="save-msg" aria-live="polite"></div>
+
+    <p class="note">Tip: To share a save with someone, export then open a new tab and visit:
+      <code>https://aurababylvlsystem-ponv.onrender.com/?save=PASTE_CODE</code>
+    </p>
+
+    <a class="home" href="index.html">← Back to site</a>
   </div>
 
   <script src="save.js"></script>
