@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Aurababy Saving System</title>
+  <style>
+    /* Minimal styles for UI */
+    #save-ui { position: fixed; bottom: 10px; right: 10px; background:#fff;border:1px solid #ccc;padding:10px; width:320px; z-index:9999; }
+    #save-ui input, #save-ui textarea { width:100%; margin-top:6px; box-sizing:border-box; }
+    #save-ui button { margin-top:6px; }
+  </style>
+</head>
+<body>
+  <!-- your existing content here -->
+
+  <!-- Save UI -->
+  <div id="save-ui">
+    <label>Username
+      <input id="save-username" placeholder="Choose a username (optional)">
+    </label>
+
+    <label>Save Code (shareable)
+      <textarea id="save-code" rows="3" placeholder="Press Export to create a save code"></textarea>
+    </label>
+
+    <button id="export-save">Export Save</button>
+    <button id="copy-save">Copy Code</button>
+    <button id="import-save">Import Save (apply)</button>
+
+    <hr>
+    <label>Load code or paste URL param:
+      <input id="load-code" placeholder="Paste save code or ?save=...">
+    </label>
+    <button id="load-from-input">Load</button>
+
+    <div id="save-msg" style="color:green;margin-top:8px;"></div>
+  </div>
+
+  <script src="save.js"></script>
+</body>
+</html>
