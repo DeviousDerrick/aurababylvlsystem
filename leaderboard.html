@@ -2,229 +2,766 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aurababy Leaderboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet">
 <style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 800;
-    background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
-    color: white;
-    text-align: center;
-    padding: 50px 20px;
+:root {
+  --purple-deep: #1a0d2e;
+  --purple-mid: #2d1b4e;
+  --purple-bright: #7b2cbf;
+  --blue-bright: #00b4d8;
+  --pink-neon: #f72585;
+  --gold-bright: #ffd700;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(125deg, #1a0d2e 0%, #2d1b4e 25%, #3e1f5c 50%, #2d1b4e 75%, #1a0d2e 100%);
+  background-size: 400% 400%;
+  animation: gradientFlow 20s ease infinite;
+  position: relative;
+  padding: 20px;
+}
+
+@keyframes gradientFlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb1 {
+  width: 500px;
+  height: 500px;
+  background: var(--purple-bright);
+  top: -250px;
+  left: -250px;
+  animation: float 25s ease-in-out infinite;
+}
+
+.orb2 {
+  width: 400px;
+  height: 400px;
+  background: var(--blue-bright);
+  bottom: -200px;
+  right: -200px;
+  animation: float 30s ease-in-out infinite reverse;
+}
+
+.orb3 {
+  width: 350px;
+  height: 350px;
+  background: var(--pink-neon);
+  top: 50%;
+  left: 50%;
+  animation: float 35s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(100px, -100px) scale(1.1); }
+  66% { transform: translate(-100px, 100px) scale(0.9); }
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.main-title {
+  font-size: 3em;
+  background: linear-gradient(135deg, var(--gold-bright), var(--pink-neon), var(--blue-bright));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleGlow 3s ease-in-out infinite;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.8)); }
+  50% { filter: drop-shadow(0 0 40px rgba(247,37,133,0.8)); }
+}
+
+.subtitle {
+  font-size: 1.2em;
+  opacity: 0.9;
+  color: var(--blue-bright);
+}
+
+/* User Stats Panel */
+.user-panel {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.user-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--purple-bright), var(--blue-bright), var(--pink-neon));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.user-panel:hover::before {
+  opacity: 1;
+}
+
+.panel-title {
+  font-size: 1.5em;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--gold-bright);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-box {
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  opacity: 0.8;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 1.5em;
+  color: var(--gold-bright);
+  text-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+
+.username-form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.username-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 15px;
+  font-size: 1em;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  color: var(--white);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.username-input:focus {
+  outline: none;
+  border-color: var(--blue-bright);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 0 20px rgba(0,180,216,0.5);
+}
+
+.username-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-btn, .update-btn, .back-btn {
+  padding: 12px 25px;
+  font-size: 1em;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, var(--blue-bright), var(--purple-bright));
+  color: var(--white);
+}
+
+.submit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0,180,216,0.6);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.update-btn {
+  background: linear-gradient(135deg, var(--purple-bright), var(--pink-neon));
+  color: var(--white);
+  width: 100%;
+  margin-top: 10px;
+}
+
+.update-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(247,37,133,0.6);
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 1em;
+  min-height: 25px;
+}
+
+.msg-success {
+  color: var(--gold-bright);
+  text-shadow: 0 0 10px rgba(255,215,0,0.8);
+}
+
+.msg-error {
+  color: var(--pink-neon);
+  text-shadow: 0 0 10px rgba(247,37,133,0.8);
+}
+
+/* Leaderboard Panel */
+.leaderboard-panel {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.leaderboard-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--gold-bright), var(--pink-neon), var(--blue-bright));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.leaderboard-panel:hover::before {
+  opacity: 1;
+}
+
+.leaderboard-title {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 25px;
+  background: linear-gradient(135deg, var(--gold-bright), var(--white));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard-item {
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateX(5px);
+}
+
+.leaderboard-item.rank-1 {
+  border-color: #ffd700;
+  background: rgba(255,215,0,0.1);
+  box-shadow: 0 0 20px rgba(255,215,0,0.3);
+}
+
+.leaderboard-item.rank-2 {
+  border-color: #c0c0c0;
+  background: rgba(192,192,192,0.1);
+}
+
+.leaderboard-item.rank-3 {
+  border-color: #cd7f32;
+  background: rgba(205,127,50,0.1);
+}
+
+.leaderboard-item.current-user {
+  border-color: var(--pink-neon);
+  background: rgba(247,37,133,0.15);
+  box-shadow: 0 0 20px rgba(247,37,133,0.4);
+}
+
+.rank-display {
+  font-size: 1.8em;
+  min-width: 50px;
+  text-align: center;
+}
+
+.rank-1 .rank-display {
+  color: #ffd700;
+  text-shadow: 0 0 15px #ffd700;
+}
+
+.rank-2 .rank-display {
+  color: #c0c0c0;
+  text-shadow: 0 0 15px #c0c0c0;
+}
+
+.rank-3 .rank-display {
+  color: #cd7f32;
+  text-shadow: 0 0 15px #cd7f32;
+}
+
+.user-info {
+  flex: 1;
+  margin: 0 15px;
+}
+
+.username-display {
+  font-size: 1.2em;
+  margin-bottom: 3px;
+}
+
+.user-stats-display {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.rank-info {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid rgba(255,255,255,0.1);
+  font-size: 1.1em;
+  color: var(--blue-bright);
+}
+
+/* Back Button */
+.back-btn {
+  background: linear-gradient(135deg, var(--pink-neon), #ff0066);
+  color: var(--white);
+  display: block;
+  width: 200px;
+  margin: 30px auto 0;
+  text-decoration: none;
+  text-align: center;
+}
+
+.back-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(247,37,133,0.6);
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2em;
   }
-
-  h1 { font-size: 2.5em; color: #00ffcc; margin-bottom: 20px; }
-
-  #container {
-    background: rgba(0,0,0,0.35);
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 500px;
-    margin: 0 auto;
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
-
-  input { padding: 8px; border-radius: 6px; border: none; width: 70%; font-size: 1em; }
-  button { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: 800; margin-left:5px; }
-
-  #submitBtn { background: #00ffcc; color: black; }
-  #updateBtn { background: #0072ff; color: white; margin-top: 10px; }
-  #backBtn { background: #ff00aa; color: white; margin-top: 15px; }
-
-  #leaderboard div {
-    padding: 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.05em;
-    align-items: center;
+  
+  .username-form {
+    flex-direction: column;
   }
-
-  #leaderboard div:nth-child(1) { border-left: 5px solid gold; background: rgba(255,255,255,0.15); }
-  #leaderboard div:nth-child(2) { border-left: 5px solid silver; background: rgba(255,255,255,0.1); }
-  #leaderboard div:nth-child(3) { border-left: 5px solid #cd7f32; background: rgba(255,255,255,0.1); }
-
-  /* highlight current user */
-  .you {
-    background: rgba(0,255,204,0.08);
-    border-left: 5px solid #00ffcc !important;
-    font-weight: 900;
+  
+  .username-input {
+    min-width: 100%;
   }
-
-  .muted { color: rgba(255,255,255,0.6); font-weight: 600; }
-
-  #rankInfo { margin-top:10px; font-size:0.95em; min-height:22px; }
-
+}
 </style>
 </head>
-
 <body>
-<h1>🏆 Aurababy Leaderboard 🏆</h1>
-<div id="container">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
 
-  <div>
-    <input type="text" id="usernameInput" placeholder="Enter your username">
-    <button id="submitBtn">Submit</button>
+<div class="container">
+  <div class="header">
+    <div class="main-title">🏆 AURABABY LEADERBOARD 🏆</div>
+    <div class="subtitle">Compete for the Top Spot!</div>
   </div>
-  <div id="message" style="margin-top:10px; min-height:20px;"></div>
 
-  <button id="updateBtn">Check EXP</button>
+  <!-- User Stats & Registration -->
+  <div class="user-panel">
+    <div class="panel-title">💎 YOUR STATS 💎</div>
+    
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">EXP</div>
+        <div class="stat-value" id="userExp">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Level</div>
+        <div class="stat-value" id="userLevel">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Time</div>
+        <div class="stat-value" id="userTime">0s</div>
+      </div>
+    </div>
 
-  <div id="rankInfo" class="muted"></div>
+    <div id="registrationForm">
+      <div class="username-form">
+        <input 
+          type="text" 
+          id="usernameInput" 
+          class="username-input" 
+          placeholder="Enter username (3-20 chars, lowercase only)"
+          maxlength="20"
+        >
+        <button class="submit-btn" id="submitBtn">REGISTER</button>
+      </div>
+      <div class="message" id="submitMessage"></div>
+    </div>
 
-  <div id="leaderboard" style="margin-top:20px;"></div>
+    <div id="registeredUser" style="display:none;">
+      <div style="text-align:center; font-size:1.2em; margin-bottom:15px;">
+        Registered as: <span style="color: var(--gold-bright);" id="currentUsername"></span>
+      </div>
+      <button class="update-btn" id="updateBtn">📊 UPDATE MY SCORE</button>
+    </div>
+  </div>
 
-  <button id="backBtn" onclick="window.location.href='index.html'">⬅ Back to Game</button>
+  <!-- Leaderboard -->
+  <div class="leaderboard-panel">
+    <div class="leaderboard-title">👑 TOP PLAYERS 👑</div>
+    <div class="leaderboard-list" id="leaderboardList">
+      <!-- Populated by JS -->
+    </div>
+    <div class="rank-info" id="rankInfo">Loading...</div>
+  </div>
+
+  <a href="index.html" class="back-btn">⬅ BACK TO GAME</a>
 </div>
 
 <script>
-const apiBase = "https://leaderboardbackend-7cum.onrender.com";
-let username = sessionStorage.getItem("aurababyUsername") || null;
+// IMPORTANT: Replace with your actual backend API URL
+const API_BASE = "https://leaderboardbackend-7cum.onrender.com";
 
-// DOM elements
-const usernameInput = document.getElementById("usernameInput");
-const submitBtn = document.getElementById("submitBtn");
-const message = document.getElementById("message");
-const leaderboardEl = document.getElementById("leaderboard");
-const updateBtn = document.getElementById("updateBtn");
-const rankInfo = document.getElementById("rankInfo");
+let registeredUsername = localStorage.getItem("aurababyUsername") || null;
 
-// Lock username if already stored
-if (username) {
-  usernameInput.value = username;
-  usernameInput.disabled = true;
-  submitBtn.disabled = true;
-  message.innerText = `Logged in as ${username}`;
+// Get stats from localStorage
+function getUserStats() {
+  const exp = parseInt(localStorage.getItem("exp") || "0");
+  const totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+  const level = getLevelFromExp(exp);
+  
+  return { exp, totalSeconds, level };
 }
 
-// Submit username
-submitBtn.onclick = () => {
-  const name = usernameInput.value.trim();
-  if (!name || name.length < 3 || name.length > 20) {
-    message.innerText = "Username must be 3–20 characters.";
+// Calculate level from exp (matching the level system)
+function getLevelFromExp(exp) {
+  const BASE_XP_COST = 100;
+  const TARGET_MAX_XP = 200000;
+  const maxLevel = 100;
+  const XP_CURVE_EXPONENT = Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1);
+  
+  function getTotalExpForLevel(level) {
+    if (level <= 1) return 0;
+    if (level >= maxLevel) return TARGET_MAX_XP;
+    return Math.floor(BASE_XP_COST * Math.pow(level - 1, XP_CURVE_EXPONENT));
+  }
+  
+  for (let i = 1; i <= maxLevel; i++) {
+    if (exp < getTotalExpForLevel(i)) return i - 1;
+  }
+  return maxLevel;
+}
+
+// Format numbers
+function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toString();
+}
+
+function formatTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  
+  if (hours > 0) return `${hours}h ${mins}m`;
+  if (mins > 0) return `${mins}m ${secs}s`;
+  return `${secs}s`;
+}
+
+// Validate username
+function validateUsername(username) {
+  const trimmed = username.trim().toLowerCase();
+  
+  if (trimmed.length < 3 || trimmed.length > 20) {
+    return { valid: false, error: "Username must be 3-20 characters" };
+  }
+  
+  // Only lowercase letters allowed
+  if (!/^[a-z]+$/.test(trimmed)) {
+    return { valid: false, error: "Only lowercase letters allowed (no numbers/symbols)" };
+  }
+  
+  return { valid: true, username: trimmed };
+}
+
+// Update UI with user stats
+function updateUserStats() {
+  const stats = getUserStats();
+  document.getElementById('userExp').textContent = formatNumber(stats.exp);
+  document.getElementById('userLevel').textContent = stats.level;
+  document.getElementById('userTime').textContent = formatTime(stats.totalSeconds);
+}
+
+// Show/hide registration form
+function updateRegistrationUI() {
+  if (registeredUsername) {
+    document.getElementById('registrationForm').style.display = 'none';
+    document.getElementById('registeredUser').style.display = 'block';
+    document.getElementById('currentUsername').textContent = registeredUsername;
+  } else {
+    document.getElementById('registrationForm').style.display = 'block';
+    document.getElementById('registeredUser').style.display = 'none';
+  }
+}
+
+// Submit username (register)
+async function submitUsername() {
+  const input = document.getElementById('usernameInput');
+  const message = document.getElementById('submitMessage');
+  
+  const validation = validateUsername(input.value);
+  
+  if (!validation.valid) {
+    message.textContent = '❌ ' + validation.error;
+    message.className = 'message msg-error';
     return;
   }
-  username = name;
-  sessionStorage.setItem("aurababyUsername", username);
-  usernameInput.disabled = true;
-  submitBtn.disabled = true;
-  message.innerText = `Logged in as ${username}`;
-  updateLeaderboard();
-};
+  
+  const stats = getUserStats();
+  
+  try {
+    const res = await fetch(`${API_BASE}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: validation.username,
+        exp: stats.exp
+      })
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to register');
+    }
+    
+    registeredUsername = validation.username;
+    localStorage.setItem('aurababyUsername', registeredUsername);
+    
+    message.textContent = '✅ Registered successfully!';
+    message.className = 'message msg-success';
+    
+    updateRegistrationUI();
+    fetchLeaderboard();
+  } catch (error) {
+    message.textContent = '❌ ' + error.message;
+    message.className = 'message msg-error';
+  }
+}
 
-// Fetch leaderboard
+// Update score for existing user
+async function updateScore() {
+  if (!registeredUsername) return;
+  
+  const stats = getUserStats();
+  
+  try {
+    const res = await fetch(`${API_BASE}/submit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: registeredUsername,
+        exp: stats.exp
+      })
+    });
+    
+    if (!res.ok) throw new Error('Failed to update');
+    
+    fetchLeaderboard();
+  } catch (error) {
+    console.error('Update error:', error);
+  }
+}
+
+// Fetch and render leaderboard
 async function fetchLeaderboard() {
   try {
-    const res = await fetch(`${apiBase}/leaderboard`);
-    if (!res.ok) throw new Error("Failed to fetch leaderboard");
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
-  } catch (err) {
-    console.error(err);
-    message.innerText = "Could not reach leaderboard server. Showing local-only view.";
-    return [];
+    const res = await fetch(`${API_BASE}/leaderboard`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    
+    let data = await res.json();
+    data = data.map(d => ({ 
+      username: d.username, 
+      exp: Number(d.exp) || 0 
+    }));
+    
+    // Sort by exp descending
+    data.sort((a, b) => b.exp - a.exp);
+    
+    renderLeaderboard(data);
+  } catch (error) {
+    console.error('Fetch error:', error);
+    document.getElementById('rankInfo').textContent = 'Could not load leaderboard. Check connection.';
   }
 }
 
-// Submit current user EXP to backend
-async function submitEXP() {
-  if (!username) return;
-  const exp = parseInt(localStorage.getItem("exp") || "0", 10);
-  try {
-    const res = await fetch(`${apiBase}/submit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, exp })
-    });
-    if (!res.ok) {
-      console.warn("Submit EXP returned non-OK:", res.status);
+function renderLeaderboard(data) {
+  const list = document.getElementById('leaderboardList');
+  const rankInfo = document.getElementById('rankInfo');
+  list.innerHTML = '';
+  
+  // Show top 10
+  for (let i = 0; i < 10; i++) {
+    const div = document.createElement('div');
+    div.className = 'leaderboard-item';
+    
+    if (i < 3) {
+      div.classList.add(`rank-${i + 1}`);
     }
-  } catch(err) {
-    console.error(err);
-  }
-}
-
-// Render top 5 and user's place
-async function updateLeaderboard() {
-  if (!username) {
-    message.innerText = "Please enter a username first.";
-    usernameInput.focus();
-    return;
-  }
-
-  message.innerText = "";
-  rankInfo.innerText = "Checking...";
-
-  // submit current exp (best-effort)
-  await submitEXP();
-
-  let data = await fetchLeaderboard();
-  // Ensure exp numbers and username exist
-  data = data.map(d => ({ username: d.username, exp: Number(d.exp) || 0 }));
-
-  // Sort descending by exp
-  data.sort((a,b) => b.exp - a.exp);
-
-  leaderboardEl.innerHTML = "";
-
-  // Top 5 display
-  for (let i=0; i<5; i++) {
-    const div = document.createElement("div");
+    
     if (i < data.length) {
-      const u = data[i];
-      div.innerHTML = `<strong>${i+1}. ${escapeHtml(u.username)}</strong> <span>${u.exp} EXP</span>`;
-      if (u.username.toLowerCase() === username.toLowerCase()) {
-        div.classList.add("you");
+      const user = data[i];
+      const level = getLevelFromExp(user.exp);
+      
+      if (registeredUsername && user.username.toLowerCase() === registeredUsername.toLowerCase()) {
+        div.classList.add('current-user');
       }
+      
+      div.innerHTML = `
+        <div class="rank-display">#${i + 1}</div>
+        <div class="user-info">
+          <div class="username-display">${escapeHtml(user.username)}</div>
+          <div class="user-stats-display">Level ${level} • ${formatNumber(user.exp)} EXP</div>
+        </div>
+      `;
     } else {
-      div.innerHTML = `<strong>${i+1}. ---</strong> <span>0 EXP</span>`;
+      div.innerHTML = `
+        <div class="rank-display">#${i + 1}</div>
+        <div class="user-info">
+          <div class="username-display">---</div>
+          <div class="user-stats-display">No player yet</div>
+        </div>
+      `;
     }
-    leaderboardEl.appendChild(div);
+    
+    list.appendChild(div);
   }
-
-  // Find user's index in full list
-  const myIndex = data.findIndex(u => u.username.toLowerCase() === username.toLowerCase());
-  if (myIndex === -1) {
-    // user not on leaderboard (server may not have them or exp is 0)
-    const myExp = Number(localStorage.getItem("exp") || "0");
-    rankInfo.innerText = `You are not ranked yet. Your EXP: ${myExp}. Submit by clicking "Check EXP".`;
-    // Optionally show user's current exp below top 5
-    const spacer = document.createElement("div");
-    spacer.className = "muted";
-    spacer.innerText = "...";
-    leaderboardEl.appendChild(spacer);
-
-    const selfDiv = document.createElement("div");
-    selfDiv.classList.add("you");
-    selfDiv.innerHTML = `<strong>—. ${escapeHtml(username)}</strong> <span>${myExp} EXP</span>`;
-    leaderboardEl.appendChild(selfDiv);
-  } else {
-    const rank = myIndex + 1;
-    rankInfo.innerText = `You are #${rank} out of ${data.length} player${data.length === 1 ? "" : "s"} (${data[myIndex].exp} EXP).`;
-    // If user is not in top 5, show a small separator and their actual rank row
-    if (myIndex >= 5) {
-      const spacer = document.createElement("div");
-      spacer.className = "muted";
-      spacer.innerText = "...";
-      leaderboardEl.appendChild(spacer);
-
-      const myDiv = document.createElement("div");
-      myDiv.classList.add("you");
-      myDiv.innerHTML = `<strong>${rank}. ${escapeHtml(data[myIndex].username)}</strong> <span>${data[myIndex].exp} EXP</span>`;
-      leaderboardEl.appendChild(myDiv);
+  
+  // Show user's rank if not in top 10
+  if (registeredUsername) {
+    const userIndex = data.findIndex(u => u.username.toLowerCase() === registeredUsername.toLowerCase());
+    
+    if (userIndex === -1) {
+      rankInfo.textContent = 'You are not ranked yet. Update your score to appear!';
+    } else if (userIndex >= 10) {
+      rankInfo.textContent = `You are #${userIndex + 1} out of ${data.length} players`;
+      
+      // Add separator and user's position
+      const spacer = document.createElement('div');
+      spacer.style.textAlign = 'center';
+      spacer.style.opacity = '0.5';
+      spacer.style.margin = '15px 0';
+      spacer.textContent = '...';
+      list.appendChild(spacer);
+      
+      const userDiv = document.createElement('div');
+      userDiv.className = 'leaderboard-item current-user';
+      const user = data[userIndex];
+      const level = getLevelFromExp(user.exp);
+      
+      userDiv.innerHTML = `
+        <div class="rank-display">#${userIndex + 1}</div>
+        <div class="user-info">
+          <div class="username-display">${escapeHtml(user.username)}</div>
+          <div class="user-stats-display">Level ${level} • ${formatNumber(user.exp)} EXP</div>
+        </div>
+      `;
+      list.appendChild(userDiv);
+    } else {
+      rankInfo.textContent = `You are #${userIndex + 1} out of ${data.length} players! 🎉`;
     }
+  } else {
+    rankInfo.textContent = 'Register to compete!';
   }
 }
 
-// Update button
-updateBtn.onclick = updateLeaderboard;
-
-// Auto-refresh every 10s (only if logged in)
-setInterval(() => {
-  if (sessionStorage.getItem("aurababyUsername")) updateLeaderboard();
-}, 10000);
-
-// simple HTML-escape helper to avoid injection if usernames are untrusted
 function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
@@ -233,82 +770,23 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
-</script>
-</body>
-</html>
-```
 
+// Event listeners
+document.getElementById('submitBtn').addEventListener('click', submitUsername);
+document.getElementById('updateBtn').addEventListener('click', updateScore);
 
-````html name=index.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Aurababy - Game</title>
-<style>
-  body { font-family: Arial, sans-serif; text-align:center; padding:40px; background:#f3f8ff; }
-  #exp { font-size:2em; margin:20px 0; }
-  button { padding:10px 16px; margin:6px; border-radius:6px; border:none; cursor:pointer; font-weight:bold; }
-  #toLeaderboard { background:#0072ff; color:white; }
-  #saveExp { background:#00cc66; color:white; }
-</style>
-</head>
-<body>
-  <h1>Aurababy Game (demo)</h1>
+// Enter key to submit
+document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') submitUsername();
+});
 
-  <div>Current EXP:</div>
-  <div id="exp">0</div>
+// Initialize
+updateUserStats();
+updateRegistrationUI();
+fetchLeaderboard();
 
-  <button id="gainExp">Gain 10 EXP</button>
-  <button id="saveExp">Save EXP (to local)</button>
-  <br/>
-  <input id="usernameField" placeholder="Enter username to use on leaderboard" />
-  <br/>
-  <button id="setName">Set Username for Leaderboard</button>
-  <br/>
-  <button id="toLeaderboard">Open Leaderboard</button>
-
-<script>
-  // Simple demo to show how index.html should store EXP and username
-  const expEl = document.getElementById('exp');
-  const gainExpBtn = document.getElementById('gainExp');
-  const saveExpBtn = document.getElementById('saveExp');
-  const toLeaderboardBtn = document.getElementById('toLeaderboard');
-  const usernameField = document.getElementById('usernameField');
-  const setNameBtn = document.getElementById('setName');
-
-  // load stored exp (if any)
-  let exp = Number(localStorage.getItem('exp') || 0);
-  expEl.innerText = exp;
-
-  gainExpBtn.onclick = () => {
-    exp += 10;
-    expEl.innerText = exp;
-  };
-
-  // Save EXP into localStorage so leaderboard can read it
-  saveExpBtn.onclick = () => {
-    localStorage.setItem('exp', String(exp));
-    alert('EXP saved locally. Now click "Open Leaderboard" and then "Check EXP" to submit.');
-  };
-
-  // Save username into sessionStorage so leaderboard.html can auto-use it
-  setNameBtn.onclick = () => {
-    const name = usernameField.value.trim();
-    if (!name || name.length < 3) {
-      alert('Choose a username with 3+ chars');
-      return;
-    }
-    sessionStorage.setItem('aurababyUsername', name);
-    alert('Username saved for leaderboard: ' + name);
-  };
-
-  // open leaderboard in same tab
-  toLeaderboardBtn.onclick = () => {
-    // ensure exp saved first (optional convenience)
-    localStorage.setItem('exp', String(exp));
-    window.location.href = 'leaderboard.html';
-  };
+// Auto-refresh every 10 seconds
+setInterval(fetchLeaderboard, 10000);
 </script>
 </body>
 </html>
