@@ -145,6 +145,7 @@ body {
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none; /* FIXED: Allows clicking through the glow */
 }
 
 .user-panel:hover::before {
@@ -190,6 +191,8 @@ body {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  position: relative; /* Ensure it sits right */
+  z-index: 2; /* Ensure input sits above background */
 }
 
 .username-input {
@@ -235,6 +238,7 @@ body {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  z-index: 2; /* Ensures button is clickable */
 }
 
 .submit-btn {
@@ -307,6 +311,7 @@ body {
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none; /* FIXED: Allows clicking through the glow */
 }
 
 .leaderboard-panel:hover::before {
@@ -327,6 +332,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  position: relative;
+  z-index: 2;
 }
 
 .leaderboard-item {
