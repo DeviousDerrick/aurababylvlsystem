@@ -1,33 +1,38 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// In-memory leaderboard (OK for now)
+// Needed to serve HTML files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ===== LEADERBOARD DATA =====
 let leaderboard = [];
 
-// GET leaderboard
+// API: get leaderboard
 app.get("/leaderboard", (req, res) => {
   res.json(leaderboard);
 });
 
-// POST submit / update score
+// API: submit / update score
 app.post("/submit", (req, res) => {
   const { username, exp } = req.body;
 
   if (!username || typeof exp !== "number") {
-    return res.status(400).json({ error: "Invalid data" });
+    return res.status(400).json({ error: "Invalid payload" });
   }
 
-  const existing = leaderboard.find(
+  const user = leaderboard.find(
     u => u.username.toLowerCase() === username.toLowerCase()
   );
 
-  if (existing) {
-    // update score (keep highest EXP)
-    existing.exp = Math.max(existing.exp, exp);
+  if (user) {
+    user.exp = Math.max(user.exp, exp);
   } else {
     leaderboard.push({ username, exp });
   }
@@ -35,12 +40,14 @@ app.post("/submit", (req, res) => {
   res.json({ success: true });
 });
 
-// Health check (VERY important)
+// ===== SERVE FRONTEND FILES =====
+app.use(express.static(__dirname));
+
 app.get("/", (req, res) => {
-  res.send("Aurababy leaderboard backend running");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log("Aurababy server running on port", PORT);
 });
