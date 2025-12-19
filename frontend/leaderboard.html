@@ -840,5 +840,140 @@ fetchLeaderboard();
 // Auto-refresh every 10 seconds
 setInterval(fetchLeaderboard, 10000);
 </script>
+
+  <script>
+const API_BASE = "https://aurababylvlsystem-backend0.onrender.com";
+
+/* DEVICE-LOCKED USERNAME */
+const DEVICE_USERNAME_KEY = "aurababyUsername";
+let registeredUsername = localStorage.getItem(DEVICE_USERNAME_KEY);
+
+// Get stats from localStorage
+function getUserStats() {
+  const exp = parseInt(localStorage.getItem("exp") || "0");
+  const totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+  const level = getLevelFromExp(exp);
+  return { exp, totalSeconds, level };
+}
+
+function getLevelFromExp(exp) {
+  const BASE_XP_COST = 100;
+  const TARGET_MAX_XP = 200000;
+  const maxLevel = 100;
+  const XP_CURVE_EXPONENT =
+    Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1);
+
+  function getTotalExpForLevel(level) {
+    if (level <= 1) return 0;
+    if (level >= maxLevel) return TARGET_MAX_XP;
+    return Math.floor(BASE_XP_COST * Math.pow(level - 1, XP_CURVE_EXPONENT));
+  }
+
+  for (let i = 1; i <= maxLevel; i++) {
+    if (exp < getTotalExpForLevel(i)) return i - 1;
+  }
+  return maxLevel;
+}
+
+function formatNumber(num) {
+  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
+  if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
+  return num.toString();
+}
+
+function formatTime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function validateUsername(username) {
+  const trimmed = username.trim().toLowerCase();
+  if (trimmed.length < 3 || trimmed.length > 20)
+    return { valid: false, error: "Username must be 3–20 characters" };
+  if (!/^[a-z0-9]+$/.test(trimmed))
+    return { valid: false, error: "Only letters and numbers allowed" };
+  return { valid: true, username: trimmed };
+}
+
+function updateUserStats() {
+  const stats = getUserStats();
+  document.getElementById("userExp").textContent = formatNumber(stats.exp);
+  document.getElementById("userLevel").textContent = stats.level;
+  document.getElementById("userTime").textContent = formatTime(stats.totalSeconds);
+}
+
+function updateRegistrationUI() {
+  const input = document.getElementById("usernameInput");
+  const submitBtn = document.getElementById("submitBtn");
+
+  if (registeredUsername) {
+    document.getElementById("registrationForm").style.display = "none";
+    document.getElementById("registeredUser").style.display = "block";
+    document.getElementById("currentUsername").textContent = registeredUsername;
+    input.disabled = true;
+    submitBtn.disabled = true;
+  } else {
+    document.getElementById("registrationForm").style.display = "block";
+    document.getElementById("registeredUser").style.display = "none";
+    input.disabled = false;
+    submitBtn.disabled = false;
+  }
+}
+
+async function submitUsername() {
+  if (registeredUsername) return;
+
+  const input = document.getElementById("usernameInput");
+  const message = document.getElementById("submitMessage");
+  const submitBtn = document.getElementById("submitBtn");
+
+  const validation = validateUsername(input.value);
+  if (!validation.valid) {
+    message.textContent = "❌ " + validation.error;
+    message.className = "message msg-error";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  message.textContent = "Registering...";
+
+  try {
+    const stats = getUserStats();
+    const res = await fetch(`${API_BASE}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: validation.username,
+        exp: stats.exp
+      })
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+
+    registeredUsername = validation.username;
+    localStorage.setItem(DEVICE_USERNAME_KEY, registeredUsername);
+
+    message.textContent = "✅ Registered!";
+    message.className = "message msg-success";
+    updateRegistrationUI();
+    fetchLeaderboard();
+  } catch (err) {
+    message.textContent = "❌ " + err.message;
+    message.className = "message msg-error";
+    submitBtn.disabled = false;
+  }
+}
+
+// existing leaderboard logic below stays untouched
+updateUserStats();
+updateRegistrationUI();
+fetchLeaderboard();
+setInterval(fetchLeaderboard, 10000);
+</script>
+
 </body>
 </html>
