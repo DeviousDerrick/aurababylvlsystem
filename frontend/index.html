@@ -1,486 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>Level System</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level System | Aurababy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
     <script src="leaderboard.js"></script>
     <style>
-      /* GLOBAL FONT */
-      body, * {
-        font-family: 'Poppins', sans-serif !important;
-        font-weight: 800 !important;
-      }
+        :root {
+            --bg-dark: #0f0c29;
+            --purple-glow: #6b46c1;
+            --accent-gold: #ffdd57;
+            --accent-teal: #00ffcc;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
 
-      /* BACKGROUND + LAYOUT */
-      body {
-        background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
-        color: #ffffff;
-        text-align: center;
-        padding-top: 50px;
-        position: relative;
-        overflow-y: auto;
-        min-height: 100vh;
-      }
+        /* RESET & BASE */
+        * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-      /* WHITE STAR SHAPES */
-      .star {
-        position: absolute;
-        width: 12px; height: 12px;
-        background: white;
-        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-        filter: drop-shadow(0 0 6px white);
-        opacity: 0.9;
-        z-index: -1;
-      }
-      .star:nth-child(1) { top: 10%; left: 15%; transform: scale(0.8); }
-      .star:nth-child(2) { top: 25%; left: 70%; transform: scale(1.1); }
-      .star:nth-child(3) { top: 40%; left: 30%; transform: scale(0.6); }
-      .star:nth-child(4) { top: 55%; left: 85%; transform: scale(1.3); }
-      .star:nth-child(5) { top: 75%; left: 20%; transform: scale(1.0); }
-      .star:nth-child(6) { top: 12%; left: 80%; transform: scale(0.7); }
-      .star:nth-child(7) { top: 90%; left: 60%; transform: scale(1.2); }
-      .star:nth-child(8) { top: 65%; left: 45%; transform: scale(0.9); }
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-      /* TIMER BOX */
-      #timeSpent {
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        padding: 10px 16px;
-        background: rgba(0, 0, 0, 0.45);
-        color: white;
-        font-size: 16px;
-        border-radius: 8px;
-        backdrop-filter: blur(4px);
-        z-index: 5000;
-        box-shadow: 0 0 8px rgba(255,255,255,0.4);
-      }
+        /* FLOATING STARS BACKGROUND */
+        .star {
+            position: fixed;
+            width: 10px; height: 10px;
+            background: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            filter: drop-shadow(0 0 6px white);
+            opacity: 0.3;
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
 
-      /* ACHIEVEMENTS LINK BUTTON (Updated) */
-      #achButton {
-        position: fixed;
-        left: 15px;
-        top: 15px;
-        padding: 12px 18px;
-        background: #ffdd57;
-        color: black;
-        border-radius: 8px;
-        cursor: pointer;
-        z-index: 5000;
-        text-decoration: none;
-        box-shadow: 0 0 10px #ffdd57;
-        transition: 0.2s;
-      }
-      #achButton:hover { transform: scale(1.05); }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
 
-      /* LEADERBOARD BUTTON */
-      #leaderboardBtn {
-        position: fixed;
-        left: 15px;
-        top: 70px;
-        padding: 12px 18px;
-        background: #00ffcc;
-        color: black;
-        border-radius: 8px;
-        cursor: pointer;
-        z-index: 5000;
-        text-decoration: none;
-        box-shadow: 0 0 10px #00ffcc;
-        transition: 0.2s;
-      }
-      #leaderboardBtn:hover { transform: scale(1.05); background: #00e6b8; }
+        /* CLEAN TOP NAVIGATION BAR */
+        .top-nav {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
 
-      /* LEVEL UI */
-      h1 { font-size: 2.5em; margin-top: 25px; color: #00c6ff; text-shadow: 0 0 10px white; }
-      .level-info { font-size: 1.5em; margin-bottom: 10px; }
-      .title-info { font-size: 1.2em; color: #ffdd57; margin-bottom: 25px; }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
 
-      .progress-container {
-        width: min(90%, 600px);
-        height: 40px;
-        background-color: #1a1a2e;
-        border-radius: 20px;
-        margin: 0 auto;
-        overflow: hidden;
-        box-shadow: 0 0 10px #00c6ff;
-        border: 2px solid #005580;
-      }
+        .nav-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+        }
 
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(to right, #00c6ff, #0072ff);
-        border-radius: 20px;
-        line-height: 40px;
-        color: #fff;
-        transition: width 0.5s ease-in-out;
-      }
+        #achButton { background: var(--accent-gold); color: #000; box-shadow: 0 4px 15px rgba(255, 221, 87, 0.3); }
+        #leaderboardBtn { background: var(--accent-teal); color: #000; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3); }
+        #timeSpent { background: var(--glass-bg); border: 1px solid var(--glass-border); color: white; padding: 10px 15px; border-radius: 12px; }
 
-      .exp-text, .countdown {
-        margin-top: 10px;
-        font-size: 1.1em;
-        color: #a0d8ef;
-      }
-      .countdown { margin-top: 20px; color: #66d9ff; }
+        /* MAIN CONTENT CARD (Decluttering) */
+        .main-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: min(95%, 700px);
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
 
-      /* CODE INPUT */
-      .code-redeem { margin-top: 30px; }
-      input[type="text"] {
-        padding: 10px; border-radius: 5px; border: none; font-family: 'Poppins';
-      }
-      button#redeemBtn {
-        padding: 10px 20px; border-radius: 5px; border: none; background: #00c6ff; color: white; cursor: pointer; font-family: 'Poppins'; font-weight: 800;
-      }
-      button#redeemBtn:hover { background: #0099cc; }
-      .code-message { margin-top: 10px; color: #ffdd57; transition: 0.5s; height: 20px;}
+        h1 { 
+            font-size: 2.2rem; 
+            font-weight: 800; 
+            margin: 0 0 10px 0; 
+            background: linear-gradient(to right, #fff, var(--purple-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-      /* LEVEL UP POPUP */
-      #levelUpPopup {
-        position: fixed;
-        top: 20%; left: 50%;
-        transform: translateX(-50%);
-        background: #00ff99;
-        color: black;
-        padding: 20px 40px;
-        font-size: 1.5em;
-        border-radius: 12px;
-        box-shadow: 0 0 20px #00ff99;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.5s;
-        z-index: 10001;
-      }
+        .level-info { font-size: 1.8rem; font-weight: 800; color: #fff; }
+        .title-info { font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 30px; letter-spacing: 1px; }
 
-      /* LEVEL REWARDS LIST */
-      .level-rewards { margin-top: 40px; }
-      .level-rewards h2 { color: #ffdd57; }
-      .level-rewards li { margin: 10px 0; font-size: 1.1em; }
-      .level-rewards a { color: #00ff99; text-decoration: none; border-bottom: 1px dashed; }
+        /* PROGRESS BAR REDESIGN */
+        .progress-wrapper { margin: 20px 0; }
+        .progress-container {
+            width: 100%;
+            height: 25px;
+            background-color: rgba(0,0,0,0.3);
+            border-radius: 50px;
+            overflow: hidden;
+            border: 1px solid var(--purple-glow);
+        }
 
-      /* AURA SURGE STYLES */
-      #qteOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 50, 0.85);
-        backdrop-filter: blur(5px);
-        z-index: 20000;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        opacity: 0; pointer-events: none;
-        transition: opacity 0.3s;
-      }
-      #qteOverlay.active { opacity: 1; pointer-events: auto; }
-      #qteMessage {
-        font-size: 3em; color: #ffdd57;
-        text-shadow: 0 0 20px red;
-        margin-bottom: 20px;
-        animation: pulseWarning 0.5s infinite alternate;
-      }
-      @keyframes pulseWarning { from { transform: scale(1); } to { transform: scale(1.1); } }
-      .qte-orb {
-        position: absolute; width: 70px; height: 70px; border-radius: 50%;
-        background: radial-gradient(circle, #fff, #00c6ff);
-        box-shadow: 0 0 25px #00c6ff, 0 0 50px #fff;
-        cursor: crosshair;
-        animation: shake 0.5s infinite;
-      }
-      @keyframes shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        50% { transform: translate(-1px, 2px) rotate(-1deg); }
-        100% { transform: translate(1px, -2px) rotate(-1deg); }
-      }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #6b46c1, #a78bfa);
+            box-shadow: 0 0 20px rgba(107, 70, 193, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: width 0.5s ease;
+        }
+
+        .exp-text, .countdown { font-size: 0.9rem; color: #cbd5e0; margin-top: 10px; }
+
+        /* REDEEM SECTION */
+        .code-redeem {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        input[type="text"] {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            width: 60%;
+            outline: none;
+        }
+
+        button#redeemBtn {
+            padding: 12px 25px;
+            border-radius: 12px;
+            border: none;
+            background: var(--purple-glow);
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: 0.3s;
+        }
+
+        button#redeemBtn:hover { filter: brightness(1.2); transform: scale(1.05); }
+
+        /* REWARDS LIST */
+        .level-rewards {
+            margin-top: 40px;
+            text-align: left;
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .level-rewards h2 { font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 15px; }
+        .level-rewards li { list-style: none; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; }
+        .level-rewards a { color: var(--accent-teal); text-decoration: none; font-weight: 600; }
+
+        /* POPUPS & OVERLAYS */
+        #levelUpPopup {
+            position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
+            background: var(--accent-teal); color: #000; padding: 15px 40px;
+            border-radius: 50px; font-weight: 800; opacity: 0; transition: 0.5s; z-index: 1000;
+        }
+
+        #qteOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 12, 41, 0.95); z-index: 9999;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        #qteOverlay.active { display: flex; }
+
+        .qte-orb {
+            position: absolute; width: 70px; height: 70px; border-radius: 50%;
+            background: radial-gradient(circle, #fff, var(--purple-glow));
+            box-shadow: 0 0 30px var(--purple-glow); cursor: pointer;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
+    <div class="star" style="top:10%; left:10%;"></div>
+    <div class="star" style="top:30%; left:80%;"></div>
+    <div class="star" style="top:70%; left:15%;"></div>
+    <div class="star" style="top:85%; left:75%;"></div>
+
+    <div class="top-nav">
+        <div class="nav-links">
+            <a href="achievements.html" id="achButton" class="nav-btn">🏆 Achievements</a>
+            <a href="leaderboard.html" id="leaderboardBtn" class="nav-btn">📊 Leaderboard</a>
+        </div>
+        <div id="timeSpent">0m 0s</div>
+    </div>
+
+    <main class="main-card">
+        <h1>Aurababy Leveling</h1>
+        <div class="level-info">Level <span id="level">0</span></div>
+        <div class="title-info" id="title">🍼 Title: None Yet</div>
+
+        <div class="progress-wrapper">
+            <div class="progress-container">
+                <div class="progress-bar" id="expBar">0%</div>
+            </div>
+            <div class="exp-text">EXP: <span id="exp">0</span> / <span id="nextExp">100</span></div>
+            <div class="countdown" id="countdown">Next EXP in: 60s</div>
+        </div>
+
+        <div class="code-redeem">
+            <input type="text" id="codeInput" placeholder="Enter promo code..." />
+            <button id="redeemBtn" onclick="redeemCode()">Redeem</button>
+            <div id="codeMessage" style="margin-top:10px; font-size:0.8rem; color:var(--accent-gold);"></div>
+        </div>
+
+        <div class="level-rewards">
+            <h2>🎁 Level Rewards</h2>
+            <ul id="rewardList" style="padding:0; margin:0;">
+                <li data-level="25">🔒 Level 25: ???</li>
+                <li data-level="50">🔒 Level 50: ???</li>
+                <li data-level="75">🔒 Level 75: ???</li>
+                <li data-level="100">🔒 Level 100: ???</li>
+            </ul>
+        </div>
+    </main>
+
+    <div id="levelUpPopup">🎉 LEVEL UP! 🎉</div>
+
     <div id="qteOverlay">
-      <div id="qteMessage">⚠️ AURA SURGE! ⚠️</div>
-      <div style="font-size:1.5em; color:white;">Click the 3 Orbs fast!</div>
-      <div id="qteTimer" style="font-size:2em; color:#ff4444; margin-top:10px;">5.0s</div>
+        <h2 style="color:red; font-size:3rem;">⚠️ AURA SURGE!</h2>
+        <p>Click the 3 Orbs quickly!</p>
+        <div id="qteTimer" style="font-size:2rem;">5.0s</div>
     </div>
-
-    <div id="timeSpent">Time on site: 0s</div>
-    <a href="achievements.html" id="achButton">🏆 Achievements</a>
-    <a href="leaderboard.html" id="leaderboardBtn">🏆 Leaderboard {Beta}</a>
-
-    <div class="star"></div><div class="star"></div><div class="star"></div>
-    <div class="star"></div><div class="star"></div><div class="star"></div>
-    <div class="star"></div><div class="star"></div>
-
-    <h1>🌟👶Aurababy Leveling System👶🌟</h1>
-    <div class="level-info">Level: <span id="level">0</span></div>
-    <div class="title-info" id="title">🍼 Title: None Yet</div>
-
-    <div class="progress-container">
-      <div class="progress-bar" id="expBar">0%</div>
-    </div>
-
-    <div class="exp-text">
-      EXP: <span id="exp">0</span> / <span id="nextExp">100</span>
-    </div>
-    <div class="countdown" id="countdown">Next EXP in: 60 seconds</div>
-
-    <div class="code-redeem" id="codeSection">
-      <input type="text" id="codeInput" placeholder="Enter code" />
-      <button id="redeemBtn" onclick="redeemCode()">Redeem Code</button>
-      <div id="codeMessage" class="code-message"></div>
-    </div>
-
-    <div class="level-rewards">
-      <h2>🎁 Level Rewards</h2>
-      <ul id="rewardList" style="list-style:none; padding:0;">
-        <li data-level="25">🔒 Level 25 Reward: ???</li>
-        <li data-level="50">🔒 Level 50 Reward: ???</li>
-        <li data-level="75">🔒 Level 75 Reward: ???</li>
-        <li data-level="100">🔒 Level 100 Reward: ???</li>
-      </ul>
-    </div>
-
-    <div id="levelUpPopup">🎉 Level Up! 🎉</div>
 
     <script>
-        // --- TIMER LOGIC (Continues on this page) ---
+        /* SCRIPT LOGIC (Integrated from your original) */
         let totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
         let displaySec = parseInt(localStorage.getItem("displaySec") || "0");
 
         function updateDisplayTime() {
             let mins = Math.floor(displaySec / 60);
             let secs = displaySec % 60;
-            document.getElementById("timeSpent").innerText = `Time on site: ${mins}m ${secs}s`;
+            document.getElementById("timeSpent").innerText = `${mins}m ${secs}s`;
         }
 
         setInterval(() => {
-            totalSeconds++; // Tracks logic time (badges)
-            displaySec++;   // Tracks visual session time
+            totalSeconds++;
+            displaySec++;
             localStorage.setItem("totalSeconds", totalSeconds);
             localStorage.setItem("displaySec", displaySec);
             updateDisplayTime();
         }, 1000);
-        updateDisplayTime();
 
-        // --- LEVEL SYSTEM ---
         const maxLevel = 100;
         let exp = parseInt(localStorage.getItem("exp") || "0");
         let secondsLeft = parseInt(localStorage.getItem("secondsLeft") || "60");
-
-        // Codes
         let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
-        const codes5000 = ["teroswillrebirth","300GamesBaby!","400GamesSoon?"];
+
+        const codes5000 = ["teroswillrebirth","300gamesbaby!","400gamessoon?"];
         const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
-        const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
-        const codesHoliday = [
-            "merrychristmas", "merryhanukkah", "hollyandjolly", "jinglethebells", "sleddingbaby!", 
-            "gingerbaby", "mannylovescookiesandmilk!", "candycanes", "eggingandnogging", "reinbabies", 
-            "carolingtime", "cozybabies", "babyontheshelf", "frostybaby", "santababy!", "yetibebeh", 
-            "underthemistletoe!", "tothenorthpole", "presentsforall", "angelbabies", "clausbaby", 
-            "staronthetree", "winterweather", "jollybaby", "happyholidaysaurababyteam!"
-        ];
+        const validCodes = [...codes5000, ...codes2500].map(c => c.toLowerCase());
 
-        const validCodes = [...codes5000, ...codes2500, ...codes1000, ...codesHoliday].map(c => c.toLowerCase());
+        const titleMap = { 1: "🧬 Sperm Cell", 5: "👶 Newborn", 10: "✨👶 Aurababy", 25: "🌾👶 Aurafarmer", 50: "🌌👶 Celestial", 75: "👼 Divine", 100: "💫 Aura God" };
+        const rewards = { 25: "https://hianime.cx", 50: "https://npm.lat.cdn.cloudflare.net/", 75: "http://xcpugbjyjm.finxstudio.fi/", 100: "https://www.khanacademy.ink/" };
 
-        const titleMap = {
-            1: "🧬 Sperm Cell", 5: "👶 Newborn", 10: "✨👶 Aurababy",
-            25: "🌾👶 Aurafarmer", 50: "🌌👶 The Celestial Baby",
-            75: "👼 Divine Baby", 100: "💫👶💫 The Baby That Holds Aura"
-        };
-        const rewards = {
-            25: "https://hianime.cx", 50: "https://npm.lat.cdn.cloudflare.net/",
-            75: "http://xcpugbjyjm.finxstudio.fi/", 100: "https://www.khanacademy.ink/"
-        };
-
-        // XP Math
         const BASE_XP_COST = 100;
         const TARGET_MAX_XP = 200000;
         const XP_CURVE_EXPONENT = Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1);
-
         const expTable = [];
         for (let i = 0; i <= maxLevel; i++) {
             if (i <= 1) expTable.push(0);
-            else if (i >= maxLevel) expTable.push(TARGET_MAX_XP);
             else expTable.push(Math.floor(BASE_XP_COST * Math.pow(i - 1, XP_CURVE_EXPONENT)));
         }
 
-        function clampToMaxExp(v) { return Math.min(v, expTable[maxLevel]); }
         function getLevelFromExp(x) {
             for (let i = 1; i <= maxLevel; i++) if (x < expTable[i]) return i - 1;
             return maxLevel;
         }
-        function getNextLevelExp(lv) {
-            return lv >= maxLevel ? expTable[maxLevel] : expTable[lv + 1];
-        }
-        function getTitle(level) {
-            let best = "🍼 None Yet";
-            for (const lvl in titleMap) if (level >= lvl) best = titleMap[lvl];
-            return best;
-        }
 
-        // UI Updates
         function updateUI() {
             localStorage.setItem("exp", exp);
             const level = getLevelFromExp(exp);
-            const nextLevelExp = getNextLevelExp(level);
+            const nextLevelExp = expTable[level + 1] || expTable[maxLevel];
             const currentLevelExp = expTable[level];
 
             document.getElementById("level").innerText = level;
             document.getElementById("exp").innerText = exp.toLocaleString();
-            document.getElementById("title").innerText = "🍼 Title: " + getTitle(level);
+            document.getElementById("title").innerText = "🍼 Title: " + (titleMap[level] || "Aurababy");
 
             if (level >= maxLevel) {
                 document.getElementById("expBar").style.width = "100%";
-                document.getElementById("expBar").innerText = "MAX LEVEL";
-                document.getElementById("nextExp").innerText = "MAX";
-                document.getElementById("countdown").innerText = "MAX LEVEL REACHED";
+                document.getElementById("expBar").innerText = "MAX";
             } else {
-                const levelProgress = exp - currentLevelExp;
-                const levelTotal = nextLevelExp - currentLevelExp;
-                const percent = Math.floor((levelProgress / levelTotal) * 100);
+                const percent = Math.floor(((exp - currentLevelExp) / (nextLevelExp - currentLevelExp)) * 100);
                 document.getElementById("expBar").style.width = percent + "%";
                 document.getElementById("expBar").innerText = percent + "%";
                 document.getElementById("nextExp").innerText = nextLevelExp.toLocaleString();
             }
-            updateRewards();
+            updateRewards(level);
         }
 
-        function updateRewards() {
+        function updateRewards(currentLevel) {
             document.querySelectorAll("#rewardList li").forEach(li => {
                 const lvl = parseInt(li.dataset.level);
-                if (getLevelFromExp(exp) >= lvl) {
-                    li.innerHTML = `🎉 Level ${lvl} Reward: <a href="${rewards[lvl]}" target="_blank">Claim Here</a>`;
+                if (currentLevel >= lvl) {
+                    li.innerHTML = `✅ Level ${lvl} Unlocked: <a href="${rewards[lvl]}" target="_blank">Claim Reward</a>`;
                 }
             });
         }
 
-        // --- GAME LOOPS ---
         setInterval(() => {
-            // Check if exp changed from other page (achievements)
-            let storedExp = parseInt(localStorage.getItem("exp") || "0");
-            if (storedExp !== exp) {
-                exp = storedExp;
-                updateUI();
-            }
-            
             if (getLevelFromExp(exp) >= maxLevel) return;
-
             secondsLeft--;
-            document.getElementById("countdown").innerText = `Next EXP in: ${secondsLeft} seconds`;
-            localStorage.setItem("secondsLeft", secondsLeft);
-
+            document.getElementById("countdown").innerText = `Next EXP in: ${secondsLeft}s`;
             if (secondsLeft <= 0) {
-                exp = clampToMaxExp(exp + 20); // Passive gain
+                exp = Math.min(exp + 20, expTable[maxLevel]);
                 updateUI();
                 secondsLeft = 60;
-                checkLevelUp();
             }
         }, 1000);
 
-        let previousLevel = getLevelFromExp(exp);
-        function checkLevelUp() {
-            const current = getLevelFromExp(exp);
-            if (current > previousLevel) {
-                const popup = document.getElementById("levelUpPopup");
-                popup.style.opacity = 1;
-                popup.style.top = "30%";
-                setTimeout(() => { popup.style.opacity = 0; popup.style.top = "20%"; }, 3000);
-                previousLevel = current;
-            }
-        }
-
-        // --- CODE REDEEM ---
         window.redeemCode = function() {
             const input = document.getElementById("codeInput");
             const code = input.value.trim().toLowerCase();
             const msg = document.getElementById("codeMessage");
 
-            if (usedCodes[code]) {
-                msg.innerText = "⚠️ Code already used!";
-                return;
-            }
-            if (!validCodes.includes(code)) {
-                msg.innerText = "❌ Invalid Code!";
-                return;
-            }
+            if (usedCodes[code]) { msg.innerText = "Already used!"; return; }
+            if (!validCodes.includes(code)) { msg.innerText = "Invalid code!"; return; }
 
-            let reward = 0;
-            if (codes5000.map(c=>c.toLowerCase()).includes(code)) reward = 5000;
-            else if (codes2500.map(c=>c.toLowerCase()).includes(code)) reward = 2500;
-            else if (codes1000.map(c=>c.toLowerCase()).includes(code)) reward = 1000;
-            else if (codesHoliday.includes(code)) reward = 1750;
-
-            exp = clampToMaxExp(exp + reward);
+            let reward = codes5000.includes(code) ? 5000 : 2500;
+            exp = Math.min(exp + reward, expTable[maxLevel]);
             usedCodes[code] = true;
             localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
             updateUI();
-            
-            msg.innerText = `✅ Code Redeemed! +${reward} EXP`;
+            msg.innerText = "Success! +" + reward + " EXP";
             input.value = "";
         };
 
-        // --- AURA SURGE EVENT ---
-        let surgeCount = parseInt(localStorage.getItem("surgeCount") || "0");
-        
-        function triggerSurge() {
-             const overlay = document.getElementById("qteOverlay");
-             const qteTimerDiv = document.getElementById("qteTimer");
-             
-             overlay.classList.add("active");
-             let timeLeft = 5.0;
-             let orbsClicked = 0;
-             let maxOrbs = 3;
-             
-             // Clear existing orbs
-             document.querySelectorAll(".qte-orb").forEach(e => e.remove());
-             
-             // Spawn Orbs
-             for(let i=0; i<maxOrbs; i++) {
-                 let orb = document.createElement("div");
-                 orb.className = "qte-orb";
-                 orb.style.top = (20 + Math.random() * 60) + "%";
-                 orb.style.left = (20 + Math.random() * 60) + "%";
-                 
-                 orb.onclick = function() {
-                     this.remove();
-                     orbsClicked++;
-                     if(orbsClicked >= maxOrbs) {
-                         endSurge(true);
-                     }
-                 };
-                 overlay.appendChild(orb);
-             }
-             
-             // Timer
-             let surgeInterval = setInterval(() => {
-                 timeLeft -= 0.1;
-                 qteTimerDiv.innerText = timeLeft.toFixed(1) + "s";
-                 if(timeLeft <= 0) {
-                     clearInterval(surgeInterval);
-                     endSurge(false);
-                 }
-                 if(overlay.style.opacity === '0') clearInterval(surgeInterval); // Safety break
-             }, 100);
-             
-             function endSurge(success) {
-                 clearInterval(surgeInterval);
-                 overlay.classList.remove("active");
-                 if(success) {
-                     exp = clampToMaxExp(exp + 500);
-                     surgeCount++;
-                     localStorage.setItem("surgeCount", surgeCount);
-                     updateUI();
-                     alert("⚡ SURGE COMPLETE! +500 EXP ⚡");
-                 } else {
-                     alert("❌ Surge Failed...");
-                 }
-             }
-        }
-        
-        // Randomly trigger surge every 2-5 minutes
-        setInterval(() => {
-            if(Math.random() > 0.7) triggerSurge();
-        }, 120000); // Check every 2 mins
-
         updateUI();
     </script>
-  </body>
+</body>
 </html>
