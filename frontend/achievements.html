@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Achievements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet" />
+    <style>
+        /* GLOBAL FONT & THEME */
+        body, * {
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 800 !important;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #002b80, #0044cc, #0066ff);
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* BACK BUTTON */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: #ffdd57;
+            color: black;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 221, 87, 0.5);
+            z-index: 100;
+            transition: transform 0.2s;
+        }
+        .back-btn:hover { transform: scale(1.05); }
+
+        /* HEADERS */
+        h1 {
+            font-size: 3em;
+            color: #ffdd57;
+            text-shadow: 0 0 15px rgba(255, 100, 100, 0.5);
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 2em;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px white;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        /* GRID LAYOUT */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* BADGE STYLES */
+        .badge {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            font-size: 1.1em;
+            color: white;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge span {
+            display: block;
+            margin: 10px 0;
+            opacity: 0.8;
+            font-size: 0.8em;
+        }
+
+        /* UNLOCKED STATE */
+        .badge.unlocked {
+            background: rgba(0, 255, 153, 0.15);
+            border-color: #00ff99;
+            box-shadow: 0 0 15px rgba(0, 255, 153, 0.3);
+        }
+
+        /* BUTTONS */
+        .claimBtn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: auto;
+        }
+        .claimBtn:hover { background: rgba(255,255,255,0.3); }
+
+        .claimBtn.claimed {
+            background: #00c853;
+            border-color: #00e676;
+            cursor: default;
+            color: white;
+        }
+        
+        .claimBtn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: transparent;
+        }
+
+        /* STARS BACKGROUND (Purely decorative) */
+        .star {
+            position: fixed;
+            background: white;
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            z-index: -1;
+            animation: twinkle 3s infinite;
+        }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">⬅ Back to Leveling</a>
+
+    <h1>🏆 Achievement Hall</h1>
+
+    <h2>⏳ Time Badges</h2>
+    <div class="badge-grid" id="timeGrid">
+        <div class="badge"><div id="ach60s">✨👶 Sparkling Newborn</div><span>Stay 1 min (+100 XP)</span><button class="claimBtn locked" data-cat="time" data-id="60s">Locked</button></div>
+        <div class="badge"><div id="ach300s">🌙👶 Tiny Time Wanderer</div><span>Stay 5 mins (+350 XP)</span><button class="claimBtn locked" data-cat="time" data-id="300s">Locked</button></div>
+        <div class="badge"><div id="ach600s">⭐👶 Little Starlight</div><span>Stay 10 mins (+600 XP)</span><button class="claimBtn locked" data-cat="time" data-id="600s">Locked</button></div>
+        <div class="badge"><div id="ach1800s">⏳👶 Half-Hour Hatchling</div><span>Stay 30 mins (+1,300 XP)</span><button class="claimBtn locked" data-cat="time" data-id="1800s">Locked</button></div>
+        <div class="badge"><div id="ach3600s">🕰👶 Hour-Born Baby</div><span>Stay 1 hour (+2,250 XP)</span><button class="claimBtn locked" data-cat="time" data-id="3600s">Locked</button></div>
+        <div class="badge"><div id="ach7200s">💠👶 Crystal Baby</div><span>Stay 2 hours (+3,750 XP)</span><button class="claimBtn locked" data-cat="time" data-id="7200s">Locked</button></div>
+        <div class="badge"><div id="ach14400s">🔮👶 Arcane Time Infant</div><span>Stay 4 hours (+6,400 XP)</span><button class="claimBtn locked" data-cat="time" data-id="14400s">Locked</button></div>
+        <div class="badge"><div id="ach28800s">🌌👶 Cosmic Time Baby</div><span>Stay 8 hours (+11,000 XP)</span><button class="claimBtn locked" data-cat="time" data-id="28800s">Locked</button></div>
+        <div class="badge"><div id="ach57600s">🌅👶 Dawn-Touched Baby</div><span>Stay 16 hours (+18,500 XP)</span><button class="claimBtn locked" data-cat="time" data-id="57600s">Locked</button></div>
+        <div class="badge"><div id="ach86400s">🪽👶 Daylight Aura Child</div><span>Stay 24 hours (+25,000 XP)</span><button class="claimBtn locked" data-cat="time" data-id="86400s">Locked</button></div>
+    </div>
+
+    <h2>🎁 Level Badges</h2>
+    <div class="badge-grid" id="levelGrid">
+        <div class="badge"><div>✨👶 Aurababy</div><span>Reach Level 10 (+1,000 XP)</span><button class="claimBtn locked" data-cat="level" data-id="lvl10">Locked</button></div>
+        <div class="badge"><div>🌾👶 Aurafarmer</div><span>Reach Level 25 (+5,000 XP)</span><button class="claimBtn locked" data-cat="level" data-id="lvl25">Locked</button></div>
+        <div class="badge"><div>🌌👶 Celestial Baby</div><span>Reach Level 50 (+10,000 XP)</span><button class="claimBtn locked" data-cat="level" data-id="lvl50">Locked</button></div>
+        <div class="badge"><div>👼 Divine Baby</div><span>Reach Level 75 (+20,000 XP)</span><button class="claimBtn locked" data-cat="level" data-id="lvl75">Locked</button></div>
+        <div class="badge"><div>💫👶💫 Aura Holder</div><span>Reach Level 100 (Max)</span><button class="claimBtn locked" data-cat="level" data-id="lvl100">Locked</button></div>
+    </div>
+
+    <h2>🔎 Code Badges</h2>
+    <div class="badge-grid" id="codeGrid">
+        <div class="badge"><div>🔎👶 Code Novice</div><span>Redeem 1 Code (+500 XP)</span><button class="claimBtn locked" data-cat="code" data-id="code1">Locked</button></div>
+        <div class="badge"><div>🕵️👶 Code Detective</div><span>Redeem 5 Codes (+2,500 XP)</span><button class="claimBtn locked" data-cat="code" data-id="code5">Locked</button></div>
+        <div class="badge"><div>📜👶 Code Collector</div><span>Redeem 10 Codes (+5,000 XP)</span><button class="claimBtn locked" data-cat="code" data-id="code10">Locked</button></div>
+        <div class="badge"><div>🧠👶 Code Master</div><span>Redeem 20 Codes (+10,000 XP)</span><button class="claimBtn locked" data-cat="code" data-id="code20">Locked</button></div>
+        <div class="badge"><div>💎👶 Vault Keeper</div><span>Redeem 30 Codes (+15,000 XP)</span><button class="claimBtn locked" data-cat="code" data-id="code30">Locked</button></div>
+    </div>
+
+    <h2>⚡ Surge Badges</h2>
+    <div class="badge-grid" id="surgeGrid">
+        <div class="badge"><div>⚡👶 First Spark</div><span>1 Surge (+500 XP)</span><button class="claimBtn locked" data-cat="surge" data-id="surge1">Locked</button></div>
+        <div class="badge"><div>🔋👶 Energy Gatherer</div><span>5 Surges (+2,500 XP)</span><button class="claimBtn locked" data-cat="surge" data-id="surge5">Locked</button></div>
+        <div class="badge"><div>⛈️👶 Storm Chaser</div><span>10 Surges (+5,000 XP)</span><button class="claimBtn locked" data-cat="surge" data-id="surge10">Locked</button></div>
+        <div class="badge"><div>🌪️👶 Tempest Born</div><span>25 Surges (+12,500 XP)</span><button class="claimBtn locked" data-cat="surge" data-id="surge25">Locked</button></div>
+        <div class="badge"><div>🔮👶 Orb Master</div><span>50 Surges (+25,000 XP)</span><button class="claimBtn locked" data-cat="surge" data-id="surge50">Locked</button></div>
+    </div>
+
+    <script>
+        // --- DATA & CONFIG ---
+        const maxLevel = 100;
+        const TARGET_MAX_XP = 200000; 
+        const BASE_XP_COST = 100;
+        const XP_CURVE_EXPONENT = Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1);
+
+        // Calculate XP Table (Must match index.html logic)
+        const expTable = [];
+        for (let i = 0; i <= maxLevel; i++) {
+            if (i <= 1) expTable.push(0);
+            else if (i >= maxLevel) expTable.push(TARGET_MAX_XP);
+            else expTable.push(Math.floor(BASE_XP_COST * Math.pow(i - 1, XP_CURVE_EXPONENT)));
+        }
+
+        // --- LOAD USER DATA ---
+        let exp = parseInt(localStorage.getItem("exp") || "0");
+        let totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+        let surgeCount = parseInt(localStorage.getItem("surgeCount") || "0");
+        let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
+        let redeemedCodeCount = Object.keys(usedCodes).length;
+
+        // Current Level Calculation
+        function getLevelFromExp(x) {
+            for (let i = 1; i <= maxLevel; i++) {
+                if (x < expTable[i]) return i - 1;
+            }
+            return maxLevel;
+        }
+
+        let currentLevel = getLevelFromExp(exp);
+
+        // --- BADGE CONFIGURATIONS ---
+        const badgeConfig = {
+            time: {
+                reqs: { "60s": 60, "300s": 300, "600s": 600, "1800s": 1800, "3600s": 3600, "7200s": 7200, "14400s": 14400, "28800s": 28800, "57600s": 57600, "86400s": 86400 },
+                rewards: { "60s": 100, "300s": 350, "600s": 600, "1800s": 1300, "3600s": 2250, "7200s": 3750, "14400s": 6400, "28800s": 11000, "57600s": 18500, "86400s": 25000 },
+                storageKey: "claimedBadges",
+                val: totalSeconds
+            },
+            level: {
+                reqs: { "lvl10": 10, "lvl25": 25, "lvl50": 50, "lvl75": 75, "lvl100": 100 },
+                rewards: { "lvl10": 1000, "lvl25": 5000, "lvl50": 10000, "lvl75": 20000, "lvl100": 0 },
+                storageKey: "claimedLevelBadges",
+                val: currentLevel
+            },
+            code: {
+                reqs: { "code1": 1, "code5": 5, "code10": 10, "code20": 20, "code30": 30 },
+                rewards: { "code1": 500, "code5": 2500, "code10": 5000, "code20": 10000, "code30": 15000 },
+                storageKey: "claimedCodeBadges",
+                val: redeemedCodeCount
+            },
+            surge: {
+                reqs: { "surge1": 1, "surge5": 5, "surge10": 10, "surge25": 25, "surge50": 50 },
+                rewards: { "surge1": 500, "surge5": 2500, "surge10": 5000, "surge25": 12500, "surge50": 25000 },
+                storageKey: "claimedSurgeBadges",
+                val: surgeCount
+            }
+        };
+
+        // --- INITIALIZE UI ---
+        function initBadges() {
+            document.querySelectorAll(".claimBtn").forEach(btn => {
+                const cat = btn.dataset.cat;
+                const id = btn.dataset.id;
+                const config = badgeConfig[cat];
+                
+                // Load claimed status
+                let claimedStore = JSON.parse(localStorage.getItem(config.storageKey) || "{}");
+                let isClaimed = claimedStore[id];
+                let isUnlocked = config.val >= config.reqs[id];
+
+                const badgeDiv = btn.parentElement;
+
+                if (isClaimed) {
+                    badgeDiv.classList.add("unlocked");
+                    btn.className = "claimBtn claimed";
+                    btn.innerText = "Claimed ✔";
+                } else if (isUnlocked) {
+                    badgeDiv.classList.add("unlocked");
+                    btn.className = "claimBtn";
+                    btn.innerText = "Claim Reward";
+                    btn.onclick = () => claimReward(btn, cat, id);
+                } else {
+                    btn.className = "claimBtn locked";
+                    btn.innerText = "Locked";
+                }
+            });
+        }
+
+        function claimReward(btn, cat, id) {
+            const config = badgeConfig[cat];
+            let claimedStore = JSON.parse(localStorage.getItem(config.storageKey) || "{}");
+            
+            if (claimedStore[id]) return;
+
+            // Add XP
+            let reward = config.rewards[id];
+            exp = Math.min(exp + reward, expTable[maxLevel]);
+            localStorage.setItem("exp", exp);
+
+            // Save Claim Status
+            claimedStore[id] = true;
+            localStorage.setItem(config.storageKey, JSON.stringify(claimedStore));
+
+            // Update UI
+            btn.className = "claimBtn claimed";
+            btn.innerText = "Claimed ✔";
+            btn.onclick = null;
+
+            alert(`🎉 Claimed! +${reward} EXP`);
+        }
+
+        // --- BACKGROUND STARS ---
+        for(let i=0; i<50; i++) {
+            let s = document.createElement("div");
+            s.className = "star";
+            s.style.left = Math.random()*100 + "vw";
+            s.style.top = Math.random()*100 + "vh";
+            s.style.animationDelay = Math.random()*2 + "s";
+            document.body.appendChild(s);
+        }
+
+        // Run Init
+        initBadges();
+
+        // Refresh every second for time updates
+        setInterval(() => {
+            totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
+            badgeConfig.time.val = totalSeconds;
+            initBadges(); // Re-check locks
+        }, 1000);
+
+    </script>
+</body>
+</html>
