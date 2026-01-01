@@ -533,6 +533,11 @@
             background: rgba(0, 0, 0, 0.3);
         }
 
+        #imageDropZone:hover {
+            border-color: #4facfe;
+            background: rgba(79, 172, 254, 0.05);
+        }
+
         .rejuvenate-section {
             margin-top: 40px;
             padding: 30px;
@@ -690,27 +695,90 @@
         <p style="font-size: 1.2rem;">You reached level <span id="popupLevel">0</span>!</p>
     </div>
 
-    <!-- Save/Load Modal -->
+    <!-- Profile Modal -->
     <div class="modal" id="saveModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h2>💾 Save & Load Profile</h2>
+                <h2>👤 Your Profile</h2>
                 <button class="close-btn" onclick="closeModal('saveModal')">&times;</button>
             </div>
             
-            <div class="save-code-box">
-                <h3 style="color: #4facfe; margin-bottom: 10px;">Your Save Code:</h3>
-                <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Copy this code and store it safely!</p>
-                <textarea class="save-code" id="saveCodeDisplay" readonly></textarea>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="copySaveCode()">📋 Copy Code</button>
+            <!-- Profile Setup (shows if no username) -->
+            <div id="profileSetup" style="display: none;">
+                <div class="save-code-box">
+                    <h3 style="color: #4facfe; margin-bottom: 15px; text-align: center;">✨ Create Your Profile</h3>
+                    
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <!-- Profile Picture Upload -->
+                        <div id="imageDropZone" style="width: 150px; height: 150px; border: 3px dashed rgba(79, 172, 254, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(0,0,0,0.3); position: relative; overflow: hidden; transition: all 0.3s ease;">
+                            <div id="dropZoneText" style="text-align: center; color: #4facfe; font-size: 0.9rem; padding: 20px;">
+                                <div style="font-size: 2rem; margin-bottom: 5px;">📸</div>
+                                Click or drag image
+                            </div>
+                            <img id="profilePreview" style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                            <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <!-- Username Input -->
+                        <div style="width: 100%;">
+                            <label style="display: block; color: #4facfe; margin-bottom: 10px; font-weight: 600;">Choose Your Username:</label>
+                            <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="20" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(79, 172, 254, 0.3); background: rgba(0, 0, 0, 0.3); color: white; font-size: 1rem; text-align: center; font-weight: 600;">
+                            <p style="font-size: 0.8rem; color: #a0d4f7; margin-top: 5px; text-align: center;">⚠️ This cannot be changed later!</p>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;" onclick="createProfile()">🚀 Create Profile</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="save-code-box">
-                <h3 style="color: #4facfe; margin-bottom: 10px;">Load Profile:</h3>
-                <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Paste your save code here to restore progress:</p>
-                <textarea class="save-code" id="loadCodeInput" placeholder="Paste your save code here..."></textarea>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="loadSaveCode()">📥 Load Code</button>
-                <div id="loadMessage" style="margin-top: 10px; text-align: center; font-weight: 600;"></div>
+            <!-- Profile Display (shows after setup) -->
+            <div id="profileDisplay" style="display: none;">
+                <!-- Profile Header -->
+                <div style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; margin-bottom: 20px;">
+                    <img id="displayProfileImage" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #4facfe; box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);">
+                    <div style="flex: 1;">
+                        <h2 id="displayUsername" style="color: #4facfe; margin-bottom: 5px; font-size: 1.8rem;"></h2>
+                        <p id="displayJoinDate" style="color: #a0d4f7; font-size: 0.9rem; margin-bottom: 10px;"></p>
+                        <div style="display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; font-size: 0.9rem; font-weight: 600;">Level <span id="profileLevel">0</span></div>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
+                        <div style="font-size: 2rem; font-weight: 800; color: #4facfe;" id="statExp">0</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Total EXP</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
+                        <div style="font-size: 2rem; font-weight: 800; color: #f5576c;" id="statTime">0h</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Time Played</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
+                        <div style="font-size: 2rem; font-weight: 800; color: #667eea;" id="statReborn">0</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Rejuvenations</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
+                        <div style="font-size: 2rem; font-weight: 800; color: #00f2fe;" id="statCodes">0</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Codes Used</div>
+                    </div>
+                </div>
+
+                <!-- Save & Load Section -->
+                <div class="save-code-box">
+                    <h3 style="color: #4facfe; margin-bottom: 10px;">💾 Backup Your Progress</h3>
+                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Copy this code and store it safely! You can use it to restore everything.</p>
+                    <textarea class="save-code" id="saveCodeDisplay" readonly></textarea>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="copySaveCode()">📋 Copy Save Code</button>
+                    <div id="copyMessage" style="margin-top: 10px; text-align: center; font-weight: 600; color: #00f2fe;"></div>
+                </div>
+
+                <div class="save-code-box" style="margin-top: 20px;">
+                    <h3 style="color: #4facfe; margin-bottom: 10px;">📥 Restore Profile</h3>
+                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Paste your save code to restore your progress:</p>
+                    <textarea class="save-code" id="loadCodeInput" placeholder="Paste your save code here..."></textarea>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="loadSaveCode()">📥 Load Save Code</button>
+                    <div id="loadMessage" style="margin-top: 10px; text-align: center; font-weight: 600;"></div>
+                </div>
             </div>
         </div>
     </div>
@@ -771,6 +839,11 @@
         let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
         let rejuvenateCount = parseInt(localStorage.getItem("rejuvenateCount") || "0");
         let currentTheme = localStorage.getItem("currentTheme") || "default";
+        
+        // Profile Variables
+        let username = localStorage.getItem("username") || null;
+        let profileImage = localStorage.getItem("profileImage") || null;
+        let firstJoinDate = localStorage.getItem("firstJoinDate") || null;
 
         // Code Lists
         const codes5000 = ["teroswillrebirth","300GamesBaby!","400GamesSoon?"];
@@ -901,6 +974,12 @@
             document.getElementById("countdown").innerText = `Next EXP in: ${secondsLeft}s`;
             
             if (secondsLeft <= 0) {
+                // Track first join date on first EXP gain
+                if (!firstJoinDate && exp === 0) {
+                    firstJoinDate = new Date().toISOString();
+                    localStorage.setItem('firstJoinDate', firstJoinDate);
+                }
+                
                 exp += 20;
                 updateUI();
                 secondsLeft = 60;
@@ -954,6 +1033,12 @@
             if (codes5000.map(c => c.toLowerCase()).includes(code)) reward = 5000;
             else if (codes2500.map(c => c.toLowerCase()).includes(code)) reward = 2500;
 
+            // Track first join date on first code redemption if no EXP yet
+            if (!firstJoinDate && exp === 0) {
+                firstJoinDate = new Date().toISOString();
+                localStorage.setItem('firstJoinDate', firstJoinDate);
+            }
+
             exp += reward;
             usedCodes[code] = true;
             localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
@@ -973,6 +1058,9 @@
                 totalSeconds: totalSeconds,
                 rejuvenateCount: rejuvenateCount,
                 currentTheme: currentTheme,
+                username: username,
+                profileImage: profileImage,
+                firstJoinDate: firstJoinDate,
                 timestamp: Date.now()
             };
             return btoa(JSON.stringify(saveData));
@@ -980,9 +1068,20 @@
 
         window.copySaveCode = function() {
             const code = generateSaveCode();
-            document.getElementById("saveCodeDisplay").value = code;
-            navigator.clipboard.writeText(code);
-            alert("Save code copied to clipboard!");
+            const textarea = document.getElementById("saveCodeDisplay");
+            textarea.value = code;
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Try modern API as well
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(code);
+            }
+            
+            const msg = document.getElementById("copyMessage");
+            msg.innerText = "✅ Copied to clipboard!";
+            msg.style.color = "#00f2fe";
+            setTimeout(() => msg.innerText = "", 3000);
         };
 
         window.loadSaveCode = function() {
@@ -997,12 +1096,18 @@
                 totalSeconds = decoded.totalSeconds || 0;
                 rejuvenateCount = decoded.rejuvenateCount || 0;
                 currentTheme = decoded.currentTheme || "default";
+                username = decoded.username || null;
+                profileImage = decoded.profileImage || null;
+                firstJoinDate = decoded.firstJoinDate || null;
                 
                 localStorage.setItem("exp", exp);
                 localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
                 localStorage.setItem("totalSeconds", totalSeconds);
                 localStorage.setItem("rejuvenateCount", rejuvenateCount);
                 localStorage.setItem("currentTheme", currentTheme);
+                localStorage.setItem("username", username || "");
+                localStorage.setItem("profileImage", profileImage || "");
+                localStorage.setItem("firstJoinDate", firstJoinDate || "");
                 
                 applyTheme(currentTheme);
                 updateUI();
@@ -1012,12 +1117,183 @@
                 msg.style.color = "#00f2fe";
                 input.value = "";
                 
-                setTimeout(() => closeModal('saveModal'), 2000);
+                setTimeout(() => {
+                    closeModal('saveModal');
+                    if (username) {
+                        openModal('saveModal'); // Reopen to show profile
+                    }
+                }, 1500);
             } catch (e) {
                 msg.innerText = "❌ Invalid save code!";
                 msg.style.color = "#f5576c";
             }
         };
+
+        // Profile Image Upload
+        function setupImageUpload() {
+            const dropZone = document.getElementById('imageDropZone');
+            const fileInput = document.getElementById('profileImageInput');
+            const preview = document.getElementById('profilePreview');
+            const dropText = document.getElementById('dropZoneText');
+
+            // Click to upload
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleImageFile(file);
+                }
+            });
+
+            // Drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#4facfe';
+                dropZone.style.backgroundColor = 'rgba(79, 172, 254, 0.1)';
+            });
+
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'rgba(79, 172, 254, 0.5)';
+                dropZone.style.backgroundColor = 'rgba(0,0,0,0.3)';
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = 'rgba(79, 172, 254, 0.5)';
+                dropZone.style.backgroundColor = 'rgba(0,0,0,0.3)';
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    handleImageFile(file);
+                }
+            });
+
+            function handleImageFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Resize image to max 400x400 to save storage
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 400;
+                        
+                        if (width > height) {
+                            if (width > maxSize) {
+                                height *= maxSize / width;
+                                width = maxSize;
+                            }
+                        } else {
+                            if (height > maxSize) {
+                                width *= maxSize / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const resizedImage = canvas.toDataURL('image/jpeg', 0.8);
+                        profileImage = resizedImage;
+                        
+                        preview.src = resizedImage;
+                        preview.style.display = 'block';
+                        dropText.style.display = 'none';
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Create Profile
+        window.createProfile = function() {
+            const usernameInput = document.getElementById('usernameInput');
+            const enteredUsername = usernameInput.value.trim();
+            
+            if (!enteredUsername) {
+                alert('Please enter a username!');
+                return;
+            }
+            
+            if (enteredUsername.length < 3) {
+                alert('Username must be at least 3 characters!');
+                return;
+            }
+            
+            // Set first join date if not already set
+            if (!firstJoinDate) {
+                firstJoinDate = new Date().toISOString();
+                localStorage.setItem('firstJoinDate', firstJoinDate);
+            }
+            
+            username = enteredUsername;
+            localStorage.setItem('username', username);
+            
+            if (profileImage) {
+                localStorage.setItem('profileImage', profileImage);
+            }
+            
+            // Show profile display
+            document.getElementById('profileSetup').style.display = 'none';
+            updateProfileDisplay();
+            document.getElementById('profileDisplay').style.display = 'block';
+        };
+
+        // Update Profile Display
+        function updateProfileDisplay() {
+            if (!username) return;
+            
+            document.getElementById('displayUsername').innerText = username;
+            
+            // Format join date
+            if (firstJoinDate) {
+                const joinDate = new Date(firstJoinDate);
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                const now = new Date();
+                const daysSince = Math.floor((now - joinDate) / (1000 * 60 * 60 * 24));
+                
+                let membershipText = `First joined Aurababy on ${joinDate.toLocaleDateString('en-US', options)}`;
+                if (daysSince > 0) {
+                    membershipText += ` (${daysSince} day${daysSince !== 1 ? 's' : ''} ago)`;
+                } else {
+                    membershipText += ' (Today!)';
+                }
+                
+                document.getElementById('displayJoinDate').innerText = membershipText;
+            }
+            
+            // Set profile image
+            if (profileImage) {
+                document.getElementById('displayProfileImage').src = profileImage;
+            } else {
+                // Create SVG with first letter of username
+                const firstLetter = username ? username[0].toUpperCase() : '?';
+                const svgImage = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%234facfe"/><text x="50" y="65" font-size="50" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">${firstLetter}</text></svg>`;
+                document.getElementById('displayProfileImage').src = svgImage;
+            }
+            
+            // Update stats
+            document.getElementById('profileLevel').innerText = getLevelFromExp(exp);
+            document.getElementById('statExp').innerText = exp.toLocaleString();
+            
+            const hours = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            document.getElementById('statTime').innerText = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+            
+            document.getElementById('statReborn').innerText = rejuvenateCount;
+            document.getElementById('statCodes').innerText = Object.keys(usedCodes).length;
+            
+            // Update save code
+            document.getElementById('saveCodeDisplay').value = generateSaveCode();
+        }
 
         // Theme System
         const themes = {
@@ -1072,7 +1348,17 @@
             modal.classList.add('active');
             
             if (modalId === 'saveModal') {
-                document.getElementById("saveCodeDisplay").value = generateSaveCode();
+                if (!username) {
+                    // Show profile setup
+                    document.getElementById('profileSetup').style.display = 'block';
+                    document.getElementById('profileDisplay').style.display = 'none';
+                    setupImageUpload();
+                } else {
+                    // Show profile display
+                    document.getElementById('profileSetup').style.display = 'none';
+                    document.getElementById('profileDisplay').style.display = 'block';
+                    updateProfileDisplay();
+                }
             }
             
             if (modalId === 'customUIModal') {
@@ -1120,6 +1406,12 @@
                 document.querySelectorAll(".qte-orb").forEach(o => o.remove());
                 
                 if (success) {
+                    // Track first join date on first surge success if no EXP yet
+                    if (!firstJoinDate && exp === 0) {
+                        firstJoinDate = new Date().toISOString();
+                        localStorage.setItem('firstJoinDate', firstJoinDate);
+                    }
+                    
                     exp += 500;
                     updateUI();
                     checkLevelUp();
@@ -1134,6 +1426,12 @@
         updateDisplayTime();
         updateUI();
         applyTheme(currentTheme);
+        
+        // Set first join date for legacy users who already have EXP but no date
+        if (exp > 0 && !firstJoinDate) {
+            firstJoinDate = new Date().toISOString();
+            localStorage.setItem('firstJoinDate', firstJoinDate);
+        }
         
         // Apply custom colors if saved
         const savedColor1 = localStorage.getItem("customColor1");
