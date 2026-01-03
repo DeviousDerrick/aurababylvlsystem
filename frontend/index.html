@@ -10,10 +10,13 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Poppins', sans-serif !important;
+            font-weight: 800 !important;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
+            font-weight: 800;
             background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             color: #ffffff;
             min-height: 100vh;
@@ -61,7 +64,7 @@
             padding: 12px 24px;
             border-radius: 12px;
             border: none;
-            font-weight: 600;
+            font-weight: 800;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -146,7 +149,7 @@
             padding: 10px 30px;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             border-radius: 50px;
-            font-weight: 600;
+            font-weight: 800;
             font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
         }
@@ -173,7 +176,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1rem;
             position: relative;
             overflow: hidden;
@@ -200,6 +203,7 @@
             justify-content: space-between;
             margin-top: 15px;
             font-size: 0.95rem;
+            font-weight: 800;
             color: #a0d4f7;
         }
 
@@ -208,7 +212,7 @@
             margin-top: 10px;
             font-size: 1rem;
             color: #4facfe;
-            font-weight: 600;
+            font-weight: 800;
         }
 
         /* Redeem Section */
@@ -312,19 +316,20 @@
 
         .reward-title {
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 10px;
             color: #fff;
         }
 
         .reward-description {
             font-size: 0.9rem;
+            font-weight: 800;
             color: #a0d4f7;
             margin-bottom: 15px;
         }
 
         .reward-status {
-            font-weight: 600;
+            font-weight: 800;
             font-size: 0.9rem;
         }
 
@@ -424,7 +429,7 @@
             transition: all 0.3s ease;
             border: 3px solid transparent;
             text-align: center;
-            font-weight: 600;
+            font-weight: 800;
         }
 
         .theme-option:hover {
@@ -521,7 +526,7 @@
             display: block;
             margin-bottom: 10px;
             color: #4facfe;
-            font-weight: 600;
+            font-weight: 800;
         }
 
         .color-picker {
@@ -578,6 +583,7 @@
 
         .stat-label {
             font-size: 0.9rem;
+            font-weight: 800;
             color: #a0d4f7;
             margin-top: 5px;
         }
@@ -633,16 +639,16 @@
 
         <!-- Rejuvenate Section (shows at level 100+) -->
         <div class="rejuvenate-section" id="rejuvenateSection" style="display: none;">
-            <h2>💫 Rejuvenated Mode</h2>
-            <p style="color: #a0d4f7; margin-bottom: 20px;">You've transcended! Continue your journey beyond Level 100!</p>
+            <h2 style="font-weight: 800;">💫 Rejuvenated Mode</h2>
+            <p style="color: #a0d4f7; margin-bottom: 20px; font-weight: 800;">You've reached the peak! Break through the level cap!</p>
             <div class="rejuvenate-stats">
                 <div class="stat-box">
-                    <div class="stat-value" id="rejuvenateCount">0</div>
-                    <div class="stat-label">Rejuvenations</div>
+                    <div class="stat-value" id="rejuvenateCount">No</div>
+                    <div class="stat-label" style="font-weight: 800;">Rejuvenated</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-value" id="totalLevels">0</div>
-                    <div class="stat-label">Total Levels</div>
+                    <div class="stat-value" id="totalLevels">100</div>
+                    <div class="stat-label" style="font-weight: 800;">Current Level</div>
                 </div>
             </div>
         </div>
@@ -666,52 +672,45 @@
                 <div class="reward-status locked">🔒 Locked</div>
             </div>
 
-            <div class="reward-card" data-level="50" id="reward50">
-                <div class="reward-level">Level 50</div>
-                <div class="reward-title">🎨 Custom UI</div>
-                <div class="reward-description">Unlock custom colors and 5 unique themes!</div>
-                <div class="reward-status locked">🔒 Locked</div>
-            </div>
-
-            <div class="reward-card" data-level="75" id="reward75">
-                <div class="reward-level">Level 75</div>
-                <div class="reward-title">🌟 Mystery Reward</div>
-                <div class="reward-description">Something amazing awaits...</div>
-                <div class="reward-status locked">🔒 Locked</div>
-            </div>
-
             <div class="reward-card" data-level="100" id="reward100">
                 <div class="reward-level">Level 100</div>
                 <div class="reward-title">💫 Rejuvenate</div>
-                <div class="reward-description">Transcend Level 100 and continue growing!</div>
+                <div class="reward-description">Break the level cap and continue beyond 100!</div>
                 <div class="reward-status locked">🔒 Locked</div>
             </div>
+        </div>
+
+        <!-- UI Customization Section (Always Available) -->
+        <div style="margin-top: 40px; padding: 30px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(79, 172, 254, 0.2); text-align: center;">
+            <h2 style="color: #4facfe; margin-bottom: 15px; font-size: 1.5rem; font-weight: 800;">🎨 Customize Your UI</h2>
+            <p style="color: #a0d4f7; margin-bottom: 20px; font-weight: 800;">Change your colors and theme anytime!</p>
+            <button class="btn btn-primary" onclick="openModal('customUIModal')" style="font-weight: 800;">Open Customization</button>
         </div>
     </div>
 
     <!-- Level Up Popup -->
     <div class="popup" id="levelUpPopup">
-        <h2>🎉 LEVEL UP! 🎉</h2>
-        <p style="font-size: 1.2rem;">You reached level <span id="popupLevel">0</span>!</p>
+        <h2 style="font-weight: 800;">🎉 LEVEL UP! 🎉</h2>
+        <p style="font-size: 1.2rem; font-weight: 800;">You reached level <span id="popupLevel">0</span>!</p>
     </div>
 
     <!-- Profile Modal -->
     <div class="modal" id="saveModal">
         <div class="modal-content" style="max-width: 700px;">
             <div class="modal-header">
-                <h2>👤 Your Profile</h2>
+                <h2 style="font-weight: 800;">👤 Your Profile</h2>
                 <button class="close-btn" onclick="closeModal('saveModal')">&times;</button>
             </div>
             
             <!-- Profile Setup (shows if no username) -->
             <div id="profileSetup" style="display: none;">
                 <div class="save-code-box">
-                    <h3 style="color: #4facfe; margin-bottom: 15px; text-align: center;">✨ Create Your Profile</h3>
+                    <h3 style="color: #4facfe; margin-bottom: 15px; text-align: center; font-weight: 800;">✨ Create Your Profile</h3>
                     
                     <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
                         <!-- Profile Picture Upload -->
                         <div id="imageDropZone" style="width: 150px; height: 150px; border: 3px dashed rgba(79, 172, 254, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(0,0,0,0.3); position: relative; overflow: hidden; transition: all 0.3s ease;">
-                            <div id="dropZoneText" style="text-align: center; color: #4facfe; font-size: 0.9rem; padding: 20px;">
+                            <div id="dropZoneText" style="text-align: center; color: #4facfe; font-size: 0.9rem; padding: 20px; font-weight: 800;">
                                 <div style="font-size: 2rem; margin-bottom: 5px;">📸</div>
                                 Click or drag image
                             </div>
@@ -721,12 +720,12 @@
                         
                         <!-- Username Input -->
                         <div style="width: 100%;">
-                            <label style="display: block; color: #4facfe; margin-bottom: 10px; font-weight: 600;">Choose Your Username:</label>
-                            <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="20" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(79, 172, 254, 0.3); background: rgba(0, 0, 0, 0.3); color: white; font-size: 1rem; text-align: center; font-weight: 600;">
-                            <p style="font-size: 0.8rem; color: #a0d4f7; margin-top: 5px; text-align: center;">⚠️ This cannot be changed later!</p>
+                            <label style="display: block; color: #4facfe; margin-bottom: 10px; font-weight: 800;">Choose Your Username:</label>
+                            <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="20" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(79, 172, 254, 0.3); background: rgba(0, 0, 0, 0.3); color: white; font-size: 1rem; text-align: center; font-weight: 800;">
+                            <p style="font-size: 0.8rem; color: #a0d4f7; margin-top: 5px; text-align: center; font-weight: 800;">⚠️ This cannot be changed later!</p>
                         </div>
                         
-                        <button class="btn btn-primary" style="width: 100%;" onclick="createProfile()">🚀 Create Profile</button>
+                        <button class="btn btn-primary" style="width: 100%; font-weight: 800;" onclick="createProfile()">🚀 Create Profile</button>
                     </div>
                 </div>
             </div>
@@ -737,9 +736,8 @@
                 <div style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; margin-bottom: 20px;">
                     <img id="displayProfileImage" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #4facfe; box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);">
                     <div style="flex: 1;">
-                        <h2 id="displayUsername" style="color: #4facfe; margin-bottom: 5px; font-size: 1.8rem;"></h2>
-                        <p id="displayJoinDate" style="color: #a0d4f7; font-size: 0.9rem; margin-bottom: 10px;"></p>
-                        <div style="display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; font-size: 0.9rem; font-weight: 600;">Level <span id="profileLevel">0</span></div>
+                        <h2 id="displayUsername" style="color: #4facfe; margin-bottom: 10px; font-size: 1.8rem; font-weight: 800;"></h2>
+                        <div style="display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; font-size: 0.9rem; font-weight: 800;">Level <span id="profileLevel">0</span></div>
                     </div>
                 </div>
 
@@ -747,37 +745,37 @@
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
                     <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
                         <div style="font-size: 2rem; font-weight: 800; color: #4facfe;" id="statExp">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Total EXP</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Total EXP</div>
                     </div>
                     <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
                         <div style="font-size: 2rem; font-weight: 800; color: #f5576c;" id="statTime">0h</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Time Played</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Time Played</div>
                     </div>
                     <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
                         <div style="font-size: 2rem; font-weight: 800; color: #667eea;" id="statReborn">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Rejuvenations</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Rejuvenated</div>
                     </div>
                     <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
                         <div style="font-size: 2rem; font-weight: 800; color: #00f2fe;" id="statCodes">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px;">Codes Used</div>
+                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Codes Used</div>
                     </div>
                 </div>
 
                 <!-- Save & Load Section -->
                 <div class="save-code-box">
-                    <h3 style="color: #4facfe; margin-bottom: 10px;">💾 Backup Your Progress</h3>
-                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Copy this code and store it safely! You can use it to restore everything.</p>
+                    <h3 style="color: #4facfe; margin-bottom: 10px; font-weight: 800;">💾 Backup Your Progress</h3>
+                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px; font-weight: 800;">Copy this code and store it safely! You can use it to restore everything.</p>
                     <textarea class="save-code" id="saveCodeDisplay" readonly></textarea>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="copySaveCode()">📋 Copy Save Code</button>
-                    <div id="copyMessage" style="margin-top: 10px; text-align: center; font-weight: 600; color: #00f2fe;"></div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-weight: 800;" onclick="copySaveCode()">📋 Copy Save Code</button>
+                    <div id="copyMessage" style="margin-top: 10px; text-align: center; font-weight: 800; color: #00f2fe;"></div>
                 </div>
 
                 <div class="save-code-box" style="margin-top: 20px;">
-                    <h3 style="color: #4facfe; margin-bottom: 10px;">📥 Restore Profile</h3>
-                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px;">Paste your save code to restore your progress:</p>
+                    <h3 style="color: #4facfe; margin-bottom: 10px; font-weight: 800;">📥 Restore Profile</h3>
+                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px; font-weight: 800;">Paste your save code to restore your progress:</p>
                     <textarea class="save-code" id="loadCodeInput" placeholder="Paste your save code here..."></textarea>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="loadSaveCode()">📥 Load Save Code</button>
-                    <div id="loadMessage" style="margin-top: 10px; text-align: center; font-weight: 600;"></div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-weight: 800;" onclick="loadSaveCode()">📥 Load Save Code</button>
+                    <div id="loadMessage" style="margin-top: 10px; text-align: center; font-weight: 800;"></div>
                 </div>
             </div>
         </div>
@@ -787,47 +785,47 @@
     <div class="modal" id="customUIModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>🎨 Customize Your UI</h2>
+                <h2 style="font-weight: 800;">🎨 Customize Your UI</h2>
                 <button class="close-btn" onclick="closeModal('customUIModal')">&times;</button>
             </div>
 
-            <h3 style="color: #4facfe; margin: 20px 0 10px;">Preset Themes:</h3>
+            <h3 style="color: #4facfe; margin: 20px 0 10px; font-weight: 800;">Preset Themes:</h3>
             <div class="theme-grid">
                 <div class="theme-option" data-theme="default" style="background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);" onclick="applyTheme('default')">
-                    <div>🌊 Ocean</div>
+                    <div style="font-weight: 800;">🌊 Ocean</div>
                 </div>
                 <div class="theme-option" data-theme="sunset" style="background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);" onclick="applyTheme('sunset')">
-                    <div>🌅 Sunset</div>
+                    <div style="font-weight: 800;">🌅 Sunset</div>
                 </div>
                 <div class="theme-option" data-theme="forest" style="background: linear-gradient(135deg, #0f9b0f 0%, #00d2ff 100%);" onclick="applyTheme('forest')">
-                    <div>🌲 Forest</div>
+                    <div style="font-weight: 800;">🌲 Forest</div>
                 </div>
                 <div class="theme-option" data-theme="galaxy" style="background: linear-gradient(135deg, #2e1437 0%, #764ba2 100%);" onclick="applyTheme('galaxy')">
-                    <div>🌌 Galaxy</div>
+                    <div style="font-weight: 800;">🌌 Galaxy</div>
                 </div>
                 <div class="theme-option" data-theme="fire" style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);" onclick="applyTheme('fire')">
-                    <div>🔥 Fire</div>
+                    <div style="font-weight: 800;">🔥 Fire</div>
                 </div>
             </div>
 
-            <h3 style="color: #4facfe; margin: 30px 0 10px;">Custom Colors:</h3>
+            <h3 style="color: #4facfe; margin: 30px 0 10px; font-weight: 800;">Custom Colors:</h3>
             <div class="color-picker-group">
-                <label>Background Start Color:</label>
+                <label style="font-weight: 800;">Background Start Color:</label>
                 <input type="color" class="color-picker" id="bgColor1" value="#0f2027">
             </div>
             <div class="color-picker-group">
-                <label>Background End Color:</label>
+                <label style="font-weight: 800;">Background End Color:</label>
                 <input type="color" class="color-picker" id="bgColor2" value="#2c5364">
             </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="applyCustomColors()">Apply Custom Colors</button>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 20px; font-weight: 800;" onclick="applyCustomColors()">Apply Custom Colors</button>
         </div>
     </div>
 
     <!-- QTE Overlay -->
     <div class="qte-overlay" id="qteOverlay">
-        <div class="qte-message">⚡ AURA SURGE! ⚡</div>
-        <div style="font-size: 1.5rem; color: white;">Click the 3 orbs fast!</div>
-        <div class="qte-timer" id="qteTimer">5.0s</div>
+        <div class="qte-message" style="font-weight: 800;">⚡ AURA SURGE! ⚡</div>
+        <div style="font-size: 1.5rem; color: white; font-weight: 800;">Click the 3 orbs fast!</div>
+        <div class="qte-timer" id="qteTimer" style="font-weight: 800;">5.0s</div>
     </div>
 
     <script>
@@ -837,13 +835,12 @@
         let exp = parseInt(localStorage.getItem("exp") || "0");
         let secondsLeft = parseInt(localStorage.getItem("secondsLeft") || "60");
         let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
-        let rejuvenateCount = parseInt(localStorage.getItem("rejuvenateCount") || "0");
+        let rejuvenated = localStorage.getItem("rejuvenated") === "true";
         let currentTheme = localStorage.getItem("currentTheme") || "default";
         
         // Profile Variables
         let username = localStorage.getItem("username") || null;
         let profileImage = localStorage.getItem("profileImage") || null;
-        let firstJoinDate = localStorage.getItem("firstJoinDate") || null;
 
         // Code Lists
         const codes5000 = ["teroswillrebirth","300GamesBaby!","400GamesSoon?"];
@@ -866,6 +863,7 @@
         // Level System with Exponential Growth
         const BASE_XP_COST = 100;
         const XP_EXPONENT = 1.5;
+        const MAX_LEVEL_CAP = 100;
         
         function getExpForLevel(level) {
             if (level <= 1) return 0;
@@ -876,6 +874,8 @@
             let level = 1;
             while (getExpForLevel(level + 1) <= xp) {
                 level++;
+                // Stop at 100 unless rejuvenated
+                if (level >= MAX_LEVEL_CAP && !rejuvenated) break;
             }
             return level;
         }
@@ -916,22 +916,30 @@
             document.getElementById("titleBadge").innerText = title;
 
             // Update progress bar
-            const expInLevel = exp - currentLevelExp;
-            const expNeeded = nextLevelExp - currentLevelExp;
-            const percent = Math.floor((expInLevel / expNeeded) * 100);
-            
-            document.getElementById("progressBar").style.width = percent + "%";
-            document.getElementById("progressBar").innerText = percent + "%";
-            document.getElementById("nextExp").innerText = nextLevelExp.toLocaleString();
+            if (level >= MAX_LEVEL_CAP && !rejuvenated) {
+                document.getElementById("progressBar").style.width = "100%";
+                document.getElementById("progressBar").innerText = "MAX LEVEL - Rejuvenate to Continue!";
+                document.getElementById("nextExp").innerText = "∞";
+            } else {
+                const expInLevel = exp - currentLevelExp;
+                const expNeeded = nextLevelExp - currentLevelExp;
+                const percent = Math.floor((expInLevel / expNeeded) * 100);
+                
+                document.getElementById("progressBar").style.width = percent + "%";
+                document.getElementById("progressBar").innerText = percent + "%";
+                document.getElementById("nextExp").innerText = nextLevelExp.toLocaleString();
+            }
 
             // Update rewards
             updateRewards(level);
 
             // Show rejuvenate section if level 100+
-            if (level >= 100) {
+            if (level >= MAX_LEVEL_CAP) {
                 document.getElementById("rejuvenateSection").style.display = "block";
-                document.getElementById("rejuvenateCount").innerText = rejuvenateCount;
-                document.getElementById("totalLevels").innerText = (level + rejuvenateCount * 100).toLocaleString();
+                document.getElementById("rejuvenateCount").innerText = rejuvenated ? "Yes" : "Not Yet";
+                document.getElementById("totalLevels").innerText = level.toLocaleString();
+            } else {
+                document.getElementById("rejuvenateSection").style.display = "none";
             }
         }
 
@@ -939,8 +947,6 @@
         function updateRewards(level) {
             const rewards = [
                 { id: "reward25", level: 25, action: () => openModal('saveModal') },
-                { id: "reward50", level: 50, action: () => openModal('customUIModal') },
-                { id: "reward75", level: 75, action: null },
                 { id: "reward100", level: 100, action: () => performRejuvenate() }
             ];
 
@@ -974,16 +980,13 @@
             document.getElementById("countdown").innerText = `Next EXP in: ${secondsLeft}s`;
             
             if (secondsLeft <= 0) {
-                // Track first join date on first EXP gain
-                if (!firstJoinDate && exp === 0) {
-                    firstJoinDate = new Date().toISOString();
-                    localStorage.setItem('firstJoinDate', firstJoinDate);
+                // Only gain EXP if not at max level or if rejuvenated
+                if (getLevelFromExp(exp) < MAX_LEVEL_CAP || rejuvenated) {
+                    exp += 20;
+                    updateUI();
+                    checkLevelUp();
                 }
-                
-                exp += 20;
-                updateUI();
                 secondsLeft = 60;
-                checkLevelUp();
             }
             localStorage.setItem("secondsLeft", secondsLeft);
         }, 1000);
@@ -1033,12 +1036,6 @@
             if (codes5000.map(c => c.toLowerCase()).includes(code)) reward = 5000;
             else if (codes2500.map(c => c.toLowerCase()).includes(code)) reward = 2500;
 
-            // Track first join date on first code redemption if no EXP yet
-            if (!firstJoinDate && exp === 0) {
-                firstJoinDate = new Date().toISOString();
-                localStorage.setItem('firstJoinDate', firstJoinDate);
-            }
-
             exp += reward;
             usedCodes[code] = true;
             localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
@@ -1056,11 +1053,10 @@
                 exp: exp,
                 usedCodes: usedCodes,
                 totalSeconds: totalSeconds,
-                rejuvenateCount: rejuvenateCount,
+                rejuvenated: rejuvenated,
                 currentTheme: currentTheme,
                 username: username,
                 profileImage: profileImage,
-                firstJoinDate: firstJoinDate,
                 timestamp: Date.now()
             };
             return btoa(JSON.stringify(saveData));
@@ -1094,20 +1090,18 @@
                 exp = decoded.exp || 0;
                 usedCodes = decoded.usedCodes || {};
                 totalSeconds = decoded.totalSeconds || 0;
-                rejuvenateCount = decoded.rejuvenateCount || 0;
+                rejuvenated = decoded.rejuvenated || false;
                 currentTheme = decoded.currentTheme || "default";
                 username = decoded.username || null;
                 profileImage = decoded.profileImage || null;
-                firstJoinDate = decoded.firstJoinDate || null;
                 
                 localStorage.setItem("exp", exp);
                 localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
                 localStorage.setItem("totalSeconds", totalSeconds);
-                localStorage.setItem("rejuvenateCount", rejuvenateCount);
+                localStorage.setItem("rejuvenated", rejuvenated);
                 localStorage.setItem("currentTheme", currentTheme);
                 localStorage.setItem("username", username || "");
                 localStorage.setItem("profileImage", profileImage || "");
-                localStorage.setItem("firstJoinDate", firstJoinDate || "");
                 
                 applyTheme(currentTheme);
                 updateUI();
@@ -1228,12 +1222,6 @@
                 return;
             }
             
-            // Set first join date if not already set
-            if (!firstJoinDate) {
-                firstJoinDate = new Date().toISOString();
-                localStorage.setItem('firstJoinDate', firstJoinDate);
-            }
-            
             username = enteredUsername;
             localStorage.setItem('username', username);
             
@@ -1253,23 +1241,6 @@
             
             document.getElementById('displayUsername').innerText = username;
             
-            // Format join date
-            if (firstJoinDate) {
-                const joinDate = new Date(firstJoinDate);
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                const now = new Date();
-                const daysSince = Math.floor((now - joinDate) / (1000 * 60 * 60 * 24));
-                
-                let membershipText = `First joined Aurababy on ${joinDate.toLocaleDateString('en-US', options)}`;
-                if (daysSince > 0) {
-                    membershipText += ` (${daysSince} day${daysSince !== 1 ? 's' : ''} ago)`;
-                } else {
-                    membershipText += ' (Today!)';
-                }
-                
-                document.getElementById('displayJoinDate').innerText = membershipText;
-            }
-            
             // Set profile image
             if (profileImage) {
                 document.getElementById('displayProfileImage').src = profileImage;
@@ -1288,7 +1259,7 @@
             const mins = Math.floor((totalSeconds % 3600) / 60);
             document.getElementById('statTime').innerText = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
             
-            document.getElementById('statReborn').innerText = rejuvenateCount;
+            document.getElementById('statReborn').innerText = rejuvenated ? "Yes" : "No";
             document.getElementById('statCodes').innerText = Object.keys(usedCodes).length;
             
             // Update save code
@@ -1327,18 +1298,23 @@
 
         // Rejuvenate System
         window.performRejuvenate = function() {
-            if (getLevelFromExp(exp) < 100) {
+            if (getLevelFromExp(exp) < MAX_LEVEL_CAP) {
                 alert("You must reach Level 100 first!");
                 return;
             }
 
-            const confirmed = confirm("Rejuvenate and continue beyond Level 100?\n\nThis will reset your level to 100 but keep all progress. You'll continue earning EXP with the same exponential curve!");
+            if (rejuvenated) {
+                alert("You've already rejuvenated! Continue leveling past 100!");
+                return;
+            }
+
+            const confirmed = confirm("Rejuvenate and break the level cap?\n\nThis will allow you to continue gaining EXP and levels beyond 100 with exponential growth!");
             
             if (confirmed) {
-                rejuvenateCount++;
-                localStorage.setItem("rejuvenateCount", rejuvenateCount);
-                alert("💫 Rejuvenated! Continue your journey!");
+                rejuvenated = true;
+                localStorage.setItem("rejuvenated", "true");
                 updateUI();
+                alert("💫 Rejuvenated! You can now level up past 100!");
             }
         };
 
@@ -1406,12 +1382,6 @@
                 document.querySelectorAll(".qte-orb").forEach(o => o.remove());
                 
                 if (success) {
-                    // Track first join date on first surge success if no EXP yet
-                    if (!firstJoinDate && exp === 0) {
-                        firstJoinDate = new Date().toISOString();
-                        localStorage.setItem('firstJoinDate', firstJoinDate);
-                    }
-                    
                     exp += 500;
                     updateUI();
                     checkLevelUp();
@@ -1426,12 +1396,6 @@
         updateDisplayTime();
         updateUI();
         applyTheme(currentTheme);
-        
-        // Set first join date for legacy users who already have EXP but no date
-        if (exp > 0 && !firstJoinDate) {
-            firstJoinDate = new Date().toISOString();
-            localStorage.setItem('firstJoinDate', firstJoinDate);
-        }
         
         // Apply custom colors if saved
         const savedColor1 = localStorage.getItem("customColor1");
