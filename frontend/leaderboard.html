@@ -1,4 +1,4 @@
-<!DOCTYPE  html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -20,12 +20,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 800 !important;
 }
 
 html, body {
   height: 100%;
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
   color: var(--white);
   overflow-x: hidden;
 }
@@ -88,7 +88,7 @@ body {
 .container {
   position: relative;
   z-index: 1;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -119,7 +119,6 @@ body {
   color: var(--blue-bright);
 }
 
-/* User Stats Panel */
 .user-panel {
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(20px);
@@ -128,28 +127,6 @@ body {
   padding: 25px;
   margin-bottom: 30px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.user-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background: linear-gradient(135deg, var(--purple-bright), var(--blue-bright), var(--pink-neon));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none; /* FIXED: Allows clicking through the glow */
-}
-
-.user-panel:hover::before {
-  opacity: 1;
 }
 
 .panel-title {
@@ -191,8 +168,8 @@ body {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
-  position: relative; /* Ensure it sits right */
-  z-index: 2; /* Ensure input sits above background */
+  position: relative;
+  z-index: 2;
 }
 
 .username-input {
@@ -200,8 +177,6 @@ body {
   min-width: 200px;
   padding: 12px 15px;
   font-size: 1em;
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
   background: rgba(255,255,255,0.1);
   border: 2px solid rgba(255,255,255,0.2);
   border-radius: 12px;
@@ -221,24 +196,16 @@ body {
   box-shadow: 0 0 20px rgba(0,180,216,0.5);
 }
 
-.username-input:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  background: rgba(0,0,0,0.2);
-}
-
 .submit-btn, .update-btn, .back-btn {
   padding: 12px 25px;
   font-size: 1em;
-  font-family: "Poppins", sans-serif;
-  font-weight: 800;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  z-index: 2; /* Ensures button is clickable */
+  z-index: 2;
 }
 
 .submit-btn {
@@ -254,7 +221,6 @@ body {
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 .update-btn {
@@ -286,7 +252,6 @@ body {
   text-shadow: 0 0 10px rgba(247,37,133,0.8);
 }
 
-/* Leaderboard Panel */
 .leaderboard-panel {
   background: rgba(255,255,255,0.05);
   backdrop-filter: blur(20px);
@@ -294,28 +259,6 @@ body {
   border-radius: 20px;
   padding: 25px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.leaderboard-panel::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 2px;
-  background: linear-gradient(135deg, var(--gold-bright), var(--pink-neon), var(--blue-bright));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none; /* FIXED: Allows clicking through the glow */
-}
-
-.leaderboard-panel:hover::before {
-  opacity: 1;
 }
 
 .leaderboard-title {
@@ -326,6 +269,34 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.tab {
+  padding: 12px 30px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--white);
+}
+
+.tab:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--purple-bright), var(--pink-neon));
+  border-color: var(--pink-neon);
+  box-shadow: 0 0 20px rgba(247,37,133,0.5);
 }
 
 .leaderboard-list {
@@ -419,7 +390,6 @@ body {
   color: var(--blue-bright);
 }
 
-/* Back Button */
 .back-btn {
   background: linear-gradient(135deg, var(--pink-neon), #ff0066);
   color: var(--white);
@@ -450,6 +420,14 @@ body {
   
   .username-input {
     min-width: 100%;
+  }
+  
+  .tabs {
+    flex-direction: column;
+  }
+  
+  .tab {
+    width: 100%;
   }
 }
 </style>
@@ -501,13 +479,21 @@ body {
       <div style="text-align:center; font-size:1.2em; margin-bottom:15px;">
         Registered as: <span style="color: var(--gold-bright); font-size: 1.4em;" id="currentUsername"></span>
       </div>
-      <div style="text-align:center; opacity:0.6; font-size:0.8em; margin-bottom:15px;">(Username is locked)</div>
+      <div style="text-align:center; opacity:0.6; font-size:0.8em; margin-bottom:15px;">(Username is permanent)</div>
       <button class="update-btn" id="updateBtn">📊 UPDATE MY SCORE</button>
+      <div class="message" id="updateMessage"></div>
     </div>
   </div>
 
   <div class="leaderboard-panel">
-    <div class="leaderboard-title">👑 TOP PLAYERS 👑</div>
+    <div class="leaderboard-title">👑 LEADERBOARDS 👑</div>
+    
+    <div class="tabs">
+      <div class="tab active" id="expTab">💎 EXP</div>
+      <div class="tab" id="levelTab">⭐ LEVEL</div>
+      <div class="tab" id="timeTab">⏱️ TIME</div>
+    </div>
+    
     <div class="leaderboard-list" id="leaderboardList">
       <div style="text-align:center; padding:20px; opacity:0.7;">Loading leaderboard...</div>
     </div>
@@ -521,10 +507,11 @@ body {
 // Backend API
 const API_BASE = "https://aurababylvlsystem-backend0.onrender.com";
 
-// Use localStorage instead of sessionStorage for permanence
+// Use localStorage for permanent username
 let registeredUsername = localStorage.getItem("aurababyUsername") || null;
+let currentCategory = "exp";
 
-// Get stats from localStorage (Game stats)
+// Get stats from localStorage
 function getUserStats() {
   const exp = parseInt(localStorage.getItem("exp") || "0");
   const totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
@@ -533,23 +520,21 @@ function getUserStats() {
   return { exp, totalSeconds, level };
 }
 
-// Calculate level from exp
+// Calculate level from exp (matching your level system)
 function getLevelFromExp(exp) {
   const BASE_XP_COST = 100;
-  const TARGET_MAX_XP = 200000;
-  const maxLevel = 100;
-  const XP_CURVE_EXPONENT = Math.log(TARGET_MAX_XP / BASE_XP_COST) / Math.log(maxLevel - 1);
+  const XP_EXPONENT = 1.5;
+  const MAX_LEVEL_CAP = 100;
+  const rejuvenated = localStorage.getItem("rejuvenated") === "true";
   
-  function getTotalExpForLevel(level) {
-    if (level <= 1) return 0;
-    if (level >= maxLevel) return TARGET_MAX_XP;
-    return Math.floor(BASE_XP_COST * Math.pow(level - 1, XP_CURVE_EXPONENT));
+  let level = 1;
+  while (true) {
+    const nextLevelExp = level <= 1 ? 0 : Math.floor(BASE_XP_COST * Math.pow(level - 1, XP_EXPONENT));
+    if (exp < nextLevelExp) break;
+    level++;
+    if (level >= MAX_LEVEL_CAP && !rejuvenated) break;
   }
-  
-  for (let i = 1; i <= maxLevel; i++) {
-    if (exp < getTotalExpForLevel(i)) return i - 1;
-  }
-  return maxLevel;
+  return level - 1;
 }
 
 // Format numbers
@@ -577,7 +562,6 @@ function validateUsername(username) {
     return { valid: false, error: "Username must be 3-20 characters" };
   }
   
-  // Only letters and numbers
   if (!/^[a-z0-9]+$/.test(trimmed)) {
     return { valid: false, error: "Only letters and numbers allowed" };
   }
@@ -593,19 +577,15 @@ function updateUserStats() {
   document.getElementById('userTime').textContent = formatTime(stats.totalSeconds);
 }
 
-// Switch between Registration form and "Logged In" view
+// Switch between Registration form and Logged In view
 function updateRegistrationUI() {
   if (registeredUsername) {
-    // User is logged in/registered
     document.getElementById('registrationForm').style.display = 'none';
     document.getElementById('registeredUser').style.display = 'block';
     document.getElementById('currentUsername').textContent = registeredUsername;
   } else {
-    // User needs to register
     document.getElementById('registrationForm').style.display = 'block';
     document.getElementById('registeredUser').style.display = 'none';
-    document.getElementById('usernameInput').value = '';
-    document.getElementById('usernameInput').disabled = false;
   }
 }
 
@@ -635,13 +615,15 @@ async function submitUsername() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: validation.username,
-        exp: stats.exp
+        exp: stats.exp,
+        level: stats.level,
+        time: stats.totalSeconds
       })
     });
     
     if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(errorText || 'Server Error');
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Server Error');
     }
     
     // SUCCESS: Save to localStorage (Permanent)
@@ -651,11 +633,10 @@ async function submitUsername() {
     message.textContent = '✅ Registered successfully!';
     message.className = 'message msg-success';
     
-    // Wait 1 second then lock the UI
     setTimeout(() => {
-        updateRegistrationUI();
-        fetchLeaderboard();
-        message.textContent = ''; 
+      updateRegistrationUI();
+      fetchLeaderboard();
+      message.textContent = ''; 
     }, 1000);
 
   } catch (error) {
@@ -671,19 +652,10 @@ async function updateScore() {
   if (!registeredUsername) return;
   
   const stats = getUserStats();
-  const message = document.getElementById('submitMessage'); // We reuse this message box space if needed, or creating a new one inside the registered div would be better, but this works for alerts.
+  const message = document.getElementById('updateMessage');
   
-  // Create a temporary message element inside the registeredUser div if it doesn't exist
-  let statusMsg = document.getElementById('updateStatusMsg');
-  if(!statusMsg) {
-      statusMsg = document.createElement('div');
-      statusMsg.id = 'updateStatusMsg';
-      statusMsg.className = 'message';
-      document.getElementById('registeredUser').appendChild(statusMsg);
-  }
-
-  statusMsg.textContent = 'Updating...';
-  statusMsg.className = 'message';
+  message.textContent = 'Updating...';
+  message.className = 'message';
   
   try {
     const res = await fetch(`${API_BASE}/submit`, {
@@ -691,23 +663,25 @@ async function updateScore() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: registeredUsername,
-        exp: stats.exp
+        exp: stats.exp,
+        level: stats.level,
+        time: stats.totalSeconds
       })
     });
     
     if (!res.ok) throw new Error('Failed to update');
     
-    statusMsg.textContent = '✅ Score updated!';
-    statusMsg.className = 'message msg-success';
+    message.textContent = '✅ Score updated!';
+    message.className = 'message msg-success';
     
     setTimeout(() => {
-      statusMsg.textContent = '';
+      message.textContent = '';
     }, 3000);
     
     fetchLeaderboard();
   } catch (error) {
-    statusMsg.textContent = '❌ Update failed';
-    statusMsg.className = 'message msg-error';
+    message.textContent = '❌ Update failed';
+    message.className = 'message msg-error';
   }
 }
 
@@ -726,15 +700,6 @@ async function fetchLeaderboard() {
       data = [];
     }
     
-    // Format data
-    data = data.map(d => ({ 
-      username: d.username || 'Unknown', 
-      exp: Number(d.exp) || 0 
-    }));
-    
-    // Sort by exp descending
-    data.sort((a, b) => b.exp - a.exp);
-    
     renderLeaderboard(data);
   } catch (error) {
     console.error('Fetch error:', error);
@@ -748,6 +713,15 @@ function renderLeaderboard(data) {
   const rankInfo = document.getElementById('rankInfo');
   list.innerHTML = '';
   
+  // Sort based on current category
+  if (currentCategory === 'exp') {
+    data.sort((a, b) => b.exp - a.exp);
+  } else if (currentCategory === 'level') {
+    data.sort((a, b) => b.level - a.level);
+  } else if (currentCategory === 'time') {
+    data.sort((a, b) => b.time - a.time);
+  }
+  
   // Show top 10
   for (let i = 0; i < 10; i++) {
     const div = document.createElement('div');
@@ -759,17 +733,25 @@ function renderLeaderboard(data) {
     
     if (i < data.length) {
       const user = data[i];
-      const level = getLevelFromExp(user.exp);
       
       if (registeredUsername && user.username.toLowerCase() === registeredUsername.toLowerCase()) {
         div.classList.add('current-user');
+      }
+      
+      let statDisplay = '';
+      if (currentCategory === 'exp') {
+        statDisplay = `${formatNumber(user.exp)} EXP • Level ${user.level}`;
+      } else if (currentCategory === 'level') {
+        statDisplay = `Level ${user.level} • ${formatNumber(user.exp)} EXP`;
+      } else if (currentCategory === 'time') {
+        statDisplay = `${formatTime(user.time)} • Level ${user.level}`;
       }
       
       div.innerHTML = `
         <div class="rank-display">#${i + 1}</div>
         <div class="user-info">
           <div class="username-display">${escapeHtml(user.username)}</div>
-          <div class="user-stats-display">Level ${level} • ${formatNumber(user.exp)} EXP</div>
+          <div class="user-stats-display">${statDisplay}</div>
         </div>
       `;
     } else {
@@ -804,13 +786,21 @@ function renderLeaderboard(data) {
       const userDiv = document.createElement('div');
       userDiv.className = 'leaderboard-item current-user';
       const user = data[userIndex];
-      const level = getLevelFromExp(user.exp);
+      
+      let statDisplay = '';
+      if (currentCategory === 'exp') {
+        statDisplay = `${formatNumber(user.exp)} EXP • Level ${user.level}`;
+      } else if (currentCategory === 'level') {
+        statDisplay = `Level ${user.level} • ${formatNumber(user.exp)} EXP`;
+      } else if (currentCategory === 'time') {
+        statDisplay = `${formatTime(user.time)} • Level ${user.level}`;
+      }
       
       userDiv.innerHTML = `
         <div class="rank-display">#${userIndex + 1}</div>
         <div class="user-info">
           <div class="username-display">${escapeHtml(user.username)}</div>
-          <div class="user-stats-display">Level ${level} • ${formatNumber(user.exp)} EXP</div>
+          <div class="user-stats-display">${statDisplay}</div>
         </div>
       `;
       list.appendChild(userDiv);
@@ -831,9 +821,24 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// Tab switching
+function switchTab(category) {
+  currentCategory = category;
+  
+  // Update tab UI
+  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+  document.getElementById(category + 'Tab').classList.add('active');
+  
+  // Re-render leaderboard with new sorting
+  fetchLeaderboard();
+}
+
 // Event listeners
 document.getElementById('submitBtn').addEventListener('click', submitUsername);
 document.getElementById('updateBtn').addEventListener('click', updateScore);
+document.getElementById('expTab').addEventListener('click', () => switchTab('exp'));
+document.getElementById('levelTab').addEventListener('click', () => switchTab('level'));
+document.getElementById('timeTab').addEventListener('click', () => switchTab('time'));
 
 // Enter key to submit
 document.getElementById('usernameInput').addEventListener('keypress', (e) => {
@@ -842,7 +847,7 @@ document.getElementById('usernameInput').addEventListener('keypress', (e) => {
 
 // Initialize
 updateUserStats();
-updateRegistrationUI(); // Checks localStorage immediately on load
+updateRegistrationUI();
 fetchLeaderboard();
 
 // Auto-refresh every 10 seconds
