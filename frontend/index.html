@@ -842,22 +842,32 @@
         let username = localStorage.getItem("username") || null;
         let profileImage = localStorage.getItem("profileImage") || null;
 
-        // Code Lists
-        const codes5000 = ["teroswillrebirth","300GamesBaby!","400GamesSoon?"];
-        const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
-        const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
-        const codesHoliday = ["merrychristmas", "merryhanukkah", "hollyandjolly", "jinglethebells", "sleddingbaby!", "gingerbaby", "santababy!", "jollybaby"];
-        const validCodes = [...codes5000, ...codes2500, ...codes1000, ...codesHoliday].map(c => c.toLowerCase());
+        const codes10000 = ["69THEGOOONERISGONE69", "THIEFESTOFGHOULS", "THEGANGSTANDTHEGHOULSFALLS"];
 
+const codes5000 = [
+  "teroswillrebirth",
+  "300GamesBaby!",
+  "400GamesSoon?",
+  "Thefastestbehbehalive901",      // New 5000 Exp code
+  "wowveryfastclickerbaby2222"     // New 5000 Exp code
+];
+
+const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
+
+const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
+
+const codesHoliday = ["merrychristmas", "merryhanukkah", "hollyandjolly", "jinglethebells", "sleddingbaby!", "gingerbaby", "santababy!", "jollybaby"];
+
+const validCodes = [...codes10000, ...codes5000, ...codes2500, ...codes1000, ...codesHoliday].map(c => c.toLowerCase());
         // Title System
         const titleMap = {
             1: "🧬 Sperm Cell",
             5: "👶 Newborn",
             10: "✨👶 Aurababy",
             25: "🌾👶 Aurafarmer",
-            50: "🌌👶 Celestial",
-            75: "👼 Divine",
-            100: "💫 Aura Master"
+            50: "🌌👶 Celestial Baby",
+            75: "👼 Divine Baby",
+            100: "💫 The Baby That Holds Aura💫"
         };
 
         // Level System with Exponential Growth
