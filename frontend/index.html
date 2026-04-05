@@ -506,8 +506,72 @@
     </div>
 
 </div>
-
-<!-- LEVEL UP POPUP -->
+<!-- 🥚 Aurababy Easter Egg Hunt | Code: SoftBlue | Pale Blue Egg | 🌿 Common -->
+<div id="aurababy_egg_SoftBlue" onclick="showAurababyEggSoftBlue()"
+  style="cursor:pointer;display:inline-block;transition:transform .2s;opacity:0.85;"
+  title="🥚 You found an Easter egg!">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130" width="80" height="104"
+    style="filter:drop-shadow(0 3px 8px rgba(0,0,0,0.15));">
+    <defs>
+      <radialGradient id="g70" cx="28%" cy="32%">
+        <stop offset="0%" stop-color="#fff3e0"/>
+        <stop offset="100%" stop-color="#f4845f"/>
+      </radialGradient>
+      <clipPath id="ec70">
+        <ellipse cx="50" cy="68" rx="42" ry="58"/>
+      </clipPath>
+    </defs>
+    <ellipse cx="50" cy="68" rx="42" ry="58" fill="url(#g70)"/>
+    <g clip-path="url(#ec70)"><polygon points="50,52 54.70228201833979,61.52786404500042 65.21690426072246,63.05572809000084 57.60845213036123,70.47213595499957 59.404564036679574,80.94427190999916 50,76 40.59543596332043,80.94427190999916 42.39154786963877,70.47213595499959 34.78309573927754,63.055728090000834 45.29771798166021,61.52786404500042" fill="rgba(255,255,255,0.35)"/></g>
+    <ellipse cx="30.5" cy="36.9" rx="9.0" ry="11.4" fill="rgba(255,255,255,0.18)"/>
+  </svg>
+</div>
+<script>
+function showAurababyEggSoftBlue() {
+  const overlay = document.createElement("div")
+  overlay.style = `
+    position:fixed;inset:0;background:rgba(27,67,50,.7);
+    z-index:9999;display:flex;align-items:center;justify-content:center;font-family:sans-serif;
+  `
+  const box = document.createElement("div")
+  box.style = `
+    background:#fff;border-radius:20px;padding:28px 24px;
+    max-width:340px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.3);
+  `
+  box.innerHTML = `
+    <div style="font-size:2.5em;margin-bottom:8px;">🥚</div>
+    <div style="font-family:serif;font-size:1.5em;font-weight:900;color:#1b4332;margin-bottom:6px;">
+      Pale Blue Egg
+    </div>
+    <div style="font-size:.8em;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#f4845f;background:#f4845f22;padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:14px;">
+      🌿 Common
+    </div>
+    <div style="font-size:.9em;color:rgba(27,67,50,.6);margin-bottom:12px;">
+      Enter this code on the Aurababy Egg Hunt page!
+    </div>
+    <div id="ab_code_box_SoftBlue"
+      style="background:#f0f8f4;border:2px solid #52b788;border-radius:10px;padding:12px;font-family:monospace;font-size:1.3em;font-weight:900;letter-spacing:2px;color:#1b4332;margin-bottom:14px;">
+      SoftBlue
+    </div>
+    <button id="copyEggCode_SoftBlue"
+      style="width:100%;padding:11px;background:linear-gradient(135deg,#1b4332,#40916c);color:#fff;font-size:1em;font-weight:800;letter-spacing:2px;border:none;border-radius:12px;cursor:pointer;margin-bottom:8px;">
+      📋 Copy Code
+    </button>
+    <button id="closeEgg_SoftBlue"
+      style="width:100%;padding:9px;background:rgba(27,67,50,.08);color:#2d6a4f;font-size:.9em;font-weight:800;border:2px solid rgba(64,145,108,.3);border-radius:12px;cursor:pointer;">
+      ✕ Close
+    </button>
+  `
+  overlay.appendChild(box)
+  document.body.appendChild(overlay)
+  document.getElementById("copyEggCode_SoftBlue").onclick = () => {
+    navigator.clipboard.writeText("SoftBlue")
+    document.getElementById("copyEggCode_SoftBlue").textContent = "✅ Copied!"
+  }
+  document.getElementById("closeEgg_SoftBlue").onclick = () => overlay.remove()
+  overlay.onclick = e => { if (e.target === overlay) overlay.remove() }
+}
+</script>
 <div class="popup" id="lvlPopup">
     <div style="font-size:2rem;margin-bottom:8px">🎉</div>
     <h2>LEVEL UP!</h2>
