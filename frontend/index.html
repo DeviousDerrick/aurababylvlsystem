@@ -1,1419 +1,909 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Level System | Aurababy</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+    <title>Aurababy Leveling System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800;900&display=swap" rel="stylesheet"/>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif !important;
-            font-weight: 800 !important;
+        :root {
+            --bg: #05060e;
+            --surface: rgba(255,255,255,0.04);
+            --surface2: rgba(255,255,255,0.07);
+            --border: rgba(255,255,255,0.08);
+            --border2: rgba(255,255,255,0.15);
+            --cyan: #00d4ff;
+            --purple: #8b5cf6;
+            --pink: #f472b6;
+            --gold: #fbbf24;
+            --green: #34d399;
+            --red: #f87171;
+            --text: #ffffff;
+            --sub: rgba(255,255,255,0.5);
+            --circ: 552.9;
         }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        * { font-family: 'Poppins', sans-serif !important; font-weight: 800 !important; }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            color: #ffffff;
+            background: linear-gradient(135deg, #05060e 0%, #0d1b2a 100%);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
-            position: relative;
             overflow-x: hidden;
+            position: relative;
         }
 
-        /* Animated background particles */
-        .particle {
+        /* Grid overlay */
+        body::before {
+            content: '';
             position: fixed;
-            width: 3px;
-            height: 3px;
-            background: rgba(100, 200, 255, 0.6);
-            border-radius: 50%;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px);
+            background-size: 44px 44px;
             pointer-events: none;
-            animation: float 20s infinite;
+            z-index: 0;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
-        }
+        /* Ambient orbs */
+        .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+        .orb1 { width: 520px; height: 520px; background: rgba(139,92,246,0.12); top: -200px; left: -150px; }
+        .orb2 { width: 420px; height: 420px; background: rgba(0,212,255,0.08); bottom: -150px; right: -150px; }
+        .orb3 { width: 280px; height: 280px; background: rgba(244,114,182,0.07); top: 40%; left: 45%; transform: translate(-50%,-50%); }
 
-        /* Navigation */
-        .nav-container {
-            max-width: 900px;
-            margin: 0 auto 30px;
+        .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+
+        /* ── NAV ── */
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .nav-btns {
-            display: flex;
+            margin-bottom: 36px;
             gap: 10px;
             flex-wrap: wrap;
         }
-
+        .nav-left { display: flex; gap: 8px; flex-wrap: wrap; }
         .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 11px 20px;
+            border-radius: 11px;
             border: none;
-            font-weight: 800;
-            font-size: 0.9rem;
+            font-size: 0.82rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            gap: 6px;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-glass { background: var(--surface2); border: 1px solid var(--border2); }
+        .btn-glass:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+        .btn-cyan { background: linear-gradient(135deg, #007aaa, #00d4ff); box-shadow: 0 4px 16px rgba(0,212,255,0.25); }
+        .btn-cyan:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(0,212,255,0.45); }
+        .btn-purple { background: linear-gradient(135deg, #5b21b6, #8b5cf6); box-shadow: 0 4px 16px rgba(139,92,246,0.25); }
+        .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(139,92,246,0.45); }
+
+        .session-pill {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 11px;
+            padding: 11px 18px;
+            font-size: 0.82rem;
+            color: var(--cyan);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
+        /* ── HERO ── */
+        .hero { display: flex; flex-direction: column; align-items: center; margin-bottom: 32px; }
 
-        .btn-secondary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        .ring-wrap { position: relative; width: 220px; height: 220px; margin-bottom: 18px; }
+        .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        circle.track { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 11; }
+        circle.fill {
+            fill: none; stroke: url(#rGrad); stroke-width: 11; stroke-linecap: round;
+            stroke-dasharray: 552.9; stroke-dashoffset: 552.9;
+            transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1);
         }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.6);
-        }
-
-        .btn-info {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Header */
-        .header {
+        .ring-inner {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             text-align: center;
-            margin-bottom: 40px;
         }
-
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .lvl-num {
+            font-size: 4.2rem; line-height: 1;
+            background: linear-gradient(135deg, #00aacc, #00d4ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            filter: drop-shadow(0 0 24px rgba(0,212,255,0.45));
         }
+        .lvl-label { font-size: 0.68rem; color: var(--sub); letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
 
-        .level-display {
-            font-size: 5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 20px 0;
-            text-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
-        }
-
-        .title-badge {
-            display: inline-block;
+        .title-pill {
             padding: 10px 30px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, rgba(139,92,246,0.25), rgba(244,114,182,0.2));
+            border: 1px solid rgba(139,92,246,0.4);
             border-radius: 50px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
-        }
-
-        /* Progress Section */
-        .progress-section {
-            margin: 40px 0;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 50px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 25px;
-            overflow: hidden;
-            border: 2px solid rgba(79, 172, 254, 0.3);
-            position: relative;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
             font-size: 1rem;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 0 24px rgba(139,92,246,0.15);
         }
 
-        .progress-bar::before {
+        .exp-wrap { width: 100%; max-width: 420px; margin-top: 18px; }
+        .exp-row { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--sub); margin-bottom: 8px; }
+        .exp-row span.hi { color: var(--cyan); }
+        .exp-row span.gold { color: var(--gold); }
+        .bar-track { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+        .bar-fill {
+            height: 100%; border-radius: 4px;
+            background: linear-gradient(90deg, #0088bb, #00d4ff, #8b5cf6);
+            transition: width 0.5s ease; position: relative; overflow: hidden;
+        }
+        .bar-fill::after {
             content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s infinite;
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            animation: shimmer 2.2s infinite;
         }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .exp-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            font-size: 0.95rem;
-            font-weight: 800;
-            color: #a0d4f7;
-        }
-
-        .countdown {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1rem;
-            color: #4facfe;
-            font-weight: 800;
-        }
-
-        /* Redeem Section */
-        .redeem-section {
-            margin: 40px 0;
-            padding: 30px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .redeem-section h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: #4facfe;
-        }
-
-        .redeem-input-group {
-            display: flex;
+        /* ── STATS GRID ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-
-        .redeem-input {
-            flex: 1;
-            padding: 15px;
-            border-radius: 12px;
-            border: 2px solid rgba(79, 172, 254, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .redeem-input:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
-        }
-
-        .redeem-message {
+        @media (min-width: 560px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .s-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 12px;
             text-align: center;
-            min-height: 30px;
-            font-weight: 600;
-            color: #4facfe;
+            transition: all 0.2s;
         }
+        .s-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-2px); }
+        .s-val { font-size: 1.45rem; color: var(--cyan); line-height: 1; margin-bottom: 4px; }
+        .s-lbl { font-size: 0.65rem; color: var(--sub); letter-spacing: 1.5px; text-transform: uppercase; }
 
-        /* Rewards Grid */
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 40px;
-        }
-
-        .reward-card {
-            background: rgba(0, 0, 0, 0.3);
+        /* ── SECTION WRAPPER ── */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            padding: 25px;
-            border: 2px solid rgba(79, 172, 254, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            padding: 26px 24px;
+            margin-bottom: 20px;
         }
-
-        .reward-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
+        .sec-title {
+            font-size: 0.7rem;
+            color: var(--sub);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        .reward-card:hover {
-            transform: translateY(-5px);
-            border-color: #4facfe;
-            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
-        }
-
-        .reward-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .reward-card.unlocked {
-            border-color: #00f2fe;
-            background: rgba(79, 172, 254, 0.1);
-        }
-
-        .reward-level {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #4facfe;
-            margin-bottom: 10px;
-        }
-
-        .reward-title {
-            font-size: 1.1rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .reward-description {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #a0d4f7;
-            margin-bottom: 15px;
-        }
-
-        .reward-status {
-            font-weight: 800;
-            font-size: 0.9rem;
-        }
-
-        .locked { color: #f5576c; }
-        .unlocked-status { color: #00f2fe; }
-
-        /* Popup */
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 60px;
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            z-index: 10000;
-            transition: transform 0.3s ease;
+        /* ── TIME TRACKER ── */
+        .clock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 420px) { .clock-grid { grid-template-columns: 1fr; } }
+        .clock-card {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
             text-align: center;
         }
-
-        .popup.show {
-            transform: translate(-50%, -50%) scale(1);
+        .clock-lbl { font-size: 0.65rem; letter-spacing: 2px; color: var(--sub); text-transform: uppercase; margin-bottom: 10px; }
+        .clock-dig {
+            font-size: 1.9rem;
+            letter-spacing: 5px;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px currentColor;
         }
+        .clock-sub { font-size: 0.68rem; color: var(--sub); margin-top: 6px; }
 
-        .popup h2 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
-            padding: 40px;
-            border-radius: 25px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(79, 172, 254, 0.3);
-        }
-
-        .modal-header {
+        .next-exp-row {
+            margin-top: 14px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
         }
+        .ne-lbl { font-size: 0.78rem; color: var(--sub); }
+        .ne-val { font-size: 1rem; color: var(--gold); }
 
-        .modal-header h2 {
-            font-size: 2rem;
-            color: #4facfe;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .close-btn:hover {
-            transform: rotate(90deg);
-        }
-
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .theme-option {
-            padding: 30px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .theme-option:hover {
-            transform: scale(1.05);
-            border-color: white;
-        }
-
-        .theme-option.active {
-            border-color: #00f2fe;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
-        }
-
-        .save-code-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border: 2px solid rgba(79, 172, 254, 0.3);
-        }
-
-        .save-code {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(79, 172, 254, 0.3);
-            border-radius: 10px;
-            color: #4facfe;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            word-break: break-all;
-            margin: 10px 0;
-        }
-
-        /* QTE Overlay */
-        .qte-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 20000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .qte-overlay.active {
-            display: flex;
-        }
-
-        .qte-message {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #f5576c;
-            margin-bottom: 20px;
-            animation: pulse 0.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .qte-timer {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #4facfe;
-            margin-top: 20px;
-        }
-
-        .qte-orb {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #4facfe, #764ba2);
-            cursor: pointer;
-            animation: orbPulse 1s infinite;
-            box-shadow: 0 0 30px rgba(79, 172, 254, 0.8);
-        }
-
-        @keyframes orbPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .color-picker-group {
-            margin: 20px 0;
-        }
-
-        .color-picker-group label {
-            display: block;
-            margin-bottom: 10px;
-            color: #4facfe;
-            font-weight: 800;
-        }
-
-        .color-picker {
-            width: 100%;
-            height: 50px;
-            border: 2px solid rgba(79, 172, 254, 0.3);
-            border-radius: 10px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        #imageDropZone:hover {
-            border-color: #4facfe;
-            background: rgba(79, 172, 254, 0.05);
-        }
-
-        .rejuvenate-section {
-            margin-top: 40px;
-            padding: 30px;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            border-radius: 20px;
-            border: 2px solid rgba(102, 126, 234, 0.5);
-            text-align: center;
-        }
-
-        .rejuvenate-section h2 {
-            font-size: 2rem;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .rejuvenate-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .stat-box {
+        /* ── REDEEM ── */
+        .redeem-row { display: flex; gap: 10px; margin-top: 14px; }
+        .code-in {
             flex: 1;
-            min-width: 150px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            border: 1px solid rgba(102, 126, 234, 0.3);
+            padding: 13px 18px;
+            background: rgba(0,0,0,0.35);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            color: white;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .code-in:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,212,255,0.12); }
+        .code-in::placeholder { color: var(--sub); }
+        .redeem-msg { margin-top: 10px; font-size: 0.82rem; min-height: 18px; text-align: center; }
+
+        /* ── REWARDS ── */
+        .rewards-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        @media (max-width: 440px) { .rewards-row { grid-template-columns: 1fr; } }
+        .rew-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 18px;
+            transition: all 0.3s;
+        }
+        .rew-card.unlocked {
+            border-color: rgba(0,212,255,0.35);
+            background: rgba(0,212,255,0.05);
+            cursor: pointer;
+        }
+        .rew-card.unlocked:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,212,255,0.18); }
+        .rew-lvl { font-size: 0.65rem; letter-spacing: 2px; color: var(--sub); text-transform: uppercase; margin-bottom: 8px; }
+        .rew-name { font-size: 1.05rem; margin-bottom: 6px; }
+        .rew-desc { font-size: 0.72rem; color: var(--sub); margin-bottom: 14px; line-height: 1.5; }
+        .rew-status {
+            font-size: 0.75rem;
+            padding: 5px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .rew-status.locked { background: rgba(248,113,113,0.12); color: var(--red); border: 1px solid rgba(248,113,113,0.25); }
+        .rew-status.unlocked { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.3); }
+
+        /* ── REJUVENATE ── */
+        .rejuv-section {
+            background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(244,114,182,0.08));
+            border: 1px solid rgba(139,92,246,0.25);
+            border-radius: 20px;
+            padding: 28px 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        .rejuv-section h2 {
+            font-size: 1.7rem;
+            background: linear-gradient(135deg, var(--purple), var(--pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 8px;
         }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #667eea;
+        /* ── POPUP ── */
+        .popup {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #0a0f1e;
+            border: 2px solid var(--cyan);
+            padding: 38px 56px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 50px rgba(0,212,255,0.25);
+            z-index: 10000;
+            transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
+            text-align: center;
+        }
+        .popup.show { transform: translate(-50%, -50%) scale(1); }
+        .popup h2 {
+            font-size: 2.4rem;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
-        .stat-label {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #a0d4f7;
-            margin-top: 5px;
+        /* ── MODAL ── */
+        .modal {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.88); z-index: 9999;
+            align-items: center; justify-content: center; padding: 20px;
         }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: #0b0e1a;
+            border: 1px solid var(--border2);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 580px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+        .m-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+        .m-head h2 { font-size: 1.45rem; color: var(--cyan); }
+        .close-x { background: none; border: none; color: var(--sub); font-size: 1.9rem; cursor: pointer; transition: color 0.2s, transform 0.2s; line-height: 1; }
+        .close-x:hover { color: white; transform: rotate(90deg); }
 
-        @media (max-width: 768px) {
-            .header h1 { font-size: 2rem; }
-            .level-display { font-size: 3.5rem; }
-            .main-container { padding: 20px; }
-            .rewards-grid { grid-template-columns: 1fr; }
+        /* Themes */
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 12px 0; }
+        @media (max-width: 400px) { .theme-grid { grid-template-columns: repeat(3, 1fr); } }
+        .t-opt {
+            height: 58px; border-radius: 12px; cursor: pointer;
+            border: 2px solid transparent; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
         }
+        .t-opt:hover { transform: scale(1.06); }
+        .t-opt.active { border-color: white; box-shadow: 0 0 14px rgba(255,255,255,0.3); }
+
+        /* Inputs inside modals */
+        .m-input {
+            width: 100%; padding: 13px 16px;
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border2);
+            border-radius: 12px; color: white; font-size: 0.88rem; outline: none;
+            transition: border-color 0.2s;
+        }
+        .m-input:focus { border-color: var(--cyan); }
+        .m-input::placeholder { color: var(--sub); }
+
+        textarea.m-input { resize: vertical; min-height: 80px; word-break: break-all; font-size: 0.72rem; color: var(--cyan); }
+        .m-label { font-size: 0.7rem; color: var(--sub); letter-spacing: 1.5px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+
+        /* PFP drop */
+        .pfp-drop {
+            width: 110px; height: 110px; border-radius: 50%;
+            border: 2px dashed rgba(0,212,255,0.4);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; overflow: hidden; margin: 0 auto 18px;
+            transition: border-color 0.2s; background: rgba(0,0,0,0.3); position: relative;
+        }
+        .pfp-drop:hover { border-color: var(--cyan); }
+        .pfp-drop img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .pfp-drop-txt { text-align: center; font-size: 0.72rem; color: var(--sub); padding: 8px; }
+
+        /* QTE */
+        .qte-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.97); z-index: 20000;
+            flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+        }
+        .qte-overlay.active { display: flex; }
+        .qte-title { font-size: 2.8rem; color: var(--red); animation: pulse 0.55s infinite; }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+        .qte-sub { font-size: 1.2rem; color: white; }
+        .qte-timer { font-size: 3rem; color: var(--cyan); font-variant-numeric: tabular-nums; }
+        .qte-orb {
+            position: absolute; width: 70px; height: 70px; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #00d4ff, #6d28d9);
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0,212,255,0.8);
+            animation: orbPulse 1s infinite;
+            transition: transform 0.1s;
+        }
+        .qte-orb:hover { transform: scale(1.12) !important; }
+        .qte-orb:active { transform: scale(0.92) !important; }
+        @keyframes orbPulse { 0%,100% { box-shadow: 0 0 20px rgba(0,212,255,0.6); } 50% { box-shadow: 0 0 45px rgba(0,212,255,1); } }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
     </style>
 </head>
 <body>
-    <!-- Particles -->
-    <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-    <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
-    <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
-    <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
-    <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
-    <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
-    <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
-    <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
-    <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
 
-    <!-- Navigation -->
-    <div class="nav-container">
-        <div class="nav-btns">
-            <a href="achievements.html" class="btn btn-primary">🏆 Achievements</a>
-            <a href="leaderboard.html" class="btn btn-secondary">📊 Leaderboard</a>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="wrapper">
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-left">
+            <a href="achievements.html" class="btn btn-cyan">🏆 Achievements</a>
+            <button class="btn btn-glass" onclick="openModal('saveModal')">💾 Save / Profile</button>
+            <button class="btn btn-glass" onclick="openModal('customModal')">🎨 Themes</button>
         </div>
-        <div class="btn btn-info" id="timeSpent">⏱️ 0m 0s</div>
-    </div>
+        <div class="session-pill" id="sessionPill">⏱ 00:00:00</div>
+    </nav>
 
-    <!-- Main Container -->
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Aurababy Leveling</h1>
-            <div class="level-display" id="levelDisplay">0</div>
-            <div class="title-badge" id="titleBadge">🍼 Sperm Cell</div>
-        </div>
-
-        <!-- Progress Section -->
-        <div class="progress-section">
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">0%</div>
-            </div>
-            <div class="exp-info">
-                <span>EXP: <span id="currentExp">0</span> / <span id="nextExp">100</span></span>
-                <span id="countdown">Next EXP in: 60s</span>
+    <!-- HERO -->
+    <div class="hero">
+        <div class="ring-wrap">
+            <svg viewBox="0 0 200 200">
+                <defs>
+                    <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#007aaa"/>
+                        <stop offset="50%" stop-color="#00d4ff"/>
+                        <stop offset="100%" stop-color="#8b5cf6"/>
+                    </linearGradient>
+                </defs>
+                <circle class="track" cx="100" cy="100" r="88"/>
+                <circle class="fill" id="ringFill" cx="100" cy="100" r="88"/>
+            </svg>
+            <div class="ring-inner">
+                <div class="lvl-num" id="levelDisplay">1</div>
+                <div class="lvl-label">Level</div>
             </div>
         </div>
 
-        <!-- Rejuvenate Section (shows at level 100+) -->
-        <div class="rejuvenate-section" id="rejuvenateSection" style="display: none;">
-            <h2 style="font-weight: 800;">💫 Rejuvenated Mode</h2>
-            <p style="color: #a0d4f7; margin-bottom: 20px; font-weight: 800;">You've reached the peak! Break through the level cap!</p>
-            <div class="rejuvenate-stats">
-                <div class="stat-box">
-                    <div class="stat-value" id="rejuvenateCount">No</div>
-                    <div class="stat-label" style="font-weight: 800;">Rejuvenated</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="totalLevels">100</div>
-                    <div class="stat-label" style="font-weight: 800;">Current Level</div>
-                </div>
+        <div class="title-pill" id="titleBadge">🧬 Sperm Cell</div>
+
+        <div class="exp-wrap">
+            <div class="exp-row">
+                <span>EXP: <span class="hi" id="curExp">0</span></span>
+                <span class="gold" id="countdown">Next EXP: 60s</span>
+                <span>/ <span id="nextExp">100</span></span>
             </div>
-        </div>
-
-        <!-- Redeem Section -->
-        <div class="redeem-section">
-            <h2>🎁 Redeem Code</h2>
-            <div class="redeem-input-group">
-                <input type="text" class="redeem-input" id="codeInput" placeholder="Enter your code here...">
-                <button class="btn btn-primary" onclick="redeemCode()">Redeem</button>
-            </div>
-            <div class="redeem-message" id="redeemMessage"></div>
-        </div>
-
-        <!-- Rewards Grid -->
-        <div class="rewards-grid">
-            <div class="reward-card" data-level="25" id="reward25">
-                <div class="reward-level">Level 25</div>
-                <div class="reward-title">💾 Profile & Save</div>
-                <div class="reward-description">Generate a save code to backup your progress!</div>
-                <div class="reward-status locked">🔒 Locked</div>
-            </div>
-
-            <div class="reward-card" data-level="100" id="reward100">
-                <div class="reward-level">Level 100</div>
-                <div class="reward-title">💫 Rejuvenate</div>
-                <div class="reward-description">Break the level cap and continue beyond 100!</div>
-                <div class="reward-status locked">🔒 Locked</div>
-            </div>
-        </div>
-
-        <!-- UI Customization Section (Always Available) -->
-        <div style="margin-top: 40px; padding: 30px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(79, 172, 254, 0.2); text-align: center;">
-            <h2 style="color: #4facfe; margin-bottom: 15px; font-size: 1.5rem; font-weight: 800;">🎨 Customize Your UI</h2>
-            <p style="color: #a0d4f7; margin-bottom: 20px; font-weight: 800;">Change your colors and theme anytime!</p>
-            <button class="btn btn-primary" onclick="openModal('customUIModal')" style="font-weight: 800;">Open Customization</button>
-        </div>
-    </div>
-
-    <!-- Level Up Popup -->
-    <div class="popup" id="levelUpPopup">
-        <h2 style="font-weight: 800;">🎉 LEVEL UP! 🎉</h2>
-        <p style="font-size: 1.2rem; font-weight: 800;">You reached level <span id="popupLevel">0</span>!</p>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="modal" id="saveModal">
-        <div class="modal-content" style="max-width: 700px;">
-            <div class="modal-header">
-                <h2 style="font-weight: 800;">👤 Your Profile</h2>
-                <button class="close-btn" onclick="closeModal('saveModal')">&times;</button>
-            </div>
-            
-            <!-- Profile Setup (shows if no username) -->
-            <div id="profileSetup" style="display: none;">
-                <div class="save-code-box">
-                    <h3 style="color: #4facfe; margin-bottom: 15px; text-align: center; font-weight: 800;">✨ Create Your Profile</h3>
-                    
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-                        <!-- Profile Picture Upload -->
-                        <div id="imageDropZone" style="width: 150px; height: 150px; border: 3px dashed rgba(79, 172, 254, 0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; background: rgba(0,0,0,0.3); position: relative; overflow: hidden; transition: all 0.3s ease;">
-                            <div id="dropZoneText" style="text-align: center; color: #4facfe; font-size: 0.9rem; padding: 20px; font-weight: 800;">
-                                <div style="font-size: 2rem; margin-bottom: 5px;">📸</div>
-                                Click or drag image
-                            </div>
-                            <img id="profilePreview" style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
-                            <input type="file" id="profileImageInput" accept="image/*" style="display: none;">
-                        </div>
-                        
-                        <!-- Username Input -->
-                        <div style="width: 100%;">
-                            <label style="display: block; color: #4facfe; margin-bottom: 10px; font-weight: 800;">Choose Your Username:</label>
-                            <input type="text" id="usernameInput" placeholder="Enter username..." maxlength="20" style="width: 100%; padding: 15px; border-radius: 12px; border: 2px solid rgba(79, 172, 254, 0.3); background: rgba(0, 0, 0, 0.3); color: white; font-size: 1rem; text-align: center; font-weight: 800;">
-                            <p style="font-size: 0.8rem; color: #a0d4f7; margin-top: 5px; text-align: center; font-weight: 800;">⚠️ This cannot be changed later!</p>
-                        </div>
-                        
-                        <button class="btn btn-primary" style="width: 100%; font-weight: 800;" onclick="createProfile()">🚀 Create Profile</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Profile Display (shows after setup) -->
-            <div id="profileDisplay" style="display: none;">
-                <!-- Profile Header -->
-                <div style="display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; margin-bottom: 20px;">
-                    <img id="displayProfileImage" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #4facfe; box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);">
-                    <div style="flex: 1;">
-                        <h2 id="displayUsername" style="color: #4facfe; margin-bottom: 10px; font-size: 1.8rem; font-weight: 800;"></h2>
-                        <div style="display: inline-block; padding: 5px 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; font-size: 0.9rem; font-weight: 800;">Level <span id="profileLevel">0</span></div>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
-                        <div style="font-size: 2rem; font-weight: 800; color: #4facfe;" id="statExp">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Total EXP</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
-                        <div style="font-size: 2rem; font-weight: 800; color: #f5576c;" id="statTime">0h</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Time Played</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
-                        <div style="font-size: 2rem; font-weight: 800; color: #667eea;" id="statReborn">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Rejuvenated</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(79, 172, 254, 0.2);">
-                        <div style="font-size: 2rem; font-weight: 800; color: #00f2fe;" id="statCodes">0</div>
-                        <div style="font-size: 0.85rem; color: #a0d4f7; margin-top: 5px; font-weight: 800;">Codes Used</div>
-                    </div>
-                </div>
-
-                <!-- Save & Load Section -->
-                <div class="save-code-box">
-                    <h3 style="color: #4facfe; margin-bottom: 10px; font-weight: 800;">💾 Backup Your Progress</h3>
-                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px; font-weight: 800;">Copy this code and store it safely! You can use it to restore everything.</p>
-                    <textarea class="save-code" id="saveCodeDisplay" readonly></textarea>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-weight: 800;" onclick="copySaveCode()">📋 Copy Save Code</button>
-                    <div id="copyMessage" style="margin-top: 10px; text-align: center; font-weight: 800; color: #00f2fe;"></div>
-                </div>
-
-                <div class="save-code-box" style="margin-top: 20px;">
-                    <h3 style="color: #4facfe; margin-bottom: 10px; font-weight: 800;">📥 Restore Profile</h3>
-                    <p style="font-size: 0.9rem; color: #a0d4f7; margin-bottom: 10px; font-weight: 800;">Paste your save code to restore your progress:</p>
-                    <textarea class="save-code" id="loadCodeInput" placeholder="Paste your save code here..."></textarea>
-                    <button class="btn btn-primary" style="width: 100%; margin-top: 10px; font-weight: 800;" onclick="loadSaveCode()">📥 Load Save Code</button>
-                    <div id="loadMessage" style="margin-top: 10px; text-align: center; font-weight: 800;"></div>
-                </div>
+            <div class="bar-track">
+                <div class="bar-fill" id="barFill" style="width:0%"></div>
             </div>
         </div>
     </div>
 
-    <!-- Custom UI Modal -->
-    <div class="modal" id="customUIModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 style="font-weight: 800;">🎨 Customize Your UI</h2>
-                <button class="close-btn" onclick="closeModal('customUIModal')">&times;</button>
-            </div>
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="s-card"><div class="s-val" id="sTotalExp">0</div><div class="s-lbl">Total EXP</div></div>
+        <div class="s-card"><div class="s-val" id="sCodes">0</div><div class="s-lbl">Codes Used</div></div>
+        <div class="s-card"><div class="s-val" id="sSurges">0</div><div class="s-lbl">Surges Hit</div></div>
+        <div class="s-card"><div class="s-val" id="sTime">0m</div><div class="s-lbl">Total Time</div></div>
+    </div>
 
-            <h3 style="color: #4facfe; margin: 20px 0 10px; font-weight: 800;">Preset Themes:</h3>
-            <div class="theme-grid">
-                <div class="theme-option" data-theme="default" style="background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);" onclick="applyTheme('default')">
-                    <div style="font-weight: 800;">🌊 Ocean</div>
-                </div>
-                <div class="theme-option" data-theme="sunset" style="background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 100%);" onclick="applyTheme('sunset')">
-                    <div style="font-weight: 800;">🌅 Sunset</div>
-                </div>
-                <div class="theme-option" data-theme="forest" style="background: linear-gradient(135deg, #0f9b0f 0%, #00d2ff 100%);" onclick="applyTheme('forest')">
-                    <div style="font-weight: 800;">🌲 Forest</div>
-                </div>
-                <div class="theme-option" data-theme="galaxy" style="background: linear-gradient(135deg, #2e1437 0%, #764ba2 100%);" onclick="applyTheme('galaxy')">
-                    <div style="font-weight: 800;">🌌 Galaxy</div>
-                </div>
-                <div class="theme-option" data-theme="fire" style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);" onclick="applyTheme('fire')">
-                    <div style="font-weight: 800;">🔥 Fire</div>
-                </div>
+    <!-- TIME TRACKER -->
+    <div class="section">
+        <div class="sec-title">⏱ Time Tracker</div>
+        <div class="clock-grid">
+            <div class="clock-card">
+                <div class="clock-lbl">This Session</div>
+                <div class="clock-dig" id="sessionClock" style="color: var(--cyan);">00:00:00</div>
+                <div class="clock-sub" id="sessionSub">Just started</div>
             </div>
-
-            <h3 style="color: #4facfe; margin: 30px 0 10px; font-weight: 800;">Custom Colors:</h3>
-            <div class="color-picker-group">
-                <label style="font-weight: 800;">Background Start Color:</label>
-                <input type="color" class="color-picker" id="bgColor1" value="#0f2027">
+            <div class="clock-card">
+                <div class="clock-lbl">All Time</div>
+                <div class="clock-dig" id="totalClock" style="color: var(--purple);">00:00:00</div>
+                <div class="clock-sub" id="totalSub">Lifetime total</div>
             </div>
-            <div class="color-picker-group">
-                <label style="font-weight: 800;">Background End Color:</label>
-                <input type="color" class="color-picker" id="bgColor2" value="#2c5364">
-            </div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 20px; font-weight: 800;" onclick="applyCustomColors()">Apply Custom Colors</button>
+        </div>
+        <div class="next-exp-row">
+            <span class="ne-lbl">⚡ Passive EXP  <span style="color: var(--cyan);">+20 XP</span></span>
+            <span class="ne-val" id="nextExpTimer">60s</span>
         </div>
     </div>
 
-    <!-- QTE Overlay -->
-    <div class="qte-overlay" id="qteOverlay">
-        <div class="qte-message" style="font-weight: 800;">⚡ AURA SURGE! ⚡</div>
-        <div style="font-size: 1.5rem; color: white; font-weight: 800;">Click the 3 orbs fast!</div>
-        <div class="qte-timer" id="qteTimer" style="font-weight: 800;">5.0s</div>
+    <!-- REJUVENATE (visible at 100+) -->
+    <div class="rejuv-section" id="rejuvSection">
+        <h2>💫 Rejuvenated Mode</h2>
+        <p style="color: var(--sub); font-size: 0.85rem; margin: 6px 0 20px;">You've hit the cap. Break through and keep climbing.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 300px; margin: 0 auto;">
+            <div class="s-card"><div class="s-val" id="rejCount" style="color: var(--purple);">No</div><div class="s-lbl">Rejuvenated</div></div>
+            <div class="s-card"><div class="s-val" id="rejLevel" style="color: var(--purple);">100</div><div class="s-lbl">Level</div></div>
+        </div>
     </div>
 
-    <script>
-        // Core Variables
-        let totalSeconds = parseInt(localStorage.getItem("totalSeconds") || "0");
-        let displaySec = parseInt(localStorage.getItem("displaySec") || "0");
-        let exp = parseInt(localStorage.getItem("exp") || "0");
-        let secondsLeft = parseInt(localStorage.getItem("secondsLeft") || "60");
-        let usedCodes = JSON.parse(localStorage.getItem("usedCodes") || "{}");
-        let rejuvenated = localStorage.getItem("rejuvenated") === "true";
-        let currentTheme = localStorage.getItem("currentTheme") || "default";
-        
-        // Profile Variables
-        let username = localStorage.getItem("username") || null;
-        let profileImage = localStorage.getItem("profileImage") || null;
+    <!-- REDEEM CODE -->
+    <div class="section">
+        <div class="sec-title">🎁 Redeem Code</div>
+        <div class="redeem-row">
+            <input type="text" class="code-in" id="codeInput" placeholder="Enter code here...">
+            <button class="btn btn-cyan" onclick="redeemCode()">Redeem</button>
+        </div>
+        <div class="redeem-msg" id="redeemMsg"></div>
+    </div>
 
-        const codes10000 = ["69THEGOOONERISGONE69", "THIEFESTOFGHOULS", "THEGANGSTANDTHEGHOULSFALLS"];
+    <!-- REWARDS -->
+    <div class="rewards-row">
+        <div class="rew-card" id="rew25">
+            <div class="rew-lvl">Level 25</div>
+            <div class="rew-name">💾 Profile & Save</div>
+            <div class="rew-desc">Backup your progress with a shareable save code.</div>
+            <div class="rew-status locked">🔒 Locked</div>
+        </div>
+        <div class="rew-card" id="rew100">
+            <div class="rew-lvl">Level 100</div>
+            <div class="rew-name">💫 Rejuvenate</div>
+            <div class="rew-desc">Shatter the level cap and keep rising beyond 100.</div>
+            <div class="rew-status locked">🔒 Locked</div>
+        </div>
+    </div>
 
-const codes5000 = [
-  "teroswillrebirth",
-  "300GamesBaby!",
-  "400GamesSoon?",
-  "Thefastestbehbehalive901",      // New 5000 Exp code
-  "wowveryfastclickerbaby2222"     // New 5000 Exp code
-];
+</div>
 
-const codes2500 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
+<!-- LEVEL UP POPUP -->
+<div class="popup" id="lvlPopup">
+    <div style="font-size:2rem;margin-bottom:8px">🎉</div>
+    <h2>LEVEL UP!</h2>
+    <p style="margin-top:10px;font-size:1rem;color:var(--sub)">Reached level <span style="color:var(--cyan)" id="popupLvl">0</span></p>
+</div>
 
-const codes1000 = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
+<!-- SAVE MODAL -->
+<div class="modal" id="saveModal">
+    <div class="modal-box">
+        <div class="m-head">
+            <h2>👤 Profile & Save</h2>
+            <button class="close-x" onclick="closeModal('saveModal')">×</button>
+        </div>
 
-const codesHoliday = ["merrychristmas", "merryhanukkah", "hollyandjolly", "jinglethebells", "sleddingbaby!", "gingerbaby", "santababy!", "jollybaby"];
+        <div id="profSetup">
+            <div class="pfp-drop" id="pfpDrop">
+                <div class="pfp-drop-txt" id="pfpTxt">📸<br>Upload Photo</div>
+                <img id="pfpPrev" style="display:none">
+                <input type="file" id="pfpIn" accept="image/*" style="display:none">
+            </div>
+            <label class="m-label">Username (permanent)</label>
+            <input type="text" class="m-input" id="uInput" placeholder="Pick a username..." maxlength="20" style="margin-bottom:14px">
+            <button class="btn btn-cyan" style="width:100%" onclick="createProfile()">🚀 Create Profile</button>
+        </div>
 
-const validCodes = [...codes10000, ...codes5000, ...codes2500, ...codes1000, ...codesHoliday].map(c => c.toLowerCase());
-        // Title System
-        const titleMap = {
-            1: "🧬 Sperm Cell",
-            5: "👶 Newborn",
-            10: "✨👶 Aurababy",
-            25: "🌾👶 Aurafarmer",
-            50: "🌌👶 Celestial Baby",
-            75: "👼 Divine Baby",
-            100: "💫 The Baby That Holds Aura💫"
-        };
+        <div id="profDisplay" style="display:none">
+            <div style="display:flex;align-items:center;gap:16px;padding:16px;background:rgba(0,0,0,0.3);border-radius:14px;margin-bottom:18px">
+                <img id="dispPfp" style="width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--cyan)">
+                <div>
+                    <div style="font-size:1.35rem" id="dispUname"></div>
+                    <div style="color:var(--cyan);font-size:0.82rem">Level <span id="profLvl">0</span></div>
+                </div>
+            </div>
+            <div class="stats-grid" style="margin-bottom:18px">
+                <div class="s-card"><div class="s-val" id="pExp">0</div><div class="s-lbl">EXP</div></div>
+                <div class="s-card"><div class="s-val" id="pTime">0h</div><div class="s-lbl">Time</div></div>
+                <div class="s-card"><div class="s-val" id="pRej">No</div><div class="s-lbl">Rejuvenated</div></div>
+                <div class="s-card"><div class="s-val" id="pCodes">0</div><div class="s-lbl">Codes</div></div>
+            </div>
+            <label class="m-label" style="margin-bottom:6px">Save Code</label>
+            <textarea class="m-input" id="saveDisp" readonly></textarea>
+            <button class="btn btn-cyan" style="width:100%;margin-top:8px" onclick="copySave()">📋 Copy Code</button>
+            <div id="copyMsg" style="text-align:center;font-size:0.78rem;color:var(--cyan);min-height:18px;margin-top:6px"></div>
+            <label class="m-label" style="margin-top:16px;margin-bottom:6px">Load Save Code</label>
+            <textarea class="m-input" id="loadIn" placeholder="Paste save code..."></textarea>
+            <button class="btn btn-cyan" style="width:100%;margin-top:8px" onclick="loadSave()">📥 Load Save</button>
+            <div id="loadMsg" style="text-align:center;font-size:0.78rem;min-height:18px;margin-top:6px"></div>
+        </div>
+    </div>
+</div>
 
-        // Level System with Exponential Growth
-        const BASE_XP_COST = 100;
-        const XP_EXPONENT = 1.5;
-        const MAX_LEVEL_CAP = 100;
-        
-        function getExpForLevel(level) {
-            if (level <= 1) return 0;
-            return Math.floor(BASE_XP_COST * Math.pow(level - 1, XP_EXPONENT));
-        }
+<!-- CUSTOM MODAL -->
+<div class="modal" id="customModal">
+    <div class="modal-box">
+        <div class="m-head">
+            <h2>🎨 Customize</h2>
+            <button class="close-x" onclick="closeModal('customModal')">×</button>
+        </div>
+        <label class="m-label">Preset Themes</label>
+        <div class="theme-grid">
+            <div class="t-opt" data-theme="default" style="background:linear-gradient(135deg,#05060e,#0d1b2a)" onclick="applyTheme('default')">🌊</div>
+            <div class="t-opt" data-theme="sunset" style="background:linear-gradient(135deg,#1a0000,#7c2d12)" onclick="applyTheme('sunset')">🌅</div>
+            <div class="t-opt" data-theme="forest" style="background:linear-gradient(135deg,#020d08,#052e16)" onclick="applyTheme('forest')">🌲</div>
+            <div class="t-opt" data-theme="galaxy" style="background:linear-gradient(135deg,#0f0b24,#1e1b4b)" onclick="applyTheme('galaxy')">🌌</div>
+            <div class="t-opt" data-theme="cherry" style="background:linear-gradient(135deg,#1a000a,#4a0010)" onclick="applyTheme('cherry')">🌸</div>
+        </div>
+        <label class="m-label" style="margin-top:18px">Custom Colors</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0">
+            <div>
+                <label class="m-label">Start</label>
+                <input type="color" id="bg1" value="#05060e" style="width:100%;height:44px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:none">
+            </div>
+            <div>
+                <label class="m-label">End</label>
+                <input type="color" id="bg2" value="#0d1b2a" style="width:100%;height:44px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:none">
+            </div>
+        </div>
+        <button class="btn btn-cyan" style="width:100%;margin-top:4px" onclick="applyCustomColors()">Apply Colors</button>
+    </div>
+</div>
 
-        function getLevelFromExp(xp) {
-            let level = 1;
-            while (getExpForLevel(level + 1) <= xp) {
-                level++;
-                // Stop at 100 unless rejuvenated
-                if (level >= MAX_LEVEL_CAP && !rejuvenated) break;
-            }
-            return level;
-        }
+<!-- QTE OVERLAY -->
+<div class="qte-overlay" id="qteOverlay">
+    <div class="qte-title">⚡ AURA SURGE! ⚡</div>
+    <div class="qte-sub">Click all 3 orbs fast!</div>
+    <div class="qte-timer" id="qteTimer">5.0s</div>
+</div>
 
-        // Time Display
-        function updateDisplayTime() {
-            let mins = Math.floor(displaySec / 60);
-            let secs = displaySec % 60;
-            document.getElementById("timeSpent").innerText = `⏱️ ${mins}m ${secs}s`;
-        }
+<script>
+// ── STATE ──
+let exp        = parseInt(localStorage.getItem("exp")          || "0");
+let totalSecs  = parseInt(localStorage.getItem("totalSeconds") || "0");
+let sessSecs   = 0;
+let secsLeft   = parseInt(localStorage.getItem("secondsLeft")  || "60");
+let usedCodes  = JSON.parse(localStorage.getItem("usedCodes")  || "{}");
+let surgeCount = parseInt(localStorage.getItem("surgeCount")   || "0");
+let rejuv      = localStorage.getItem("rejuvenated") === "true";
+let theme      = localStorage.getItem("currentTheme") || "default";
+let username   = localStorage.getItem("username")     || null;
+let profileImg = localStorage.getItem("profileImage") || null;
 
-        setInterval(() => {
-            totalSeconds++;
-            displaySec++;
-            localStorage.setItem("totalSeconds", totalSeconds);
-            localStorage.setItem("displaySec", displaySec);
-            updateDisplayTime();
-        }, 1000);
+// ── CODES ──
+const codes10k = ["69THEGOOONERISGONE69","THIEFESTOFGHOULS","THEGANGSTANDTHEGHOULSFALLS"];
+const codes5k  = ["teroswillrebirth","300GamesBaby!","400GamesSoon?","Thefastestbehbehalive901","wowveryfastclickerbaby2222"];
+const codes2k5 = ["scarebaby","goonerbaby","creeplingbaby","babyiscoming","67","aurababybegoated","aurababywontdie"];
+const codes1k  = ["derrickistuff","danielistuff","mannyistuff","grantistuff","emmetistuff","shout-out-to-adonis"];
+const codesHol = ["merrychristmas","merryhanukkah","hollyandjolly","jinglethebells","sleddingbaby!","gingerbaby","santababy!","jollybaby"];
+const allValid = [...codes10k,...codes5k,...codes2k5,...codes1k,...codesHol].map(c => c.toLowerCase());
 
-        // Main UI Update
-        function updateUI() {
-            localStorage.setItem("exp", exp);
-            const level = getLevelFromExp(exp);
-            const currentLevelExp = getExpForLevel(level);
-            const nextLevelExp = getExpForLevel(level + 1);
+// ── LEVEL MATH ──
+const BASE_XP = 100, XP_POW = 1.5, MAX_LVL = 100;
+function xpFor(lvl) { return lvl <= 1 ? 0 : Math.floor(BASE_XP * Math.pow(lvl - 1, XP_POW)); }
+function levelOf(xp) {
+    let l = 1;
+    while (true) { if (xp < xpFor(l + 1)) break; l++; if (l >= MAX_LVL && !rejuv) break; }
+    return l;
+}
 
-            // Update level display
-            document.getElementById("levelDisplay").innerText = level;
-            document.getElementById("currentExp").innerText = exp.toLocaleString();
+// ── TITLES ──
+const TITLES = [[100,"💫 The Baby That Holds Aura 💫"],[75,"👼 Divine Baby"],[50,"🌌 Celestial Baby"],
+    [25,"🌾 Aurafarmer"],[10,"✨ Aurababy"],[5,"🌱 Growing Baby"],[1,"🍼 Newborn"],[0,"🧬 Sperm Cell"]];
+function titleFor(lvl) { for (const [r,t] of TITLES) { if (lvl >= r) return t; } return "🧬 Sperm Cell"; }
 
-            // Update title
-            let title = "💫 Aura Master";
-            for (let lvl in titleMap) {
-                if (level >= parseInt(lvl)) {
-                    title = titleMap[lvl];
-                }
-            }
-            document.getElementById("titleBadge").innerText = title;
+// ── TIME FORMAT ──
+function hms(s) {
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), ss = s%60;
+    return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+}
+function short(s) {
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), d = Math.floor(s/86400);
+    if (d > 0) return `${d}d ${h%24}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m ${s%60}s`;
+}
 
-            // Update progress bar
-            if (level >= MAX_LEVEL_CAP && !rejuvenated) {
-                document.getElementById("progressBar").style.width = "100%";
-                document.getElementById("progressBar").innerText = "MAX LEVEL - Rejuvenate to Continue!";
-                document.getElementById("nextExp").innerText = "∞";
-            } else {
-                const expInLevel = exp - currentLevelExp;
-                const expNeeded = nextLevelExp - currentLevelExp;
-                const percent = Math.floor((expInLevel / expNeeded) * 100);
-                
-                document.getElementById("progressBar").style.width = percent + "%";
-                document.getElementById("progressBar").innerText = percent + "%";
-                document.getElementById("nextExp").innerText = nextLevelExp.toLocaleString();
-            }
+// ── RING ──
+const CIRC = 2 * Math.PI * 88;
+function setRing(pct) {
+    const el = document.getElementById("ringFill");
+    el.style.strokeDasharray = CIRC;
+    el.style.strokeDashoffset = CIRC * (1 - Math.min(pct, 1));
+}
 
-            // Update rewards
-            updateRewards(level);
+// ── MAIN UI UPDATE ──
+let prevLvl = levelOf(exp);
+function updateUI() {
+    localStorage.setItem("exp", exp);
+    const lvl  = levelOf(exp);
+    const curX = xpFor(lvl);
+    const nxtX = xpFor(lvl + 1);
 
-            // Show rejuvenate section if level 100+
-            if (level >= MAX_LEVEL_CAP) {
-                document.getElementById("rejuvenateSection").style.display = "block";
-                document.getElementById("rejuvenateCount").innerText = rejuvenated ? "Yes" : "Not Yet";
-                document.getElementById("totalLevels").innerText = level.toLocaleString();
-            } else {
-                document.getElementById("rejuvenateSection").style.display = "none";
-            }
-        }
+    document.getElementById("levelDisplay").textContent = lvl;
+    document.getElementById("titleBadge").textContent   = titleFor(lvl);
+    document.getElementById("curExp").textContent       = exp.toLocaleString();
+    document.getElementById("nextExp").textContent      = (lvl >= MAX_LVL && !rejuv) ? "MAX" : nxtX.toLocaleString();
+    document.getElementById("sTotalExp").textContent    = exp.toLocaleString();
+    document.getElementById("sCodes").textContent       = Object.keys(usedCodes).length;
+    document.getElementById("sSurges").textContent      = surgeCount;
+    document.getElementById("sTime").textContent        = short(totalSecs);
 
-        // Update Reward Cards
-        function updateRewards(level) {
-            const rewards = [
-                { id: "reward25", level: 25, action: () => openModal('saveModal') },
-                { id: "reward100", level: 100, action: () => performRejuvenate() }
-            ];
+    if (lvl >= MAX_LVL && !rejuv) {
+        document.getElementById("barFill").style.width = "100%";
+        setRing(1);
+    } else {
+        const pct = (exp - curX) / (nxtX - curX);
+        document.getElementById("barFill").style.width = (pct * 100) + "%";
+        setRing(pct);
+    }
 
-            rewards.forEach(reward => {
-                const card = document.getElementById(reward.id);
-                const statusEl = card.querySelector('.reward-status');
-                
-                if (level >= reward.level) {
-                    card.classList.add('unlocked');
-                    statusEl.className = 'reward-status unlocked-status';
-                    statusEl.innerHTML = '✅ Unlocked - Click to Use!';
-                    
-                    // Remove old listeners
-                    card.replaceWith(card.cloneNode(true));
-                    const newCard = document.getElementById(reward.id);
-                    
-                    if (reward.action) {
-                        newCard.style.cursor = 'pointer';
-                        newCard.addEventListener('click', reward.action);
-                    }
-                } else {
-                    statusEl.className = 'reward-status locked';
-                    statusEl.innerHTML = '🔒 Locked';
-                }
-            });
-        }
+    // Rewards
+    const r25  = document.getElementById("rew25");
+    const r100 = document.getElementById("rew100");
+    const s25  = r25.querySelector(".rew-status");
+    const s100 = r100.querySelector(".rew-status");
+    if (lvl >= 25) {
+        r25.classList.add("unlocked"); s25.className = "rew-status unlocked"; s25.textContent = "✅ Click to use!";
+        r25.onclick = () => openModal("saveModal");
+    } else {
+        r25.classList.remove("unlocked"); s25.className = "rew-status locked"; s25.textContent = "🔒 Locked"; r25.onclick = null;
+    }
+    if (lvl >= MAX_LVL) {
+        r100.classList.add("unlocked"); s100.className = "rew-status unlocked"; s100.textContent = "✅ Rejuvenate!";
+        r100.onclick = () => performRejuv();
+        document.getElementById("rejuvSection").style.display = "block";
+        document.getElementById("rejCount").textContent = rejuv ? "Yes" : "Not Yet";
+        document.getElementById("rejLevel").textContent = lvl;
+    } else {
+        r100.classList.remove("unlocked"); s100.className = "rew-status locked"; s100.textContent = "🔒 Locked"; r100.onclick = null;
+        document.getElementById("rejuvSection").style.display = "none";
+    }
+}
 
-        // EXP Gain Timer
-        setInterval(() => {
-            secondsLeft--;
-            document.getElementById("countdown").innerText = `Next EXP in: ${secondsLeft}s`;
-            
-            if (secondsLeft <= 0) {
-                // Only gain EXP if not at max level or if rejuvenated
-                if (getLevelFromExp(exp) < MAX_LEVEL_CAP || rejuvenated) {
-                    exp += 20;
-                    updateUI();
-                    checkLevelUp();
-                }
-                secondsLeft = 60;
-            }
-            localStorage.setItem("secondsLeft", secondsLeft);
-        }, 1000);
+// ── CLOCK TICK ──
+setInterval(() => {
+    totalSecs++; sessSecs++;
+    localStorage.setItem("totalSeconds", totalSecs);
 
-        // Level Up Detection
-        let prevLevel = getLevelFromExp(exp);
-        function checkLevelUp() {
-            const currentLevel = getLevelFromExp(exp);
-            if (currentLevel > prevLevel) {
-                showLevelUpPopup(currentLevel);
-                prevLevel = currentLevel;
-            }
-        }
+    const sh = Math.floor(sessSecs/3600), sm = Math.floor((sessSecs%3600)/60);
+    const th = Math.floor(totalSecs/3600), td = Math.floor(totalSecs/86400);
 
-        function showLevelUpPopup(level) {
-            const popup = document.getElementById("levelUpPopup");
-            document.getElementById("popupLevel").innerText = level;
-            popup.classList.add("show");
-            setTimeout(() => popup.classList.remove("show"), 3000);
-        }
+    document.getElementById("sessionClock").textContent = hms(sessSecs);
+    document.getElementById("totalClock").textContent   = hms(totalSecs);
+    document.getElementById("sessionPill").textContent  = "⏱ " + hms(sessSecs);
+    document.getElementById("sessionSub").textContent   = sh > 0 ? `${sh}h ${sm}m this session` : sm > 0 ? `${sm}m this session` : "Just started";
+    document.getElementById("totalSub").textContent     = td > 0 ? `${td}d ${th%24}h total` : `${th}h total`;
+    document.getElementById("sTime").textContent        = short(totalSecs);
+}, 1000);
 
-        // Code Redemption
-        window.redeemCode = function() {
-            const input = document.getElementById("codeInput");
-            const code = input.value.trim().toLowerCase();
-            const msg = document.getElementById("redeemMessage");
+// ── EXP TICK ──
+setInterval(() => {
+    secsLeft--;
+    document.getElementById("nextExpTimer").textContent = secsLeft + "s";
+    document.getElementById("countdown").textContent    = "Next EXP: " + secsLeft + "s";
+    if (secsLeft <= 0) {
+        if (levelOf(exp) < MAX_LVL || rejuv) { exp += 20; updateUI(); checkLvlUp(); }
+        secsLeft = 60;
+    }
+    localStorage.setItem("secondsLeft", secsLeft);
+}, 1000);
 
-            if (!code) {
-                msg.innerText = "Please enter a code!";
-                msg.style.color = "#f5576c";
-                return;
-            }
+function checkLvlUp() {
+    const cur = levelOf(exp);
+    if (cur > prevLvl) { showLvlUp(cur); prevLvl = cur; }
+}
+function showLvlUp(lvl) {
+    const p = document.getElementById("lvlPopup");
+    document.getElementById("popupLvl").textContent = lvl;
+    p.classList.add("show");
+    setTimeout(() => p.classList.remove("show"), 3200);
+}
 
-            if (usedCodes[code]) {
-                msg.innerText = "Code already used!";
-                msg.style.color = "#f5576c";
-                return;
-            }
+// ── REDEEM ──
+window.redeemCode = function() {
+    const inp = document.getElementById("codeInput");
+    const code = inp.value.trim().toLowerCase();
+    const msg  = document.getElementById("redeemMsg");
+    if (!code)              { msg.style.color = "var(--red)";  msg.textContent = "Enter a code!";    return; }
+    if (usedCodes[code])    { msg.style.color = "var(--red)";  msg.textContent = "Already used!";    return; }
+    if (!allValid.includes(code)) { msg.style.color = "var(--red)"; msg.textContent = "Invalid code!"; return; }
 
-            if (!validCodes.includes(code)) {
-                msg.innerText = "Invalid code!";
-                msg.style.color = "#f5576c";
-                return;
-            }
+    let reward = 1000;
+    if (codes10k.map(c=>c.toLowerCase()).includes(code)) reward = 10000;
+    else if (codes5k.map(c=>c.toLowerCase()).includes(code)) reward = 5000;
+    else if (codes2k5.map(c=>c.toLowerCase()).includes(code)) reward = 2500;
+    else if (codesHol.map(c=>c.toLowerCase()).includes(code)) reward = 500;
 
-            let reward = 1000;
-            if (codes5000.map(c => c.toLowerCase()).includes(code)) reward = 5000;
-            else if (codes2500.map(c => c.toLowerCase()).includes(code)) reward = 2500;
+    exp += reward;
+    usedCodes[code] = true;
+    localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
+    updateUI(); checkLvlUp();
+    msg.style.color = "var(--cyan)"; msg.textContent = `✅ +${reward.toLocaleString()} EXP!`;
+    inp.value = "";
+    setTimeout(() => msg.textContent = "", 4000);
+};
 
-            exp += reward;
-            usedCodes[code] = true;
-            localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
-            updateUI();
-            checkLevelUp();
+// ── SAVE / LOAD ──
+function genSave() {
+    return btoa(JSON.stringify({ exp, usedCodes, totalSeconds: totalSecs, surgeCount, rejuvenated: rejuv, currentTheme: theme, username, profileImage: profileImg, ts: Date.now() }));
+}
+window.copySave = function() {
+    const code = genSave();
+    document.getElementById("saveDisp").value = code;
+    if (navigator.clipboard) navigator.clipboard.writeText(code);
+    const m = document.getElementById("copyMsg"); m.textContent = "✅ Copied!"; setTimeout(() => m.textContent = "", 3000);
+};
+window.loadSave = function() {
+    const m = document.getElementById("loadMsg");
+    try {
+        const d = JSON.parse(atob(document.getElementById("loadIn").value.trim()));
+        exp = d.exp || 0; usedCodes = d.usedCodes || {}; totalSecs = d.totalSeconds || 0;
+        surgeCount = d.surgeCount || 0; rejuv = d.rejuvenated || false;
+        theme = d.currentTheme || "default"; username = d.username || null; profileImg = d.profileImage || null;
+        localStorage.setItem("exp", exp); localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
+        localStorage.setItem("totalSeconds", totalSecs); localStorage.setItem("surgeCount", surgeCount);
+        localStorage.setItem("rejuvenated", rejuv); localStorage.setItem("currentTheme", theme);
+        localStorage.setItem("username", username || ""); localStorage.setItem("profileImage", profileImg || "");
+        applyTheme(theme); updateUI(); prevLvl = levelOf(exp);
+        m.style.color = "var(--cyan)"; m.textContent = "✅ Loaded!";
+        document.getElementById("loadIn").value = "";
+        setTimeout(() => { closeModal("saveModal"); if (username) openModal("saveModal"); }, 1500);
+    } catch(e) { m.style.color = "var(--red)"; m.textContent = "❌ Invalid code!"; }
+};
 
-            msg.innerText = `✅ Code redeemed! +${reward.toLocaleString()} EXP`;
-            msg.style.color = "#00f2fe";
-            input.value = "";
-        };
+// ── PROFILE ──
+function setupPfp() {
+    const drop = document.getElementById("pfpDrop"), inp = document.getElementById("pfpIn"),
+          prev = document.getElementById("pfpPrev"), txt = document.getElementById("pfpTxt");
+    drop.onclick = () => inp.click();
+    inp.onchange = e => handleImg(e.target.files[0]);
+    drop.ondragover = e => { e.preventDefault(); drop.style.borderColor = "var(--cyan)"; };
+    drop.ondragleave = () => drop.style.borderColor = "";
+    drop.ondrop = e => { e.preventDefault(); drop.style.borderColor = ""; handleImg(e.dataTransfer.files[0]); };
+    function handleImg(file) {
+        if (!file || !file.type.startsWith("image/")) return;
+        const r = new FileReader();
+        r.onload = e => {
+            const img = new Image(); img.onload = () => {
+                const c = document.createElement("canvas");
+                let w = img.width, h = img.height;
+                if (w > 400) { h *= 400/w; w = 400; } if (h > 400) { w *= 400/h; h = 400; }
+                c.width = w; c.height = h; c.getContext("2d").drawImage(img, 0, 0, w, h);
+                profileImg = c.toDataURL("image/jpeg", 0.8);
+                prev.src = profileImg; prev.style.display = "block"; txt.style.display = "none";
+            }; img.src = e.target.result;
+        }; r.readAsDataURL(file);
+    }
+}
+window.createProfile = function() {
+    const u = document.getElementById("uInput").value.trim();
+    if (!u || u.length < 3) { alert("Username needs 3+ characters!"); return; }
+    username = u; localStorage.setItem("username", username);
+    if (profileImg) localStorage.setItem("profileImage", profileImg);
+    document.getElementById("profSetup").style.display = "none";
+    refreshProfileDisplay(); document.getElementById("profDisplay").style.display = "block";
+};
+function refreshProfileDisplay() {
+    if (!username) return;
+    document.getElementById("dispUname").textContent = username;
+    document.getElementById("profLvl").textContent = levelOf(exp);
+    const fl = username[0].toUpperCase();
+    document.getElementById("dispPfp").src = profileImg || `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%2300d4ff'/><text x='40' y='55' font-size='40' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>${fl}</text></svg>`;
+    document.getElementById("pExp").textContent   = exp.toLocaleString();
+    document.getElementById("pTime").textContent  = short(totalSecs);
+    document.getElementById("pRej").textContent   = rejuv ? "Yes" : "No";
+    document.getElementById("pCodes").textContent = Object.keys(usedCodes).length;
+    document.getElementById("saveDisp").value = genSave();
+}
 
-        // Save/Load System
-        function generateSaveCode() {
-            const saveData = {
-                exp: exp,
-                usedCodes: usedCodes,
-                totalSeconds: totalSeconds,
-                rejuvenated: rejuvenated,
-                currentTheme: currentTheme,
-                username: username,
-                profileImage: profileImage,
-                timestamp: Date.now()
-            };
-            return btoa(JSON.stringify(saveData));
-        }
+// ── MODAL ──
+window.openModal = function(id) {
+    document.getElementById(id).classList.add("active");
+    if (id === "saveModal") {
+        if (!username) { document.getElementById("profSetup").style.display = "block"; document.getElementById("profDisplay").style.display = "none"; setupPfp(); }
+        else { document.getElementById("profSetup").style.display = "none"; document.getElementById("profDisplay").style.display = "block"; refreshProfileDisplay(); }
+    }
+    if (id === "customModal") {
+        document.querySelectorAll(".t-opt").forEach(o => o.classList.remove("active"));
+        const t = document.querySelector(`[data-theme="${theme}"]`); if (t) t.classList.add("active");
+    }
+};
+window.closeModal = function(id) { document.getElementById(id).classList.remove("active"); };
 
-        window.copySaveCode = function() {
-            const code = generateSaveCode();
-            const textarea = document.getElementById("saveCodeDisplay");
-            textarea.value = code;
-            textarea.select();
-            document.execCommand('copy');
-            
-            // Try modern API as well
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(code);
-            }
-            
-            const msg = document.getElementById("copyMessage");
-            msg.innerText = "✅ Copied to clipboard!";
-            msg.style.color = "#00f2fe";
-            setTimeout(() => msg.innerText = "", 3000);
-        };
+// ── THEMES ──
+const THEMES = { default:["#05060e","#0d1b2a"], sunset:["#1a0000","#7c2d12"], forest:["#020d08","#052e16"], galaxy:["#0f0b24","#1e1b4b"], cherry:["#1a000a","#4a0010"] };
+window.applyTheme = function(name) {
+    const [c1, c2] = THEMES[name] || THEMES.default;
+    document.body.style.background = `linear-gradient(135deg,${c1},${c2})`;
+    theme = name; localStorage.setItem("currentTheme", name);
+    document.querySelectorAll(".t-opt").forEach(o => o.classList.remove("active"));
+    const t = document.querySelector(`[data-theme="${name}"]`); if (t) t.classList.add("active");
+};
+window.applyCustomColors = function() {
+    const c1 = document.getElementById("bg1").value, c2 = document.getElementById("bg2").value;
+    document.body.style.background = `linear-gradient(135deg,${c1},${c2})`;
+    localStorage.setItem("customColor1", c1); localStorage.setItem("customColor2", c2);
+};
 
-        window.loadSaveCode = function() {
-            const input = document.getElementById("loadCodeInput");
-            const msg = document.getElementById("loadMessage");
-            
-            try {
-                const decoded = JSON.parse(atob(input.value.trim()));
-                
-                exp = decoded.exp || 0;
-                usedCodes = decoded.usedCodes || {};
-                totalSeconds = decoded.totalSeconds || 0;
-                rejuvenated = decoded.rejuvenated || false;
-                currentTheme = decoded.currentTheme || "default";
-                username = decoded.username || null;
-                profileImage = decoded.profileImage || null;
-                
-                localStorage.setItem("exp", exp);
-                localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
-                localStorage.setItem("totalSeconds", totalSeconds);
-                localStorage.setItem("rejuvenated", rejuvenated);
-                localStorage.setItem("currentTheme", currentTheme);
-                localStorage.setItem("username", username || "");
-                localStorage.setItem("profileImage", profileImage || "");
-                
-                applyTheme(currentTheme);
-                updateUI();
-                prevLevel = getLevelFromExp(exp);
-                
-                msg.innerText = "✅ Profile loaded successfully!";
-                msg.style.color = "#00f2fe";
-                input.value = "";
-                
-                setTimeout(() => {
-                    closeModal('saveModal');
-                    if (username) {
-                        openModal('saveModal'); // Reopen to show profile
-                    }
-                }, 1500);
-            } catch (e) {
-                msg.innerText = "❌ Invalid save code!";
-                msg.style.color = "#f5576c";
-            }
-        };
+// ── REJUVENATE ──
+window.performRejuv = function() {
+    if (levelOf(exp) < MAX_LVL) { alert("Reach Level 100 first!"); return; }
+    if (rejuv) { alert("Already rejuvenated!"); return; }
+    if (confirm("Rejuvenate and break the level cap?\nYou'll keep leveling beyond 100!")) {
+        rejuv = true; localStorage.setItem("rejuvenated","true"); updateUI(); alert("💫 Rejuvenated! Keep going!");
+    }
+};
 
-        // Profile Image Upload
-        function setupImageUpload() {
-            const dropZone = document.getElementById('imageDropZone');
-            const fileInput = document.getElementById('profileImageInput');
-            const preview = document.getElementById('profilePreview');
-            const dropText = document.getElementById('dropZoneText');
+// ── QTE SURGE ──
+setInterval(() => { if (Math.random() > 0.95) triggerSurge(); }, 120000);
+function triggerSurge() {
+    const ov = document.getElementById("qteOverlay"); ov.classList.add("active");
+    let t = 5.0, hit = 0;
+    for (let i = 0; i < 3; i++) {
+        const o = document.createElement("div"); o.className = "qte-orb";
+        o.style.top  = (10 + Math.random() * 75) + "%";
+        o.style.left = (10 + Math.random() * 75) + "%";
+        o.onclick = () => { o.remove(); hit++; if (hit >= 3) done(true); };
+        ov.appendChild(o);
+    }
+    const tick = setInterval(() => {
+        t -= 0.1; document.getElementById("qteTimer").textContent = t.toFixed(1) + "s";
+        if (t <= 0) done(false);
+    }, 100);
+    function done(ok) {
+        clearInterval(tick); ov.classList.remove("active");
+        document.querySelectorAll(".qte-orb").forEach(o => o.remove());
+        if (ok) { surgeCount++; localStorage.setItem("surgeCount", surgeCount); exp += 500; updateUI(); checkLvlUp(); alert("⚡ SURGE! +500 EXP"); }
+        else alert("❌ Surge missed!");
+    }
+}
 
-            // Click to upload
-            dropZone.addEventListener('click', () => fileInput.click());
-
-            // File input change
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    handleImageFile(file);
-                }
-            });
-
-            // Drag and drop
-            dropZone.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                dropZone.style.borderColor = '#4facfe';
-                dropZone.style.backgroundColor = 'rgba(79, 172, 254, 0.1)';
-            });
-
-            dropZone.addEventListener('dragleave', (e) => {
-                e.preventDefault();
-                dropZone.style.borderColor = 'rgba(79, 172, 254, 0.5)';
-                dropZone.style.backgroundColor = 'rgba(0,0,0,0.3)';
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.style.borderColor = 'rgba(79, 172, 254, 0.5)';
-                dropZone.style.backgroundColor = 'rgba(0,0,0,0.3)';
-                
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    handleImageFile(file);
-                }
-            });
-
-            function handleImageFile(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        // Resize image to max 400x400 to save storage
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        let width = img.width;
-                        let height = img.height;
-                        const maxSize = 400;
-                        
-                        if (width > height) {
-                            if (width > maxSize) {
-                                height *= maxSize / width;
-                                width = maxSize;
-                            }
-                        } else {
-                            if (height > maxSize) {
-                                width *= maxSize / height;
-                                height = maxSize;
-                            }
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const resizedImage = canvas.toDataURL('image/jpeg', 0.8);
-                        profileImage = resizedImage;
-                        
-                        preview.src = resizedImage;
-                        preview.style.display = 'block';
-                        dropText.style.display = 'none';
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // Create Profile
-        window.createProfile = function() {
-            const usernameInput = document.getElementById('usernameInput');
-            const enteredUsername = usernameInput.value.trim();
-            
-            if (!enteredUsername) {
-                alert('Please enter a username!');
-                return;
-            }
-            
-            if (enteredUsername.length < 3) {
-                alert('Username must be at least 3 characters!');
-                return;
-            }
-            
-            username = enteredUsername;
-            localStorage.setItem('username', username);
-            
-            if (profileImage) {
-                localStorage.setItem('profileImage', profileImage);
-            }
-            
-            // Show profile display
-            document.getElementById('profileSetup').style.display = 'none';
-            updateProfileDisplay();
-            document.getElementById('profileDisplay').style.display = 'block';
-        };
-
-        // Update Profile Display
-        function updateProfileDisplay() {
-            if (!username) return;
-            
-            document.getElementById('displayUsername').innerText = username;
-            
-            // Set profile image
-            if (profileImage) {
-                document.getElementById('displayProfileImage').src = profileImage;
-            } else {
-                // Create SVG with first letter of username
-                const firstLetter = username ? username[0].toUpperCase() : '?';
-                const svgImage = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%234facfe"/><text x="50" y="65" font-size="50" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="bold">${firstLetter}</text></svg>`;
-                document.getElementById('displayProfileImage').src = svgImage;
-            }
-            
-            // Update stats
-            document.getElementById('profileLevel').innerText = getLevelFromExp(exp);
-            document.getElementById('statExp').innerText = exp.toLocaleString();
-            
-            const hours = Math.floor(totalSeconds / 3600);
-            const mins = Math.floor((totalSeconds % 3600) / 60);
-            document.getElementById('statTime').innerText = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-            
-            document.getElementById('statReborn').innerText = rejuvenated ? "Yes" : "No";
-            document.getElementById('statCodes').innerText = Object.keys(usedCodes).length;
-            
-            // Update save code
-            document.getElementById('saveCodeDisplay').value = generateSaveCode();
-        }
-
-        // Theme System
-        const themes = {
-            default: { bg1: "#0f2027", bg2: "#2c5364" },
-            sunset: { bg1: "#ff6b6b", bg2: "#ffd93d" },
-            forest: { bg1: "#0f9b0f", bg2: "#00d2ff" },
-            galaxy: { bg1: "#2e1437", bg2: "#764ba2" },
-            fire: { bg1: "#ff0844", bg2: "#ffb199" }
-        };
-
-        window.applyTheme = function(themeName) {
-            const theme = themes[themeName];
-            document.body.style.background = `linear-gradient(135deg, ${theme.bg1} 0%, ${theme.bg2} 100%)`;
-            currentTheme = themeName;
-            localStorage.setItem("currentTheme", themeName);
-            
-            // Update active state
-            document.querySelectorAll('.theme-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            document.querySelector(`[data-theme="${themeName}"]`).classList.add('active');
-        };
-
-        window.applyCustomColors = function() {
-            const color1 = document.getElementById("bgColor1").value;
-            const color2 = document.getElementById("bgColor2").value;
-            document.body.style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
-            localStorage.setItem("customColor1", color1);
-            localStorage.setItem("customColor2", color2);
-        };
-
-        // Rejuvenate System
-        window.performRejuvenate = function() {
-            if (getLevelFromExp(exp) < MAX_LEVEL_CAP) {
-                alert("You must reach Level 100 first!");
-                return;
-            }
-
-            if (rejuvenated) {
-                alert("You've already rejuvenated! Continue leveling past 100!");
-                return;
-            }
-
-            const confirmed = confirm("Rejuvenate and break the level cap?\n\nThis will allow you to continue gaining EXP and levels beyond 100 with exponential growth!");
-            
-            if (confirmed) {
-                rejuvenated = true;
-                localStorage.setItem("rejuvenated", "true");
-                updateUI();
-                alert("💫 Rejuvenated! You can now level up past 100!");
-            }
-        };
-
-        // Modal Functions
-        window.openModal = function(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.classList.add('active');
-            
-            if (modalId === 'saveModal') {
-                if (!username) {
-                    // Show profile setup
-                    document.getElementById('profileSetup').style.display = 'block';
-                    document.getElementById('profileDisplay').style.display = 'none';
-                    setupImageUpload();
-                } else {
-                    // Show profile display
-                    document.getElementById('profileSetup').style.display = 'none';
-                    document.getElementById('profileDisplay').style.display = 'block';
-                    updateProfileDisplay();
-                }
-            }
-            
-            if (modalId === 'customUIModal') {
-                document.querySelector(`[data-theme="${currentTheme}"]`).classList.add('active');
-            }
-        };
-
-        window.closeModal = function(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        };
-
-        // QTE System
-        setInterval(() => {
-            if (Math.random() > 0.95) triggerSurge();
-        }, 120000);
-
-        function triggerSurge() {
-            const overlay = document.getElementById("qteOverlay");
-            overlay.classList.add("active");
-            let timeLeft = 5.0;
-            let clicked = 0;
-
-            for (let i = 0; i < 3; i++) {
-                let orb = document.createElement("div");
-                orb.className = "qte-orb";
-                orb.style.top = (15 + Math.random() * 70) + "%";
-                orb.style.left = (15 + Math.random() * 70) + "%";
-                orb.onclick = () => {
-                    orb.remove();
-                    clicked++;
-                    if (clicked >= 3) endSurge(true);
-                };
-                overlay.appendChild(orb);
-            }
-
-            let timer = setInterval(() => {
-                timeLeft -= 0.1;
-                document.getElementById("qteTimer").innerText = timeLeft.toFixed(1) + "s";
-                if (timeLeft <= 0) endSurge(false);
-            }, 100);
-
-            function endSurge(success) {
-                clearInterval(timer);
-                overlay.classList.remove("active");
-                document.querySelectorAll(".qte-orb").forEach(o => o.remove());
-                
-                if (success) {
-                    exp += 500;
-                    updateUI();
-                    checkLevelUp();
-                    alert("⚡ SURGE SUCCESS! +500 EXP");
-                } else {
-                    alert("❌ SURGE FAILED! Try again next time!");
-                }
-            }
-        }
-
-        // Initialize
-        updateDisplayTime();
-        updateUI();
-        applyTheme(currentTheme);
-        
-        // Apply custom colors if saved
-        const savedColor1 = localStorage.getItem("customColor1");
-        const savedColor2 = localStorage.getItem("customColor2");
-        if (savedColor1 && savedColor2) {
-            document.getElementById("bgColor1").value = savedColor1;
-            document.getElementById("bgColor2").value = savedColor2;
-        }
-    </script>
+// ── INIT ──
+applyTheme(theme);
+const sc1 = localStorage.getItem("customColor1"), sc2 = localStorage.getItem("customColor2");
+if (sc1 && sc2) document.body.style.background = `linear-gradient(135deg,${sc1},${sc2})`;
+updateUI();
+document.getElementById("codeInput").addEventListener("keypress", e => { if (e.key === "Enter") redeemCode(); });
+</script>
 </body>
 </html>
